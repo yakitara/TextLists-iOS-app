@@ -3,6 +3,8 @@
 
 @implementation ItemsTableViewController
 
+@synthesize fetchedResultsController=_fetchedResultsController;
+@synthesize managedObjectContext=_managedObjectContext;
 
 #pragma mark -
 #pragma mark Initialization
@@ -23,21 +25,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // set the title
     self.navigationItem.title = @"Items";
-/*
-    // create a custom navigation bar button and set it to always say "Back"
-    UIBarButtonItem *temporaryBarButtonItem = [[UIBarButtonItem alloc] init];
-    //temporaryBarButtonItem.title = @"Back";
-    self.navigationItem.backBarButtonItem = temporaryBarButtonItem;
-    [temporaryBarButtonItem release];
-    NSLog(@"item table viewDidLoad");
-    */
-    // Uncomment the following line to preserve selection between presentations.
-    //self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
+    self.navigationItem.rightBarButtonItem = addButton;
+    [addButton release];
+    
+    NSError *error = nil;
+    if (![self.fetchedResultsController performFetch:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
 }
 
 
@@ -155,6 +154,12 @@
 	 */
 }
 
+#pragma mark -
+#pragma mark Add a new object
+
+- (void)insertNewObject {
+    NSLog(@"TODO: transit to Item detail view");
+}
 
 #pragma mark -
 #pragma mark Memory management

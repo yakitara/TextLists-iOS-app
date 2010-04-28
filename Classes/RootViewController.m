@@ -17,7 +17,8 @@
 
 @implementation RootViewController
 
-@synthesize fetchedResultsController, managedObjectContext;
+@synthesize fetchedResultsController=_fetchedResultsController;
+@synthesize managedObjectContext=_managedObjectContext;
 
 
 #pragma mark -
@@ -35,7 +36,7 @@
     [addButton release];
     
     NSError *error = nil;
-    if (![[self fetchedResultsController] performFetch:&error]) {
+    if (![self.fetchedResultsController performFetch:&error]) {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -78,7 +79,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     
-    NSManagedObject *managedObject = [fetchedResultsController objectAtIndexPath:indexPath];
+    NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = [[managedObject valueForKey:@"timeStamp"] description];
 }
 
@@ -89,8 +90,8 @@
 - (void)insertNewObject {
     
     // Create a new instance of the entity managed by the fetched results controller.
-    NSManagedObjectContext *context = [fetchedResultsController managedObjectContext];
-    NSEntityDescription *entity = [[fetchedResultsController fetchRequest] entity];
+    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
     NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
     
     // If appropriate, configure the new managed object.
@@ -114,12 +115,12 @@
 #pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [[fetchedResultsController sections] count];
+    return [[self.fetchedResultsController sections] count];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [[fetchedResultsController sections] objectAtIndex:section];
+    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     return [sectionInfo numberOfObjects];
 }
 
@@ -156,8 +157,8 @@
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the managed object for the given index path
-        NSManagedObjectContext *context = [fetchedResultsController managedObjectContext];
-        [context deleteObject:[fetchedResultsController objectAtIndexPath:indexPath]];
+        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
         
         // Save the context.
         NSError *error = nil;
@@ -207,8 +208,8 @@
 
 - (NSFetchedResultsController *)fetchedResultsController {
     
-    if (fetchedResultsController != nil) {
-        return fetchedResultsController;
+    if (_fetchedResultsController != nil) {
+        return _fetchedResultsController;
     }
     
     /*
@@ -217,7 +218,7 @@
     // Create the fetch request for the entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
@@ -231,7 +232,7 @@
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:managedObjectContext sectionNameKeyPath:nil cacheName:@"Root"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"Root"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -240,7 +241,7 @@
     [sortDescriptor release];
     [sortDescriptors release];
     
-    return fetchedResultsController;
+    return _fetchedResultsController;
 }    
 
 
@@ -329,8 +330,8 @@
 
 
 - (void)dealloc {
-    [fetchedResultsController release];
-    [managedObjectContext release];
+    self.fetchedResultsController = nil;
+    self.managedObjectContext = nil;
     [super dealloc];
 }
 
