@@ -21,8 +21,11 @@
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
+@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 
 - (NSString *)applicationDocumentsDirectory;
 
 @end
 
+#define UIApp [UIApplication sharedApplication]
+#define UIAppDelegate ((ItemsCoreDataAppDelegate*)UIApp.delegate)
