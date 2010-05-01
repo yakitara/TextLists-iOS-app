@@ -193,7 +193,10 @@
     // Navigation logic may go here -- for example, create and push another view controller.
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     ItemsTableViewController *itemsController = [[ItemsTableViewController alloc] initWithStyle:UITableViewStylePlain];
-//    itemsController.selectedRegion = [regions objectAtIndex:indexPath.row];
+    NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+    //NSSet *items = [selectedObject valueForKeyPath:@"listings.item"];
+    //NSMutableArray *items = [selectedObject mutableArrayValueForKeyPath:@"listings.item"];
+    itemsController.list = selectedObject;
     [[self navigationController] pushViewController:itemsController animated:YES];
     [itemsController release];
     

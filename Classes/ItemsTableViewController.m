@@ -1,10 +1,12 @@
 #import "ItemsTableViewController.h"
+#import "ItemsCoreDataAppDelegate.h"
 
 
 @implementation ItemsTableViewController
 
-@synthesize fetchedResultsController=_fetchedResultsController;
-@synthesize managedObjectContext=_managedObjectContext;
+// @synthesize fetchedResultsController=_fetchedResultsController;
+// @synthesize managedObjectContext=_managedObjectContext;
+@synthesize list=_list;
 
 #pragma mark -
 #pragma mark Initialization
@@ -24,27 +26,38 @@
 
 
 - (void)viewDidLoad {
+    NSLog(@"itemTable viewDidLoad");
     [super viewDidLoad];
-    self.navigationItem.title = @"Items";
+    //self.navigationItem.title = @"Items";
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
+    // set Add button
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
+    // set srot order for listings
+    NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
+    NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:NO];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    [sortDescriptor release];
+    [sortDescriptors release];
+    [fetchRequest setRelationshipKeyPathsForPrefetching:[NSArray arrayWithObject:@"item"]];
     
-    NSError *error = nil;
-    if (![self.fetchedResultsController performFetch:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
+//     NSError *error = nil;
+//     if (![self.fetchedResultsController performFetch:&error]) {
+//         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//         abort();
+//     }
 }
 
 
-/*
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.tableView reloadData];
+    self.navigationItem.title = [self.list valueForKey:@"name"];
 }
-*/
+
 /*
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -80,7 +93,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return 0; //number of rows in section;
+    NSUInteger count = [[self.list valueForKeyPath:@"fetchedListings"] count];
+    NSLog(@"items count:%d", count);
+    return count; //number of rows in section;
 }
 
 
@@ -95,6 +110,12 @@
     }
     
     // Configure the cell...
+//    NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    //NSManagedObject *managedObject = [self.items anyObject]; //FIXME
+    //[[self.list valueForKeyPath:@"listings.item"]]
+    //cell.textLabel.text = [[managedObject valueForKey:@"content"] description];
+    NSManagedObject *item = [[self.list valueForKeyPath:@"fetchedListings.item"] objectAtIndex:[indexPath row]];
+    cell.textLabel.text = [[item valueForKey:@"content"] description];
     
     return cell;
 }
@@ -158,6 +179,27 @@
 #pragma mark Add a new object
 
 - (void)insertNewObject {
+    
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+    
+    NSManagedObject *item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
+                                                 inManagedObjectContext:context];
+    [item setValue:@"hoge" forKey:@"content"];
+    NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing"
+                                                    inManagedObjectContext:context];
+    [listing setValue:item forKey:@"item"];
+    [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    
+    
+    
+//    [self.list
+    //[self.items addObject: newManagedObject];
+    // Save the context.
+    NSError *error = nil;
+    if (![context save:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
     NSLog(@"TODO: transit to Item detail view");
 }
 
@@ -172,8 +214,10 @@
 }
 
 - (void)viewDidUnload {
+    NSLog(@"itemsTable viewDidUnload");
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    self.list = nil;
 }
 
 
