@@ -42,6 +42,7 @@
     [fetchRequest setSortDescriptors:sortDescriptors];
     [sortDescriptor release];
     [sortDescriptors release];
+    // eager loading listings.item
     [fetchRequest setRelationshipKeyPathsForPrefetching:[NSArray arrayWithObject:@"item"]];
     
 //     NSError *error = nil;
@@ -200,6 +201,8 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+    // refresh list.items
+    [context refreshObject:self.list mergeChanges:NO];
     NSLog(@"TODO: transit to Item detail view");
 }
 
