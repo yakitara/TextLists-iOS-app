@@ -15,7 +15,7 @@
 
 #pragma mark -
 #pragma mark View lifecycle
-
+/*
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Load nib
@@ -27,7 +27,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
-
+*/
 /*
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -190,6 +190,7 @@
 
 
 - (void)dealloc {
+    self.nameCell = nil;
     [super dealloc];
 }
 

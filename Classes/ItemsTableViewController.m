@@ -1,5 +1,7 @@
 #import "ItemsTableViewController.h"
 #import "ItemsCoreDataAppDelegate.h"
+#import "ItemDetailViewController.h"
+#import "ItemViewController.h"
 
 
 @implementation ItemsTableViewController
@@ -180,7 +182,18 @@
 #pragma mark Add a new object
 
 - (void)insertNewObject {
-    
+#if 0
+    ItemViewController *itemController = [[ItemViewController alloc] initWithNibName:@"ItemViewController" bundle:nil];
+//    itemController.list = self.list;
+    [[self navigationController] pushViewController:itemController animated:YES];
+    [itemController release];
+#else
+    ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil];
+    itemController.list = self.list;
+    [[self navigationController] pushViewController:itemController animated:YES];
+    [itemController release];
+#endif
+/*    
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     
     NSManagedObject *item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
@@ -204,6 +217,7 @@
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     NSLog(@"TODO: transit to Item detail view");
+    */
 }
 
 #pragma mark -
