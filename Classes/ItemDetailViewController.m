@@ -1,26 +1,23 @@
 #import "ItemDetailViewController.h"
 #import "ItemsCoreDataAppDelegate.h"
+#import "ItemContentEditingViewController.h"
 
 
 @implementation ItemDetailViewController
 //@synthesize contentCell=_contentCell, textView=_textView;
-@synthesize list=_list;
+@synthesize list=_list, item=_item;
 @synthesize contentLabel=_contentLabel;
 
 #pragma mark -
 #pragma mark helper methods
 #define fontSize (18.0f)
 
-- (CGFloat)contentHeight {
-    NSString *text = @"a\nb\nc\nd\n"; //FIXME 
-    
-    UIFont *font = [UIFont systemFontOfSize:fontSize];
-    
+- (CGFloat)contentHeightWithString:(NSString *)string {
     CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
     CGFloat maxHeight = 9999;
     CGSize maximumLabelSize = CGSizeMake(maxWidth,maxHeight);
-    
-    CGSize labelSize = [text sizeWithFont:font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+    UIFont *font = [UIFont systemFontOfSize:fontSize];
+    CGSize labelSize = [string sizeWithFont:font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
     return labelSize.height;
 }
 
@@ -31,31 +28,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-/*    
-    NSString *text = @"a\nb\nc\nd\n"; //FIXME 
-    
-    UIFont *font = [UIFont systemFontOfSize:fontSize];
-    
-    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
-    CGFloat maxHeight = 9999;
-    CGSize maximumLabelSize = CGSizeMake(maxWidth,maxHeight);
-    
-    CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
-    CGSize labelSize = [text sizeWithFont:font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
-    
-    CGFloat height = labelSize.height + 10.0;
-    */
-    CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
-    CGFloat height = [self contentHeight];// + 10.0;
-    
-    CGRect frame = CGRectMake(10.0f, 10.0f, width, height);
-    UILabel *cellLabel = [[UILabel alloc] initWithFrame:frame];
+    //UILabel *cellLabel = [[UILabel alloc] initWithFrame:frame];
+    UILabel *cellLabel = [[UILabel alloc] init];
     cellLabel.textColor = [UIColor blackColor];
     cellLabel.backgroundColor = [UIColor clearColor];
     cellLabel.textAlignment = UITextAlignmentLeft;
     cellLabel.font = [UIFont systemFontOfSize:fontSize];
-    
-    cellLabel.text = @"a\nb\nc\nd\n"; //FIXME 
     cellLabel.numberOfLines = 0; 
     [cellLabel sizeToFit];
     self.contentLabel = cellLabel;
@@ -76,11 +54,21 @@
 }
 
 
-/*
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    if (!self.item) {
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
+                                         inManagedObjectContext:context];
+    }
+    NSString *text = [self.item valueForKey:@"content"];
+    self.contentLabel.text = text;
+    CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
+    CGFloat height = [self contentHeightWithString:text];// + 10.0;
+    self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
+    [self.tableView reloadData];
 }
-*/
+
 /*
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -210,6 +198,16 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch ([indexPath row]) {
+    case 1: {
+        ItemContentEditingViewController *controller =[[ItemContentEditingViewController alloc] init];
+        controller.item = self.item;
+        [self.navigationController pushViewController:controller animated:YES];
+        [controller release];
+        break; }
+    }
+    
+    
     // Navigation logic may go here. Create and push another view controller.
 	/*
 	 <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
@@ -225,7 +223,7 @@
     //CGFloat height = [super tableView:tableView heightForRowAtIndexPath:indexPath];
     switch ([indexPath row]) {
     case 1: {
-        height = [self contentHeight] + 20.0;
+        height = [self contentHeightWithString:[self.item valueForKey:@"content"]] + 20.0;
         /*
         //UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath]; //FIXME: maybe inefficient
         CGSize size = [cell.textLabel.text sizeWithFont:cell.textLabel.font

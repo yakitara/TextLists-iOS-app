@@ -1,7 +1,7 @@
 #import "ItemsTableViewController.h"
 #import "ItemsCoreDataAppDelegate.h"
 #import "ItemDetailViewController.h"
-#import "ItemViewController.h"
+//#import "ItemViewController.h"
 
 
 @implementation ItemsTableViewController
