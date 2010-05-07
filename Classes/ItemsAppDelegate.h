@@ -1,15 +1,7 @@
-//
-//  ItemsCoreDataAppDelegate.h
-//  ItemsCoreData
-//
-//  Created by hiroshi on 10/04/28.
-//  Copyright __MyCompanyName__ 2010. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-@interface ItemsCoreDataAppDelegate : NSObject <UIApplicationDelegate> {
+@interface ItemsAppDelegate : NSObject <UIApplicationDelegate> {
     
     NSManagedObjectModel *managedObjectModel;
     NSManagedObjectContext *managedObjectContext;
@@ -28,4 +20,4 @@
 @end
 
 #define UIApp [UIApplication sharedApplication]
-#define UIAppDelegate ((ItemsCoreDataAppDelegate*)UIApp.delegate)
+#define UIAppDelegate ((ItemsAppDelegate*)UIApp.delegate)

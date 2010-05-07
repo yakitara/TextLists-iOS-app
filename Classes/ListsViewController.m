@@ -1,22 +1,14 @@
-//
-//  RootViewController.m
-//  ItemsCoreData
-//
-//  Created by hiroshi on 10/04/28.
-//  Copyright __MyCompanyName__ 2010. All rights reserved.
-//
-
-#import "RootViewController.h"
-#import "ItemsTableViewController.h"
+#import "ListsViewController.h"
+#import "ItemsViewController.h"
 #import "ListDetailViewController.h"
 
 
-@interface RootViewController ()
+@interface ListsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
 
 
-@implementation RootViewController
+@implementation ListsViewController
 
 @synthesize fetchedResultsController=_fetchedResultsController;
 @synthesize managedObjectContext=_managedObjectContext;
@@ -192,7 +184,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Navigation logic may go here -- for example, create and push another view controller.
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    ItemsTableViewController *itemsController = [[ItemsTableViewController alloc] initWithStyle:UITableViewStylePlain];
+    ItemsViewController *itemsController = [[ItemsViewController alloc] initWithStyle:UITableViewStylePlain];
     NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
     //NSSet *items = [selectedObject valueForKeyPath:@"listings.item"];
     //NSMutableArray *items = [selectedObject mutableArrayValueForKeyPath:@"listings.item"];

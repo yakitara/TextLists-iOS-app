@@ -1,13 +1,5 @@
-//
-//  ListDetailViewController.m
-//  ItemsCoreData
-//
-//  Created by hiroshi on 10/04/28.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
-//
-
 #import "ListDetailViewController.h"
-#import "ItemsCoreDataAppDelegate.h"
+#import "ItemsAppDelegate.h"
 
 
 @implementation ListDetailViewController

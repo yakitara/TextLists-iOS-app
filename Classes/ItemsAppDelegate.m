@@ -1,23 +1,15 @@
-//
-//  ItemsCoreDataAppDelegate.m
-//  ItemsCoreData
-//
-//  Created by hiroshi on 10/04/28.
-//  Copyright __MyCompanyName__ 2010. All rights reserved.
-//
-
-#import "ItemsCoreDataAppDelegate.h"
-#import "RootViewController.h"
+#import "ItemsAppDelegate.h"
+#import "ListsViewController.h"
 
 
-@interface ItemsCoreDataAppDelegate (PrivateCoreDataStack)
+@interface ItemsAppDelegate (PrivateCoreDataStack)
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
 //@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @end
 
 
-@implementation ItemsCoreDataAppDelegate
+@implementation ItemsAppDelegate
 
 @synthesize window;
 @synthesize navigationController;
@@ -28,8 +20,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
-    RootViewController *rootViewController = (RootViewController *)[navigationController topViewController];
-    rootViewController.managedObjectContext = self.managedObjectContext;
+    ListsViewController *listsViewController = (ListsViewController *)[navigationController topViewController];
+    listsViewController.managedObjectContext = self.managedObjectContext;
     
     // Override point for customization after app launch    
     

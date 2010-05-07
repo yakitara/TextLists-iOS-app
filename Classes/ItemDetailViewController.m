@@ -1,5 +1,5 @@
 #import "ItemDetailViewController.h"
-#import "ItemsCoreDataAppDelegate.h"
+#import "ItemsAppDelegate.h"
 #import "ItemContentEditingViewController.h"
 
 

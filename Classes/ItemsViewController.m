@@ -1,10 +1,10 @@
-#import "ItemsTableViewController.h"
-#import "ItemsCoreDataAppDelegate.h"
+#import "ItemsViewController.h"
+#import "ItemsAppDelegate.h"
 #import "ItemDetailViewController.h"
 //#import "ItemViewController.h"
 
 
-@implementation ItemsTableViewController
+@implementation ItemsViewController
 
 // @synthesize fetchedResultsController=_fetchedResultsController;
 // @synthesize managedObjectContext=_managedObjectContext;

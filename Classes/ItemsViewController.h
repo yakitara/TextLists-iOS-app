@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ItemsTableViewController : UITableViewController {
+@interface ItemsViewController : UITableViewController {
 //    NSFetchedResultsController *_fetchedResultsController;
 //    NSManagedObjectContext *_managedObjectContext;
 //    NSSet *_items;
