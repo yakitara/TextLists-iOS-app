@@ -27,8 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    //UILabel *cellLabel = [[UILabel alloc] initWithFrame:frame];
+    // multiline content cell
     UILabel *cellLabel = [[UILabel alloc] init];
     cellLabel.textColor = [UIColor blackColor];
     cellLabel.backgroundColor = [UIColor clearColor];
@@ -38,12 +37,11 @@
     [cellLabel sizeToFit];
     self.contentLabel = cellLabel;
     [cellLabel release];
-    
-    //UITextView *textView = [[[UITextView alloc] initWithFrame:CGRectMake(0,0,200,22)] autorelease];
-    //textView.text = @"a\nb\nc\nd\ne\nf\n";
-    //textView.clipsToBounds = NO;
-    //self.contentView = textView;
-
+    // save button
+    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
+                                                       target:self action:@selector(save)];
+    self.navigationItem.rightBarButtonItem = button;
+    [button release];
 /*
     // Uncomment the following line to preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO;
@@ -151,8 +149,24 @@
     return cell;
 }
 
-
-
+-(void)save {
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+    NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing"
+                                                    inManagedObjectContext:context];
+    [listing setValue:self.item forKey:@"item"];
+    [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    
+    // Save the context.
+    NSError *error = nil;
+    if (![context save:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    // refresh list.items
+    [context refreshObject:self.list mergeChanges:NO];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 /*
 // Override to support conditional editing of the table view.
@@ -163,19 +177,19 @@
 */
 
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+        //[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 
 /*

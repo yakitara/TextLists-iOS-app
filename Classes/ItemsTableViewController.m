@@ -31,11 +31,16 @@
     NSLog(@"itemTable viewDidLoad");
     [super viewDidLoad];
     //self.navigationItem.title = @"Items";
-    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+//    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
     // set Add button
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
+
+    // edit button in toolbar
+    self.toolbarItems = [[[NSArray alloc] initWithObjects:self.editButtonItem, nil] autorelease];
+
     // set srot order for listings
     NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
     NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
@@ -59,6 +64,7 @@
     [super viewWillAppear:animated];
     [self.tableView reloadData];
     self.navigationItem.title = [self.list valueForKey:@"name"];
+    [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
 /*
@@ -66,11 +72,12 @@
     [super viewDidAppear:animated];
 }
 */
-/*
+
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self.navigationController setToolbarHidden:YES animated:YES];
 }
-*/
+
 /*
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -133,19 +140,28 @@
 */
 
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        NSManagedObject *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
+        [context deleteObject:listing];
+        // Save the context.
+        NSError *error = nil;
+        if (![context save:&error]) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+        [context refreshObject:self.list mergeChanges:NO];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 
 /*
@@ -161,7 +177,7 @@
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
+    */
 
 
 #pragma mark -
@@ -176,6 +192,18 @@
 	 [self.navigationController pushViewController:detailViewController animated:YES];
 	 [detailViewController release];
 	 */
+}
+/*
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if([indexPath row] == 0) {
+        return UITableViewCellEditingStyleNone;
+    }
+    return UITableViewCellEditingStyleDelete;
+}
+    */
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"Done";
 }
 
 #pragma mark -

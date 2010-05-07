@@ -25,16 +25,16 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     UITextView *view = [[UITextView alloc] init];
-    //view.delegate = self;
+    view.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.view = view;
     [view becomeFirstResponder];
+    [view release];
     
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                        target:self action:@selector(edited)];
     self.navigationItem.rightBarButtonItem = button;
     [button release];
 
-    self.view = view;
-    [view release];
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                           selector:@selector(keyboardWasShown:)
