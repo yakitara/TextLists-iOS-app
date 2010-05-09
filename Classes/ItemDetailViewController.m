@@ -8,34 +8,20 @@
 @synthesize contentLabel=_contentLabel;
 
 #pragma mark -
-#pragma mark helper methods
-#define fontSize (18.0f)
-
-- (CGFloat)contentHeightWithString:(NSString *)string {
-#if 1
-    return self.view.frame.size.height - self.tableView.rowHeight - 30;// - keyboardHeight;// - 200;
-#else
-    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
-    CGFloat maxHeight = 9999;
-    CGSize maximumLabelSize = CGSizeMake(maxWidth,maxHeight);
-    UIFont *font = [UIFont systemFontOfSize:fontSize];
-    CGSize labelSize = [string sizeWithFont:font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
-    return labelSize.height;
-#endif
-}
-
-#pragma mark -
 #pragma mark View lifecycle
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // multiline content cell
 #if 1
-    UITextView *cellLabel = [[UITextView alloc] init];//WithFrame:CGRectMake(0,0,320,480)];
-    cellLabel.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
+    UITextView *cellLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, width, 1)];
+    //cellLabel.contentSize = 
+    //cellLabel.autocapitalizationType = UITextAutocapitalizationTypeNone;
     cellLabel.scrollEnabled = NO;
-    cellLabel.delegate = self;
+    cellLabel.editable = NO;
+    //cellLabel.delegate = self;
+    cellLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;// | UIViewAutoresizingFlexibleWidth;
 #else
     UILabel *cellLabel = [[UILabel alloc] init];
     cellLabel.textColor = [UIColor blackColor];
@@ -44,31 +30,19 @@
     cellLabel.font = [UIFont systemFontOfSize:fontSize];
     cellLabel.numberOfLines = 0; 
 #endif
-    [cellLabel sizeToFit];
+//    [cellLabel sizeToFit];
     self.contentLabel = cellLabel;
     [cellLabel release];
     // save button
-    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
-                                                       target:self action:@selector(save)];
-    self.navigationItem.rightBarButtonItem = button;
-    [button release];
-/*    
-    // register for keyboard notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                          selector:@selector(keyboardWasShown:)
-                                          name:UIKeyboardDidShowNotification object:nil];
-    */    
-    //self.tableView.backgroundColor = [UIColor darkGrayColor];
-    
-/*
+//     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
+//                                                        target:self action:@selector(save)];
+//     self.navigationItem.rightBarButtonItem = button;
+//     [button release];
     // Uncomment the following line to preserve selection between presentations.
-    self.clearsSelectionOnViewWillAppear = NO;
- 
+    //self.clearsSelectionOnViewWillAppear = NO;
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    */
 }
-
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -78,17 +52,20 @@
                                          inManagedObjectContext:context];
     }
 
+    UITextView *textView = self.contentLabel;
+#if 1
+    textView.text = @"foo00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nbar\nbaz";
+#else
+    textView.text = [self.item valueForKey:@"content"];
+#endif
+/*
     NSString *text = [self.item valueForKey:@"content"];
     self.contentLabel.text = text;
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
-    CGFloat height = [self contentHeightWithString:text];// + 10.0;
-    self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
-
-#if 0
-    self.view.frame.height -
-
-    self.contentLabel.frame = CGRectMake(0, 0, 320, 480);
-#endif
+    */    
+//     CGFloat height = [self contentHeightWithString:text];// + 10.0;
+//     self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
+    
 //    [self.contentLabel becomeFirstResponder];
 //    [self.tableView reloadData];
     
@@ -155,7 +132,7 @@
         if (cell == nil) {
             cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
         }
-//        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 /*
         {
             NSLog(@"contentView.frame.org[%f,%f]",cell.contentView.frame.origin.x, cell.contentView.frame.origin.y);
@@ -169,8 +146,24 @@
         CGFloat height = [self contentHeightWithString:text];// + 10.0;
         self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
     */
+
         [cell.contentView addSubview:self.contentLabel];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        UITextView *textView = self.contentLabel;
+        CGRect newTextFrame = textView.frame;
+        //newTextFrame.size = textView.contentSize;
+        CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
+        CGFloat maxHeight = 9999;
+        CGSize maximumLabelSize = CGSizeMake(maxWidth, maxHeight);
+        CGSize labelSize = [textView.text sizeWithFont:textView.font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+        newTextFrame.origin.y = 10;
+        newTextFrame.size.width = maxWidth;
+        newTextFrame.size.height += (textView.font.ascender - textView.font.descender) + 1;
+//        textView.contentSize = newTextFrame.size;
+        textView.frame = newTextFrame;
+        [cell.contentView sizeToFit];
+//        [textView sizeToFit];
+        
+        //cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
 /*
         UITextView *textView = self.contentLabel;
@@ -288,24 +281,14 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat height = tableView.rowHeight;
-    //CGFloat height = [super tableView:tableView heightForRowAtIndexPath:indexPath];
     switch ([indexPath row]) {
     case 1: {
-        height = [self contentHeightWithString:[self.item valueForKey:@"content"]] + 20.0;
-//        height = 200;
-        /*
-        //UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath]; //FIXME: maybe inefficient
-        CGSize size = [cell.textLabel.text sizeWithFont:cell.textLabel.font
-                           constrainedToSize:CGSizeMake(cell.textLabel.bounds.size.width, 2000)
-                           lineBreakMode:UILineBreakModeWordWrap];
-        height = size.height;
-            */
-        //[tableView cellForRowAtIndexPath:indexPath].contentView
-        /*
-        NSLog(@"view:%@",self.contentView);
-        NSLog(@"  bounds.height:%f",self.contentView.bounds.size.height);
-        height = self.contentView.bounds.size.height;
-            */
+        UITextView *textView = self.contentLabel;
+        CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
+        CGFloat maxHeight = 9999;
+        CGSize maximumLabelSize = CGSizeMake(maxWidth, maxHeight);
+        CGSize labelSize = [textView.text sizeWithFont:textView.font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+        height = labelSize.height + (textView.font.ascender - textView.font.descender) + 20;
         break; }
     }
     NSLog(@"heightForRowAtIndexPath:%@ => %f",indexPath, height);
@@ -316,104 +299,11 @@
 
 
 #pragma mark -
-#pragma mark Actions
-//TODO: Add validation for empty name
-/*
-- (IBAction)contentDidEnter:(id)sender {
-    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
-                                                             inManagedObjectContext:context];
-    [newManagedObject setValue: self.textView.text forKey:@"content"];
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    // refresh list.items
-    [context refreshObject:self.list mergeChanges:NO];
-    
-    [self.navigationController popViewControllerAnimated:YES];
-}
-    */
-/*
--(CGRect)contentCellHeight {
-    NSLog(@"textViewDidChange");
-    CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
-
-    CGRect newTextFrame = textView.frame;
-    newTextFrame.size = textView.contentSize;
-    return newTextFrame.size.height + fontHeight;
-}
-    */
--(void)textViewDidChange:(UITextView *)textView {
-    NSLog(@"textViewDidChange");
-#if 1
-    CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
-
-    CGRect newTextFrame = textView.frame;
-    newTextFrame.size = textView.contentSize;
-    newTextFrame.size.height = newTextFrame.size.height + fontHeight;
-    textView.frame = newTextFrame;
-    //
-    CGRect newCellFrame = textView.superview.superview.frame;
-    newCellFrame.size.height = newTextFrame.size.height + 20;
-    textView.superview.superview.frame = newCellFrame;
-    //
-    //[self.tableView reloadData];
-    //[self.tableView _updateContentSize];
-    //[self.tableView setNeedsDisplay];
-#endif
-//    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-}
-
-#pragma mark -
-#pragma mark keyboard notifications
-#if 0
-- (void)keyboardWasShown:(NSNotification*)aNotification
-{
-//    if (keyboardHeight)
-        return;
-    NSDictionary* info = [aNotification userInfo];
-//    NSLog(@"self.view:%@",self.view);
-//    NSLog(@"self.view:%@",self.view);
- 
-    // Get the size of the keyboard.
-    NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
-    CGSize keyboardSize = [aValue CGRectValue].size;
-    keyboardHeight = keyboardSize.height;
-    // Resize the scroll view (which is the root view of the window)
-    CGRect viewFrame = self.view.superview.frame;
-//    CGRect viewBounds = [self.view bounds];
-    //viewFrame.origin.y -= keyboardHeight;
-    viewFrame.size.height -= keyboardHeight;
-    self.view.superview.frame = viewFrame;
-//     viewBounds.size.height -= keyboardHeight;
-//     self.view.bounds = viewBounds;
-    NSLog(@"keyboardShown:%f",viewFrame.size.height);
-/*
-    CGSize contentSize = self.tableView.contentSize;
-    contentSize.height -= keyboardSize.height;
-    self.tableView.contentSize = contentSize;
-    */
-//    [self.tableView reloadData];
-//    [self.contentLabel becomeFirstResponder];
-    //[self.view setNeedsDisplay];
-/* 
-    // Scroll the active text field into view.
-    CGRect textFieldRect = [activeField frame];
-    [scrollView scrollRectToVisible:textFieldRect animated:YES];
-    */
-//    keyboardShown = YES;
-}
-#endif
-#pragma mark -
 #pragma mark Memory management
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
     // Relinquish ownership any cached data, images, etc that aren't in use.
 }
 
@@ -425,11 +315,9 @@
     self.contentLabel = nil;
 }
 
-
 - (void)dealloc {
     [super dealloc];
 }
-
 
 @end
 

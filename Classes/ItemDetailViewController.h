@@ -3,12 +3,12 @@
 @interface ItemDetailViewController : UITableViewController {
     NSManagedObject *_list;
     NSManagedObject *_item;
-    UILabel *_contentLabel;
+    UITextView *_contentLabel;
     CGFloat keyboardHeight;
 }
 
 @property (nonatomic, retain) NSManagedObject *list;
 @property (nonatomic, retain) NSManagedObject *item;
-@property (nonatomic, retain) UILabel *contentLabel;
+@property (nonatomic, retain) UITextView *contentLabel;
 
 @end
