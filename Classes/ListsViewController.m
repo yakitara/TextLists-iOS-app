@@ -1,7 +1,8 @@
 #import "ListsViewController.h"
 #import "ItemsViewController.h"
 #import "ListDetailViewController.h"
-
+#import "ItemsAppDelegate.h"
+#import "ItemDetailViewController.h"
 
 @interface ListsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -11,8 +12,6 @@
 @implementation ListsViewController
 
 @synthesize fetchedResultsController=_fetchedResultsController;
-@synthesize managedObjectContext=_managedObjectContext;
-
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -21,12 +20,15 @@
     [super viewDidLoad];
     // set the title
     self.navigationItem.title = @"Lists";
-    // Set up the edit and add buttons.
+    // edit button
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
-    
+    // add button
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
+    // toolbar new item button
+    UIBarButtonItem *newItemButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)];
+    self.toolbarItems = [[[NSArray alloc] initWithObjects:newItemButton, nil] autorelease];
     
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
@@ -40,11 +42,12 @@
     }
 }
 
-/*
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.navigationController setToolbarHidden:NO animated:YES];
+
 }
-*/
+
 /*
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -107,6 +110,15 @@
     */
 }
 
+- (void)newItem {
+    ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+//    ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithStyle:UITableViewStylePlain];
+    //itemController.list = self.list;
+//    [[self navigationController] pushViewController:itemController animated:YES];
+    [self presentModalViewController:itemController animated:YES];
+
+    [itemController release];
+}
 
 #pragma mark -
 #pragma mark Table view data source
@@ -211,14 +223,14 @@
     if (_fetchedResultsController != nil) {
         return _fetchedResultsController;
     }
-    
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     /*
      Set up the fetched results controller.
     */
     // Create the fetch request for the entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"List" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"List" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
@@ -232,7 +244,7 @@
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"List"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:@"List"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
@@ -331,7 +343,6 @@
 
 - (void)dealloc {
     self.fetchedResultsController = nil;
-    self.managedObjectContext = nil;
     [super dealloc];
 }
 

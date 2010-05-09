@@ -4,7 +4,6 @@
 
 
 @implementation ItemDetailViewController
-//@synthesize contentCell=_contentCell, textView=_textView;
 @synthesize list=_list, item=_item;
 @synthesize contentLabel=_contentLabel;
 
@@ -13,12 +12,16 @@
 #define fontSize (18.0f)
 
 - (CGFloat)contentHeightWithString:(NSString *)string {
+#if 1
+    return self.view.frame.size.height - self.tableView.rowHeight - 30;// - keyboardHeight;// - 200;
+#else
     CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
     CGFloat maxHeight = 9999;
     CGSize maximumLabelSize = CGSizeMake(maxWidth,maxHeight);
     UIFont *font = [UIFont systemFontOfSize:fontSize];
     CGSize labelSize = [string sizeWithFont:font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
     return labelSize.height;
+#endif
 }
 
 #pragma mark -
@@ -28,12 +31,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // multiline content cell
+#if 1
+    UITextView *cellLabel = [[UITextView alloc] init];//WithFrame:CGRectMake(0,0,320,480)];
+    cellLabel.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    cellLabel.scrollEnabled = NO;
+    cellLabel.delegate = self;
+#else
     UILabel *cellLabel = [[UILabel alloc] init];
     cellLabel.textColor = [UIColor blackColor];
     cellLabel.backgroundColor = [UIColor clearColor];
     cellLabel.textAlignment = UITextAlignmentLeft;
     cellLabel.font = [UIFont systemFontOfSize:fontSize];
     cellLabel.numberOfLines = 0; 
+#endif
     [cellLabel sizeToFit];
     self.contentLabel = cellLabel;
     [cellLabel release];
@@ -42,6 +52,14 @@
                                                        target:self action:@selector(save)];
     self.navigationItem.rightBarButtonItem = button;
     [button release];
+/*    
+    // register for keyboard notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                          selector:@selector(keyboardWasShown:)
+                                          name:UIKeyboardDidShowNotification object:nil];
+    */    
+    //self.tableView.backgroundColor = [UIColor darkGrayColor];
+    
 /*
     // Uncomment the following line to preserve selection between presentations.
     self.clearsSelectionOnViewWillAppear = NO;
@@ -59,12 +77,22 @@
         self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
                                          inManagedObjectContext:context];
     }
+
     NSString *text = [self.item valueForKey:@"content"];
     self.contentLabel.text = text;
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
     CGFloat height = [self contentHeightWithString:text];// + 10.0;
     self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
-    [self.tableView reloadData];
+
+#if 0
+    self.view.frame.height -
+
+    self.contentLabel.frame = CGRectMake(0, 0, 320, 480);
+#endif
+//    [self.contentLabel becomeFirstResponder];
+//    [self.tableView reloadData];
+    
+    //self.view.frame = CGRectMake(0,0,320,200);
 }
 
 /*
@@ -127,12 +155,36 @@
         if (cell == nil) {
             cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
         }
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+/*
         {
             NSLog(@"contentView.frame.org[%f,%f]",cell.contentView.frame.origin.x, cell.contentView.frame.origin.y);
             NSLog(@"contentView.bounds.org[%f,%f]",cell.contentView.bounds.origin.x, cell.contentView.bounds.origin.y);
         }
+    */
+/*
+        NSString *text = [self.item valueForKey:@"content"];
+        self.contentLabel.text = text;
+        CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
+        CGFloat height = [self contentHeightWithString:text];// + 10.0;
+        self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
+    */
         [cell.contentView addSubview:self.contentLabel];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+/*
+        UITextView *textView = self.contentLabel;
+        CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
+        CGRect newTextFrame = textView.frame;
+        newTextFrame.size = textView.contentSize;
+        newTextFrame.size.height = newTextFrame.size.height + fontHeight;
+        textView.frame = newTextFrame;
+        //
+        CGRect newCellFrame = textView.superview.superview.frame;
+        newCellFrame.size.height = newTextFrame.size.height + 20;
+        textView.superview.superview.frame = newCellFrame;
+    */        
+
 //         cell.textLabel.numberOfLines = 0;
 //         cell.textLabel.text = @"a\nb\nc\nd\n";
         //cell = _contentCell;
@@ -145,6 +197,8 @@
 //        [cell.contentView addSubview:self.contentView];
         break;}
     }
+    //cell.backgroundColor = [UIColor whiteColor];
+    //cell.opaque = YES;
     NSLog(@"cellForRowAtIndexPath:%@", indexPath);
     return cell;
 }
@@ -238,6 +292,7 @@
     switch ([indexPath row]) {
     case 1: {
         height = [self contentHeightWithString:[self.item valueForKey:@"content"]] + 20.0;
+//        height = 200;
         /*
         //UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath]; //FIXME: maybe inefficient
         CGSize size = [cell.textLabel.text sizeWithFont:cell.textLabel.font
@@ -281,6 +336,77 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
     */
+/*
+-(CGRect)contentCellHeight {
+    NSLog(@"textViewDidChange");
+    CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
+
+    CGRect newTextFrame = textView.frame;
+    newTextFrame.size = textView.contentSize;
+    return newTextFrame.size.height + fontHeight;
+}
+    */
+-(void)textViewDidChange:(UITextView *)textView {
+    NSLog(@"textViewDidChange");
+#if 1
+    CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
+
+    CGRect newTextFrame = textView.frame;
+    newTextFrame.size = textView.contentSize;
+    newTextFrame.size.height = newTextFrame.size.height + fontHeight;
+    textView.frame = newTextFrame;
+    //
+    CGRect newCellFrame = textView.superview.superview.frame;
+    newCellFrame.size.height = newTextFrame.size.height + 20;
+    textView.superview.superview.frame = newCellFrame;
+    //
+    //[self.tableView reloadData];
+    //[self.tableView _updateContentSize];
+    //[self.tableView setNeedsDisplay];
+#endif
+//    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+}
+
+#pragma mark -
+#pragma mark keyboard notifications
+#if 0
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+//    if (keyboardHeight)
+        return;
+    NSDictionary* info = [aNotification userInfo];
+//    NSLog(@"self.view:%@",self.view);
+//    NSLog(@"self.view:%@",self.view);
+ 
+    // Get the size of the keyboard.
+    NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+    CGSize keyboardSize = [aValue CGRectValue].size;
+    keyboardHeight = keyboardSize.height;
+    // Resize the scroll view (which is the root view of the window)
+    CGRect viewFrame = self.view.superview.frame;
+//    CGRect viewBounds = [self.view bounds];
+    //viewFrame.origin.y -= keyboardHeight;
+    viewFrame.size.height -= keyboardHeight;
+    self.view.superview.frame = viewFrame;
+//     viewBounds.size.height -= keyboardHeight;
+//     self.view.bounds = viewBounds;
+    NSLog(@"keyboardShown:%f",viewFrame.size.height);
+/*
+    CGSize contentSize = self.tableView.contentSize;
+    contentSize.height -= keyboardSize.height;
+    self.tableView.contentSize = contentSize;
+    */
+//    [self.tableView reloadData];
+//    [self.contentLabel becomeFirstResponder];
+    //[self.view setNeedsDisplay];
+/* 
+    // Scroll the active text field into view.
+    CGRect textFieldRect = [activeField frame];
+    [scrollView scrollRectToVisible:textFieldRect animated:YES];
+    */
+//    keyboardShown = YES;
+}
+#endif
 #pragma mark -
 #pragma mark Memory management
 
@@ -295,6 +421,7 @@
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
     self.list = nil;
+    self.item = nil;
     self.contentLabel = nil;
 }
 

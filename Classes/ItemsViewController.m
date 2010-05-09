@@ -1,27 +1,10 @@
 #import "ItemsViewController.h"
 #import "ItemsAppDelegate.h"
 #import "ItemDetailViewController.h"
-//#import "ItemViewController.h"
-
 
 @implementation ItemsViewController
 
-// @synthesize fetchedResultsController=_fetchedResultsController;
-// @synthesize managedObjectContext=_managedObjectContext;
 @synthesize list=_list;
-
-#pragma mark -
-#pragma mark Initialization
-
-/*
-- (id)initWithStyle:(UITableViewStyle)style {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if ((self = [super initWithStyle:style])) {
-    }
-    return self;
-}
-*/
-
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -32,7 +15,13 @@
     [super viewDidLoad];
     //self.navigationItem.title = @"Items";
 //    self.navigationItem.rightBarButtonItem = self.editButtonItem;
-
+#if 1
+    // edit
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    // toolbar new item button
+    UIBarButtonItem *newItemButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)];
+    self.toolbarItems = [[[NSArray alloc] initWithObjects:newItemButton, nil] autorelease];
+#else
     // set Add button
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -40,7 +29,7 @@
 
     // edit button in toolbar
     self.toolbarItems = [[[NSArray alloc] initWithObjects:self.editButtonItem, nil] autorelease];
-
+#endif
     // set srot order for listings
     NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
     NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
@@ -75,7 +64,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.navigationController setToolbarHidden:YES animated:YES];
 }
 
 /*
@@ -259,7 +247,6 @@
 }
 
 - (void)viewDidUnload {
-    NSLog(@"itemsTable viewDidUnload");
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
     self.list = nil;

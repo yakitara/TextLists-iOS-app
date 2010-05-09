@@ -178,11 +178,11 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    self.nameCell = nil;
 }
 
 
 - (void)dealloc {
-    self.nameCell = nil;
     [super dealloc];
 }
 
