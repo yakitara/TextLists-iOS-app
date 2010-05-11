@@ -20,7 +20,12 @@
     view.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.view = view;
     [view release];
-/*    
+    // disable back
+    self.navigationItem.hidesBackButton = YES;
+    // Done
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(edited)] autorelease];
+    self.navigationItem.rightBarButtonItem = button;
+/*  
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                        target:self action:@selector(edited)];
     self.navigationItem.rightBarButtonItem = button;
@@ -48,17 +53,17 @@
     ((UITextView *)self.view).text = [self.item valueForKey:@"content"];
     [self.view becomeFirstResponder];
 }
-
+/*
 - (void)viewWillDisappear:(BOOL)animated {
     NSLog(@"viewWillDisappear");
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
 }
-/*
+*/
 -(void)edited {
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
     [self.navigationController popViewControllerAnimated:YES];
 }
-    */
+
 
 
 
