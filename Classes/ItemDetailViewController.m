@@ -53,10 +53,11 @@
     }
 
     UITextView *textView = self.contentLabel;
-#if 1
+#if 0
     textView.text = @"foo00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nbar\nbaz";
 #else
     textView.text = [self.item valueForKey:@"content"];
+    NSLog(@"text:%@", textView.text);
 #endif
 /*
     NSString *text = [self.item valueForKey:@"content"];
@@ -67,8 +68,8 @@
 //     self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
     
 //    [self.contentLabel becomeFirstResponder];
-//    [self.tableView reloadData];
-    
+    [self.tableView reloadData];
+    NSLog(@"viewWillAppear");
     //self.view.frame = CGRectMake(0,0,320,200);
 }
 
@@ -148,6 +149,12 @@
     */
 
         [cell.contentView addSubview:self.contentLabel];
+#if 1
+        UITextView *textView = self.contentLabel;
+        CGRect frame = textView.frame;
+        frame.origin.y = 10;
+        textView.frame = frame;
+#else
         UITextView *textView = self.contentLabel;
         CGRect newTextFrame = textView.frame;
         //newTextFrame.size = textView.contentSize;
@@ -155,12 +162,16 @@
         CGFloat maxHeight = 9999;
         CGSize maximumLabelSize = CGSizeMake(maxWidth, maxHeight);
         CGSize labelSize = [textView.text sizeWithFont:textView.font constrainedToSize:maximumLabelSize lineBreakMode:UILineBreakModeWordWrap];
+        NSLog(@"labelSize[%f,%f]",labelSize.width,labelSize.height);
         newTextFrame.origin.y = 10;
+        newTextFrame.size = labelSize;
         newTextFrame.size.width = maxWidth;
         newTextFrame.size.height += (textView.font.ascender - textView.font.descender) + 1;
 //        textView.contentSize = newTextFrame.size;
         textView.frame = newTextFrame;
-        [cell.contentView sizeToFit];
+        NSLog(@"textHeight=%f\n", textView.frame.size.height);
+#endif
+        //[cell.contentView sizeToFit];
 //        [textView sizeToFit];
         
         //cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -224,7 +235,7 @@
 */
 
 
-
+/*
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -236,7 +247,7 @@
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-
+    */
 
 
 /*
@@ -259,6 +270,7 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    //NSLog(@"didSelectRowAtIndexPath:%@", indexPath);
     switch ([indexPath row]) {
     case 1: {
         ItemContentEditingViewController *controller =[[ItemContentEditingViewController alloc] init];
@@ -267,7 +279,6 @@
         [controller release];
         break; }
     }
-    
     
     // Navigation logic may go here. Create and push another view controller.
 	/*
@@ -291,7 +302,7 @@
         height = labelSize.height + (textView.font.ascender - textView.font.descender) + 20;
         break; }
     }
-    NSLog(@"heightForRowAtIndexPath:%@ => %f",indexPath, height);
+    //NSLog(@"heightForRowAtIndexPath:%@ => %f",indexPath, height);
     return height;
 }
 

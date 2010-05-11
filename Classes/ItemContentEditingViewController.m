@@ -19,9 +19,8 @@
     UITextView *view = [[UITextView alloc] init];
     view.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.view = view;
-    [view becomeFirstResponder];
     [view release];
-    
+/*    
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                        target:self action:@selector(edited)];
     self.navigationItem.rightBarButtonItem = button;
@@ -31,6 +30,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                           selector:@selector(keyboardWasShown:)
                                           name:UIKeyboardDidShowNotification object:nil];
+    */
 //    [[NSNotificationCenter defaultCenter] addObserver:self
 //                                          selector:@selector(keyboardWasHidden:)
 //                                          name:UIKeyboardDidHideNotification object:nil];
@@ -46,13 +46,19 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     ((UITextView *)self.view).text = [self.item valueForKey:@"content"];
+    [self.view becomeFirstResponder];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    NSLog(@"viewWillDisappear");
+    [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
+}
+/*
 -(void)edited {
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
     [self.navigationController popViewControllerAnimated:YES];
 }
-
+    */
 
 
 

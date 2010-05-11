@@ -112,12 +112,11 @@
 
 - (void)newItem {
     ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
-//    ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithStyle:UITableViewStylePlain];
-    //itemController.list = self.list;
-//    [[self navigationController] pushViewController:itemController animated:YES];
-    [self presentModalViewController:itemController animated:YES];
-
+    //[self presentModalViewController:itemController animated:YES];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:itemController];
     [itemController release];
+    [self presentModalViewController:navigationController animated:YES];
+    [navigationController release];
 }
 
 #pragma mark -
