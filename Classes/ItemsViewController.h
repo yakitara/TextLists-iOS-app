@@ -4,7 +4,5 @@
 @interface ItemsViewController : UITableViewController <ItemDetailDelegate> {
     NSManagedObject *_list;
 }
-
 @property (nonatomic, retain) NSManagedObject *list;
-
 @end

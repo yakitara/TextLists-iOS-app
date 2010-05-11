@@ -115,8 +115,12 @@
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     
-    //[self.parentViewController dismissModalViewControllerAnimated:YES];
-    [self.delegate itemDetailViewController:self didSaveItem:self.item];
+    // dismiss
+    if ([self.delegate respondsToSelector:@selector(itemDetailViewController:didSaveItem:)]) {
+        [self.delegate itemDetailViewController:self didSaveItem:self.item];
+    } else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 -(void)cancel {
