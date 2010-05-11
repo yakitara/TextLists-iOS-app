@@ -3,8 +3,10 @@
 #import "ItemContentEditingViewController.h"
 
 @implementation ItemDetailViewController
-@synthesize list=_list, item=_item;
-@synthesize textView=_textView;
+@synthesize list=m_list, item=m_item;
+@synthesize textView=m_textView;
+@synthesize delegate=m_delegate;
+
 #pragma mark -
 #pragma mark Memory management
 
@@ -113,7 +115,8 @@
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     
-    [self.parentViewController dismissModalViewControllerAnimated:YES];
+    //[self.parentViewController dismissModalViewControllerAnimated:YES];
+    [self.delegate itemDetailViewController:self didSaveItem:self.item];
 }
 
 -(void)cancel {

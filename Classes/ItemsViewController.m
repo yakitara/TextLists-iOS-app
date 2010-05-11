@@ -7,6 +7,24 @@
 @synthesize list=_list;
 
 #pragma mark -
+#pragma mark Memory management
+- (void)didReceiveMemoryWarning {
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    // Relinquish ownership any cached data, images, etc that aren't in use.
+}
+
+- (void)viewDidUnload {
+    self.list = nil;
+}
+
+- (void)dealloc {
+    [super dealloc];
+}
+
+
+
+#pragma mark -
 #pragma mark View lifecycle
 
 
@@ -77,8 +95,6 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 */
-
-
 #pragma mark -
 #pragma mark Table view data source
 
@@ -196,6 +212,31 @@
 #pragma mark -
 #pragma mark Add a new object
 
+//REFACTOR: merge with -[ListsViewController newItem] if possible
+- (void)newItem {
+    ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+    itemController.list = self.list;
+    itemController.delegate = self;
+    //[self presentModalViewController:itemController animated:YES];
+    UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];
+    [self presentModalViewController:navigationController animated:YES];
+}
+
+- (void)itemDetailViewController:(ItemDetailViewController *)itemDetailViewController didSaveItem:(NSManagedObject *)item {
+    [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
+    [self.tableView reloadData];
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+
+/*
+- (void)dismissModalViewControllerAnimated:(BOOL)animated {
+    [super dismissModalViewControllerAnimated:animated];
+    [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
+    [self.tableView reloadData];
+}
+    */
+/*
 - (void)insertNewObject {
 #if 0
     ItemViewController *itemController = [[ItemViewController alloc] initWithNibName:@"ItemViewController" bundle:nil];
@@ -208,7 +249,7 @@
     [[self navigationController] pushViewController:itemController animated:YES];
     [itemController release];
 #endif
-/*    
+#if 0
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     
     NSManagedObject *item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
@@ -232,30 +273,8 @@
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     NSLog(@"TODO: transit to Item detail view");
+#endif
+}
     */
-}
-
-#pragma mark -
-#pragma mark Memory management
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload {
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
-    self.list = nil;
-}
-
-
-- (void)dealloc {
-    [super dealloc];
-}
-
-
 @end
 
