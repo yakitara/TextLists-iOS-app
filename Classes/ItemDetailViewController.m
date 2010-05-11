@@ -2,46 +2,48 @@
 #import "ItemsAppDelegate.h"
 #import "ItemContentEditingViewController.h"
 
-
 @implementation ItemDetailViewController
 @synthesize list=_list, item=_item;
-@synthesize contentLabel=_contentLabel;
+@synthesize textView=_textView;
+#pragma mark -
+#pragma mark Memory management
+
+- (void)didReceiveMemoryWarning {
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    // Relinquish ownership any cached data, images, etc that aren't in use.
+}
+
+- (void)viewDidUnload {
+    self.list = nil;
+    self.item = nil;
+    self.textView = nil;
+}
+
+- (void)dealloc {
+    [super dealloc];
+}
 
 #pragma mark -
 #pragma mark View lifecycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // multiline content cell
-#if 1
+
+    // text view in a cell
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
-    UITextView *cellLabel = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, width, 1)];
-    //cellLabel.contentSize = 
-    //cellLabel.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    cellLabel.scrollEnabled = NO;
-    cellLabel.editable = NO;
-    //cellLabel.delegate = self;
-    cellLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;// | UIViewAutoresizingFlexibleWidth;
-#else
-    UILabel *cellLabel = [[UILabel alloc] init];
-    cellLabel.textColor = [UIColor blackColor];
-    cellLabel.backgroundColor = [UIColor clearColor];
-    cellLabel.textAlignment = UITextAlignmentLeft;
-    cellLabel.font = [UIFont systemFontOfSize:fontSize];
-    cellLabel.numberOfLines = 0; 
-#endif
-//    [cellLabel sizeToFit];
-    self.contentLabel = cellLabel;
-    [cellLabel release];
+    UITextView *textView = [[[UITextView alloc] initWithFrame:CGRectMake(0, 0, width, 1)] autorelease];
+    textView.scrollEnabled = NO;
+    textView.editable = NO;
+    textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;// | UIViewAutoresizingFlexibleWidth;
+    self.textView = textView;
+    
+    // cancel button
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)] autorelease];
+    self.navigationItem.leftBarButtonItem = cancelButton;
     // save button
-//     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
-//                                                        target:self action:@selector(save)];
-//     self.navigationItem.rightBarButtonItem = button;
-//     [button release];
-    // Uncomment the following line to preserve selection between presentations.
-    //self.clearsSelectionOnViewWillAppear = NO;
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    UIBarButtonItem *saveButton = [[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)] autorelease];
+    self.navigationItem.rightBarButtonItem = saveButton;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -52,7 +54,7 @@
                                          inManagedObjectContext:context];
     }
 
-    UITextView *textView = self.contentLabel;
+    UITextView *textView = self.textView;
 #if 0
     textView.text = @"foo00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nbar\nbaz";
 #else
@@ -61,13 +63,13 @@
 #endif
 /*
     NSString *text = [self.item valueForKey:@"content"];
-    self.contentLabel.text = text;
+    self.textView.text = text;
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
     */    
 //     CGFloat height = [self contentHeightWithString:text];// + 10.0;
-//     self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
+//     self.textView.frame = CGRectMake(10.0f, 10.0f, width, height);
     
-//    [self.contentLabel becomeFirstResponder];
+//    [self.textView becomeFirstResponder];
     [self.tableView reloadData];
     NSLog(@"viewWillAppear");
     //self.view.frame = CGRectMake(0,0,320,200);
@@ -96,6 +98,27 @@
 }
 */
 
+-(void)save {
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+    NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing"
+                                                    inManagedObjectContext:context];
+    [listing setValue:self.item forKey:@"item"];
+    [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    // Save the context.
+    NSError *error = nil;
+    if (![context save:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    // refresh list.items
+    //[context refreshObject:self.list mergeChanges:NO];
+    
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
+-(void)cancel {
+    [self.parentViewController dismissModalViewControllerAnimated:YES];
+}
 
 #pragma mark -
 #pragma mark Table view data source
@@ -136,26 +159,26 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 /*
         {
-            NSLog(@"contentView.frame.org[%f,%f]",cell.contentView.frame.origin.x, cell.contentView.frame.origin.y);
-            NSLog(@"contentView.bounds.org[%f,%f]",cell.contentView.bounds.origin.x, cell.contentView.bounds.origin.y);
+            NSLog(@"textView.frame.org[%f,%f]",cell.textView.frame.origin.x, cell.textView.frame.origin.y);
+            NSLog(@"textView.bounds.org[%f,%f]",cell.textView.bounds.origin.x, cell.textView.bounds.origin.y);
         }
     */
 /*
         NSString *text = [self.item valueForKey:@"content"];
-        self.contentLabel.text = text;
+        self.textView.text = text;
         CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
         CGFloat height = [self contentHeightWithString:text];// + 10.0;
-        self.contentLabel.frame = CGRectMake(10.0f, 10.0f, width, height);
+        self.textView.frame = CGRectMake(10.0f, 10.0f, width, height);
     */
 
-        [cell.contentView addSubview:self.contentLabel];
+        [cell.contentView addSubview:self.textView];
 #if 1
-        UITextView *textView = self.contentLabel;
+        UITextView *textView = self.textView;
         CGRect frame = textView.frame;
         frame.origin.y = 10;
         textView.frame = frame;
 #else
-        UITextView *textView = self.contentLabel;
+        UITextView *textView = self.textView;
         CGRect newTextFrame = textView.frame;
         //newTextFrame.size = textView.contentSize;
         CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
@@ -171,13 +194,13 @@
         textView.frame = newTextFrame;
         NSLog(@"textHeight=%f\n", textView.frame.size.height);
 #endif
-        //[cell.contentView sizeToFit];
+        //[cell.textView sizeToFit];
 //        [textView sizeToFit];
         
         //cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
 /*
-        UITextView *textView = self.contentLabel;
+        UITextView *textView = self.textView;
         CGFloat fontHeight = (textView.font.ascender - textView.font.descender) + 1;
         CGRect newTextFrame = textView.frame;
         newTextFrame.size = textView.contentSize;
@@ -196,34 +219,15 @@
         UITextView *textView = [[[UITextView alloc] initWithFrame:CGRectMake(0,0,200,200)] autorelease];
         cell.frame = CGRectMake(0,0,cell.frame.size.width,200);
         textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [cell.contentView addSubview:textView];
+        [cell.textView addSubview:textView];
     */
-//        [cell.contentView addSubview:self.contentView];
+//        [cell.textView addSubview:self.textView];
         break;}
     }
     //cell.backgroundColor = [UIColor whiteColor];
     //cell.opaque = YES;
     NSLog(@"cellForRowAtIndexPath:%@", indexPath);
     return cell;
-}
-
--(void)save {
-    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing"
-                                                    inManagedObjectContext:context];
-    [listing setValue:self.item forKey:@"item"];
-    [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
-    
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    // refresh list.items
-    [context refreshObject:self.list mergeChanges:NO];
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 /*
@@ -294,7 +298,7 @@
     CGFloat height = tableView.rowHeight;
     switch ([indexPath row]) {
     case 1: {
-        UITextView *textView = self.contentLabel;
+        UITextView *textView = self.textView;
         CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 50;
         CGFloat maxHeight = 9999;
         CGSize maximumLabelSize = CGSizeMake(maxWidth, maxHeight);
@@ -304,30 +308,6 @@
     }
     //NSLog(@"heightForRowAtIndexPath:%@ => %f",indexPath, height);
     return height;
-}
-
-
-
-
-#pragma mark -
-#pragma mark Memory management
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload {
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
-    self.list = nil;
-    self.item = nil;
-    self.contentLabel = nil;
-}
-
-- (void)dealloc {
-    [super dealloc];
 }
 
 @end

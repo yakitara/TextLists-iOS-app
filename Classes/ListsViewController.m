@@ -12,6 +12,7 @@
 @implementation ListsViewController
 
 @synthesize fetchedResultsController=_fetchedResultsController;
+@synthesize inbox=_inbox;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -40,6 +41,8 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+    // find or create inbox
+    [self inbox];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -111,12 +114,11 @@
 }
 
 - (void)newItem {
-    ItemDetailViewController *itemController = [[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+    itemController.list = self.inbox;
     //[self presentModalViewController:itemController animated:YES];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:itemController];
-    [itemController release];
+    UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];
     [self presentModalViewController:navigationController animated:YES];
-    [navigationController release];
 }
 
 #pragma mark -
@@ -255,6 +257,22 @@
     return _fetchedResultsController;
 }    
 
+- (NSManagedObject*)inbox {
+    if (!_inbox) {
+        for (NSManagedObject *list in [self.fetchedResultsController fetchedObjects]) {
+            NSString *listName = [list valueForKey:@"name"];
+            if ([listName compare:@"in-box"] == NSOrderedSame) {
+                self.inbox = list;
+                return _inbox;
+            }
+        }
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        self.inbox = [NSEntityDescription insertNewObjectForEntityForName:@"List"
+                                          inManagedObjectContext:context];
+        [self.inbox setValue:@"in-box" forKey:@"name"];
+    }
+    return _inbox;
+}
 
 #pragma mark -
 #pragma mark Fetched results controller delegate

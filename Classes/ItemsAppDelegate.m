@@ -20,7 +20,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     
-    ListsViewController *listsViewController = (ListsViewController *)[navigationController topViewController];
+    //ListsViewController *listsViewController = (ListsViewController *)[navigationController topViewController];
     //listsViewController.managedObjectContext = self.managedObjectContext;
     
     // Override point for customization after app launch    

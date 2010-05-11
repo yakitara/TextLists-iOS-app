@@ -3,10 +3,10 @@
 
 @interface ListsViewController : UITableViewController <NSFetchedResultsControllerDelegate> {
     NSFetchedResultsController *_fetchedResultsController;
-    //NSManagedObjectContext *_managedObjectContext;
+    NSManagedObject *_inbox;
 }
 
 @property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
-//@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain) NSManagedObject *inbox;
 
 @end
