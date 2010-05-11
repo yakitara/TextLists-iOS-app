@@ -31,10 +31,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"-[ItemDetailViewController viewDidLoad]");
 
     // text view in a cell
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
-    UITextView *textView = [[[UITextView alloc] initWithFrame:CGRectMake(0, 0, width, 1)] autorelease];
+    CGFloat height = self.tableView.rowHeight - 20;
+    UITextView *textView = [[[UITextView alloc] initWithFrame:CGRectMake(0, 0, width, height)] autorelease];
     textView.scrollEnabled = NO;
     textView.editable = NO;
     textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;// | UIViewAutoresizingFlexibleWidth;
@@ -57,12 +59,8 @@
     }
 
     UITextView *textView = self.textView;
-#if 0
-    textView.text = @"foo00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\nbar\nbaz";
-#else
     textView.text = [self.item valueForKey:@"content"];
     NSLog(@"text:%@", textView.text);
-#endif
 /*
     NSString *text = [self.item valueForKey:@"content"];
     self.textView.text = text;
@@ -75,6 +73,7 @@
     [self.tableView reloadData];
     NSLog(@"viewWillAppear");
     //self.view.frame = CGRectMake(0,0,320,200);
+    [self.navigationController setToolbarHidden:YES animated:YES];
 }
 
 /*
@@ -184,6 +183,7 @@
         CGRect frame = textView.frame;
         frame.origin.y = 10;
         textView.frame = frame;
+        //[textView sizeToFit];
 #else
         UITextView *textView = self.textView;
         CGRect newTextFrame = textView.frame;
