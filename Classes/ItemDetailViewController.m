@@ -111,7 +111,7 @@
         abort();
     }
     // refresh list.items
-    //[context refreshObject:self.list mergeChanges:NO];
+    [context refreshObject:self.list mergeChanges:NO];
     
     [self.parentViewController dismissModalViewControllerAnimated:YES];
 }

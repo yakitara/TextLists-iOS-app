@@ -30,17 +30,6 @@
     // edit button in toolbar
     self.toolbarItems = [[[NSArray alloc] initWithObjects:self.editButtonItem, nil] autorelease];
 #endif
-    // set srot order for listings
-    NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
-    NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:NO];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-    [fetchRequest setSortDescriptors:sortDescriptors];
-    [sortDescriptor release];
-    [sortDescriptors release];
-    // eager loading listings.item
-    [fetchRequest setRelationshipKeyPathsForPrefetching:[NSArray arrayWithObject:@"item"]];
-    
 //     NSError *error = nil;
 //     if (![self.fetchedResultsController performFetch:&error]) {
 //         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
@@ -51,8 +40,18 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
     self.navigationItem.title = [self.list valueForKey:@"name"];
+
+    // set srot order for listings
+    NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
+    NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
+    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:NO] autorelease];
+    NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    // eager loading listings.item
+    [fetchRequest setRelationshipKeyPathsForPrefetching:[NSArray arrayWithObject:@"item"]];
+    
     [self.navigationController setToolbarHidden:NO animated:YES];
 }
 
