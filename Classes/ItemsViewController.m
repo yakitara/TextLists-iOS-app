@@ -192,7 +192,7 @@
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
     itemController.list = self.list;
     itemController.item = item;
-    //itemController.delegate = self;
+    itemController.delegate = self;
     [self.navigationController pushViewController:itemController animated:YES];
     
     
@@ -234,7 +234,12 @@
 - (void)itemDetailViewController:(ItemDetailViewController *)itemDetailViewController didSaveItem:(NSManagedObject *)item {
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
     [self.tableView reloadData];
-    [self dismissModalViewControllerAnimated:YES];
+    //REFACTOR: DRY with -[ItemDetailViewController back]
+    if (self.parentViewController.modalViewController) {
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 

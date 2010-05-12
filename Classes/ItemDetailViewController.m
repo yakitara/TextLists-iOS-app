@@ -31,8 +31,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"-[ItemDetailViewController viewDidLoad]");
-
+    
     // text view in a cell
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 50;
     CGFloat height = self.tableView.rowHeight - 20;
@@ -43,7 +42,7 @@
     self.textView = textView;
     
     // cancel button
-    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)] autorelease];
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(back)] autorelease];
     self.navigationItem.leftBarButtonItem = cancelButton;
     // save button
     UIBarButtonItem *saveButton = [[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(save)] autorelease];
@@ -101,10 +100,11 @@
 
 -(void)save {
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing"
-                                                    inManagedObjectContext:context];
-    [listing setValue:self.item forKey:@"item"];
-    [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    if ([[self.item objectID] isTemporaryID]) {
+        NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+        [listing setValue:self.item forKey:@"item"];
+        [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    }
     // Save the context.
     NSError *error = nil;
     if (![context save:&error]) {
@@ -114,16 +114,20 @@
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     
-    // dismiss
+    // back where from
     if ([self.delegate respondsToSelector:@selector(itemDetailViewController:didSaveItem:)]) {
         [self.delegate itemDetailViewController:self didSaveItem:self.item];
     } else {
-        [self dismissModalViewControllerAnimated:YES];
+        [self back];
     }
 }
 
--(void)cancel {
-    [self.parentViewController dismissModalViewControllerAnimated:YES];
+-(void)back {
+    if (self.parentViewController.modalViewController) {
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark -
