@@ -15,6 +15,7 @@
 @property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
 @property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
 
+- (void)saveWithManagedObjectContext:(NSManagedObjectContext *)context;
 - (NSString *)applicationDocumentsDirectory;
 
 @end

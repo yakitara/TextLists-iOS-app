@@ -64,7 +64,7 @@
     // set srot order for listings
     NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
     NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
-    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:NO] autorelease];
+    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
     NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
     [fetchRequest setSortDescriptors:sortDescriptors];
     // eager loading listings.item
@@ -121,8 +121,8 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    
     // Configure the cell...
+    cell.showsReorderControl = YES;
 //    NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
     //NSManagedObject *managedObject = [self.items anyObject]; //FIXME
     //[[self.list valueForKeyPath:@"listings.item"]]
@@ -165,22 +165,24 @@
     }   
 }
 
-
-
-/*
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    NSMutableArray *listings = [[[self.list valueForKeyPath:@"fetchedListings"] mutableCopy] autorelease];
+    NSManagedObject *listing = [[[listings objectAtIndex:fromIndexPath.row] retain] autorelease];
+    [listings removeObjectAtIndex:fromIndexPath.row];
+    [listings insertObject:listing atIndex:toIndexPath.row];
+    int pos = 0;
+    for (NSManagedObject *l in listings) {
+        [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
+    }
+    [UIAppDelegate saveWithManagedObjectContext:nil];
+    [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
 }
-*/
 
-
-/*
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-    */
 
 
 #pragma mark -

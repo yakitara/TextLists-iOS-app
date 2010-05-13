@@ -2,6 +2,10 @@
 #import "ItemsAppDelegate.h"
 #import "ItemContentEditingViewController.h"
 
+@interface ItemDetailViewController ()
+-(void)back;
+@end
+
 @implementation ItemDetailViewController
 @synthesize list=m_list, item=m_item;
 @synthesize textView=m_textView;
