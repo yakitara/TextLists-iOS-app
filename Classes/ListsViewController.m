@@ -143,7 +143,7 @@
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
-    
+    cell.showsReorderControl = YES;
     // Configure the cell.
     [self configureCell:cell atIndexPath:indexPath];
     
@@ -186,9 +186,29 @@
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
     // The table view should not be re-orderable.
-    return NO;
+    return YES;
 }
 
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    NSMutableArray *lists = [[self.fetchedResultsController.fetchedObjects mutableCopy] autorelease];
+    NSManagedObject *list = [[[lists objectAtIndex:fromIndexPath.row] retain] autorelease];
+    [lists removeObjectAtIndex:fromIndexPath.row];
+    [lists insertObject:list atIndex:toIndexPath.row];
+    int pos = 0;
+    for (NSManagedObject *l in lists) {
+        NSLog(@"list(%@)", [l valueForKey:@"name"]);
+        [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
+    }
+    //NOTE: save is delayed
+    
+    //NOTE: I don't believe that it is needed to perfoeme fetch, though to work around for editing status cells
+    // after editing done.
+    NSError *error = nil;
+    if (![self.fetchedResultsController performFetch:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+}
 
 #pragma mark -
 #pragma mark Table view delegate
@@ -237,7 +257,7 @@
     //[fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:NO];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
@@ -269,6 +289,7 @@
         self.inbox = [NSEntityDescription insertNewObjectForEntityForName:@"List"
                                           inManagedObjectContext:context];
         [self.inbox setValue:@"in-box" forKey:@"name"];
+        //NOTE: will be inserted at next save or destruction of context, end of the app
     }
     return _inbox;
 }
@@ -314,12 +335,12 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+//            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
-            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]withRowAnimation:UITableViewRowAnimationFade];
+//            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]withRowAnimation:UITableViewRowAnimationFade];
             break;
     }
 }
