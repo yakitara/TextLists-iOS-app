@@ -123,7 +123,8 @@
 }
 
 -(void)back {
-    if (self.parentViewController.modalViewController) {
+    //TODO: re-think away to check modal
+    if (self.parentViewController.parentViewController.modalViewController) {
         [self dismissModalViewControllerAnimated:YES];
     } else {
         [self.navigationController popViewControllerAnimated:YES];
