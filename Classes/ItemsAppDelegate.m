@@ -8,6 +8,9 @@
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @end
 
+@interface ItemsAppDelegate ()
+- (void)sync;
+@end
 
 @implementation ItemsAppDelegate
 
@@ -19,15 +22,31 @@
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
-    //ListsViewController *listsViewController = (ListsViewController *)[navigationController topViewController];
-    //listsViewController.managedObjectContext = self.managedObjectContext;
-    
-    // Override point for customization after app launch    
+    NSLog(@"launchOptions:%@", launchOptions);
+    // parse url
+    NSURL *url = [launchOptions objectForKey:@"UIApplicationLaunchOptionsURLKey"];
+    if (url) {
+        NSString *action = [url host];
+        NSMutableDictionary *params = [NSMutableDictionary dictionary];
+        for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
+            NSArray *pair = [param componentsSeparatedByString:@"="];
+            NSString *key = [pair objectAtIndex:0];
+            NSString *value = [pair objectAtIndex:1];
+            //NSLog(@"  %@ = %@", key, value);
+            [params setObject:value forKey:key];
+        }
+        // invoke action
+        if ([action compare:@"sync"] == NSOrderedSame) {
+            NSString *key = [params objectForKey:@"key"];
+            if (key) {
+                [[NSUserDefaults standardUserDefaults] setObject:key forKey:@"ApiKey"];
+            }
+            [self sync];
+        }
+    }
     
 	[window addSubview:[navigationController view]];
 	[window makeKeyAndVisible];
-    
     return YES;
 }
 
@@ -172,6 +191,17 @@
     [super dealloc];
 }
 
+#pragma mark -
+#pragma mark Misc
+
+- (void)sync {
+    NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
+    if (key) {
+        NSLog(@"sync with key:%@", key);
+    } else {
+        [UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
+    }
+}
 
 @end
 

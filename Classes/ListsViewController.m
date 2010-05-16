@@ -27,10 +27,15 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
-    // toolbar new item button
-    UIBarButtonItem *newItemButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)];
-    self.toolbarItems = [[[NSArray alloc] initWithObjects:newItemButton, nil] autorelease];
+    // toolbar items
+    NSMutableArray *toolbarItems = [NSMutableArray array];
+    //   new item button
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
+    //   sync item button
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
+    self.toolbarItems = toolbarItems;
     
+    // fetch lists
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
         /*
