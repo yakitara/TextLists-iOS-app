@@ -14,3 +14,6 @@
     #import <UIKit/UIKit.h>
     #import <CoreData/CoreData.h>
 #endif
+
+// ASIHTTPRequest
+#define REACHABILITY_20_API 1
