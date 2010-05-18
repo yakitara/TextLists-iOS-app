@@ -302,8 +302,9 @@
 			isa = XCVersionGroup;
 			children = (
 				28860B760F44E54D00985440 /* ItemsCoreData.xcdatamodel */,
+				68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */,
 			);
-			currentVersion = 28860B760F44E54D00985440 /* ItemsCoreData.xcdatamodel */;
+			currentVersion = 68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */;
 			path = ItemsCoreData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
