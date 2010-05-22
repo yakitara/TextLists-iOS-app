@@ -1,6 +1,11 @@
+#import "ASIHTTPRequest.h"
+#import "JSON.h"
+
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
+#import "Item.h"
 
+//#define API_CHANGES_URL
 
 @interface ItemsAppDelegate (PrivateCoreDataStack)
 @property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
@@ -38,9 +43,10 @@
         // invoke action
         if ([action compare:@"sync"] == NSOrderedSame) {
             NSString *key = [params objectForKey:@"key"];
-            if (key) {
-                [[NSUserDefaults standardUserDefaults] setObject:key forKey:@"ApiKey"];
-            }
+            NSString *user_id = [params objectForKey:@"user_id"];
+            [[NSUserDefaults standardUserDefaults] setObject:key forKey:@"ApiKey"];
+            [[NSUserDefaults standardUserDefaults] setObject:user_id forKey:@"UserId"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             [self sync];
         }
     }
@@ -92,6 +98,7 @@
 }
 
 // Save the context.
+// FIXME: Implement as a protocol of NSManagedObjectContext
 - (void)saveWithManagedObjectContext:(NSManagedObjectContext *)context {
     if (!context) {
         context = self.managedObjectContext;
@@ -179,6 +186,102 @@
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
+#pragma mark -
+#pragma mark Sync
+
+- (void)sync {
+    NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
+    NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
+    if (key) {
+        NSLog(@"sync with user_id:%@ and key:%@", user_id, key);
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000/api/changes?user_id=%@&key=%@", user_id, key]];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        [request setDelegate:self];
+        [request startAsynchronous];
+    } else {
+        // get api key through web
+        [UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
+    }
+}
+
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    // Use when fetching text data
+    NSString *responseString = [request responseString];
+    int status = request.responseStatusCode;
+    if (status == 200) {
+        NSLog(@"sync response: %@", responseString);
+        NSDictionary *changes = [responseString JSONValue];
+        NSLog(@"  changes:%@", changes);
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        // items
+        // TODO: implemente Item class inherited from NSManagedObject
+        NSMutableArray *uploadingItems = [NSMutableArray array];
+        for (NSDictionary *itemDict in [changes objectForKey:@"items"]) {
+            NSNumber *item_id = [itemDict objectForKey:@"id"];
+            NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"Item" inManagedObjectContext:context];
+            [fetchRequest setEntity:entity];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", item_id];
+            [fetchRequest setPredicate:predicate];
+            NSError *error;
+            NSArray *items = [context executeFetchRequest:fetchRequest error:&error];
+            if (!items) {
+                NSLog(@"Fetching item failed:%@, $@", error, [error userInfo]);
+                abort();
+            }
+            Item *item = [items lastObject];
+            if (item) {
+                NSDate *localDate = [item valueForKey:@"updated_at"];
+                NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
+                NSDate *remoteDate = [dateFormatter dateFromString:[itemDict objectForKey:@"updated_at"]];
+                if ([remoteDate compare:localDate] > 0) {
+                    //  web -> app: UPDATE
+                    for (id key in itemDict) {
+                        [item setValue:[itemDict objectForKey:key] forKey:key];
+                    }
+                } else {
+                    // web <- app: keep item to be uploaded
+                    [uploadingItems addObject:item];
+                }
+            } else {
+                // web -> app: INSERT
+                item = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:context];
+                NSLog(@"new Item:%@", item);
+                for (NSString *key in itemDict) {
+                    [item setValue:[itemDict objectForKey:key] forKey:key];
+                }
+            }
+        }
+        [self saveWithManagedObjectContext:context];
+        // upload
+        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:
+                                            uploadingItems, @"items",
+                                        nil] JSONRepresentation];
+        NSLog(@"TODO: uploading json:\n%@", json);
+#if 0
+        NSString *updated_at = [[[changes objectForKey:@"items"] lastObject] objectForKey:@"updated_at"];
+        NSDateFormatter *dateFormatter = [NSDateFormatter 
+            [dateFormatter  (NSDate *)dateFromString:(NSString *)string
+
+           
+#endif   
+    } else if (status == 403) {
+        // key is not correct. Retry from login
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];
+        [self sync];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Sync failed" message:request.responseStatusMessage
+                                                  delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        [alert release];    
+    }
+}
+ 
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    NSError *error = [request error];
+    NSLog(@"sync error: %@", error);
+}
 
 #pragma mark -
 #pragma mark Memory management
@@ -194,17 +297,7 @@
     [super dealloc];
 }
 
-#pragma mark -
-#pragma mark Misc
 
-- (void)sync {
-    NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-    if (key) {
-        NSLog(@"sync with key:%@", key);
-    } else {
-        [UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
-    }
-}
 
 @end
 
