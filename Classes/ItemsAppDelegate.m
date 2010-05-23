@@ -204,6 +204,46 @@
     }
 }
 
+- (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName withContext:(NSManagedObjectContext *)context {
+    for (NSDictionary *dict in changes) {
+        NSNumber *record_id = [dict objectForKey:@"id"];
+        NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+        [fetchRequest setEntity:entity];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", record_id];
+        [fetchRequest setPredicate:predicate];
+        NSError *error;
+        NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
+        if (!records) {
+            NSLog(@"Fetching %@ failed:%@, $@", entityName, error, [error userInfo]);
+            abort();
+        }
+        NSManagedObject *record = [records lastObject];
+        if (record) {
+            NSDate *localDate = [record valueForKey:@"updated_at"];
+            NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
+            NSDate *remoteDate = [dateFormatter dateFromString:[dict objectForKey:@"updated_at"]];
+            if ([remoteDate compare:localDate] > 0) {
+                //  web -> app: UPDATE
+                for (id key in dict) {
+                    [record setValue:[dict objectForKey:key] forKey:key];
+                }
+            } else {
+                // web <- app: keep record to be uploaded
+                //FIXME: [uploadingItems addObject:item];
+            }
+        } else {
+            // web -> app: INSERT
+            record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+            NSLog(@"new Record:%@", record);
+            for (NSString *key in dict) {
+                [record setValue:[dict objectForKey:key] forKey:key];
+            }
+        }
+    }
+}
+
 - (void)requestFinished:(ASIHTTPRequest *)request {
     // Use when fetching text data
     NSString *responseString = [request responseString];
@@ -215,50 +255,18 @@
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
         // items
         // TODO: implemente Item class inherited from NSManagedObject
-        NSMutableArray *uploadingItems = [NSMutableArray array];
-        for (NSDictionary *itemDict in [changes objectForKey:@"items"]) {
-            NSNumber *item_id = [itemDict objectForKey:@"id"];
-            NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-            NSEntityDescription *entity = [NSEntityDescription entityForName:@"Item" inManagedObjectContext:context];
-            [fetchRequest setEntity:entity];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", item_id];
-            [fetchRequest setPredicate:predicate];
-            NSError *error;
-            NSArray *items = [context executeFetchRequest:fetchRequest error:&error];
-            if (!items) {
-                NSLog(@"Fetching item failed:%@, $@", error, [error userInfo]);
-                abort();
-            }
-            Item *item = [items lastObject];
-            if (item) {
-                NSDate *localDate = [item valueForKey:@"updated_at"];
-                NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
-                NSDate *remoteDate = [dateFormatter dateFromString:[itemDict objectForKey:@"updated_at"]];
-                if ([remoteDate compare:localDate] > 0) {
-                    //  web -> app: UPDATE
-                    for (id key in itemDict) {
-                        [item setValue:[itemDict objectForKey:key] forKey:key];
-                    }
-                } else {
-                    // web <- app: keep item to be uploaded
-                    [uploadingItems addObject:item];
-                }
-            } else {
-                // web -> app: INSERT
-                item = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:context];
-                NSLog(@"new Item:%@", item);
-                for (NSString *key in itemDict) {
-                    [item setValue:[itemDict objectForKey:key] forKey:key];
-                }
-            }
-        }
+        //NSMutableArray *uploadingItems = [NSMutableArray array];
+        [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" withContext:context];
+        [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" withContext:context];
+        [self mergeChanges:[changes objectForKey:@"listings"] forEntityName:@"Listing" withContext:context];
         [self saveWithManagedObjectContext:context];
+/*
         // upload
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:
                                             uploadingItems, @"items",
                                         nil] JSONRepresentation];
-        NSLog(@"TODO: uploading json:\n%@", json);
+*/
+//        NSLog(@"TODO: uploading json:\n%@", json);
 #if 0
         NSString *updated_at = [[[changes objectForKey:@"items"] lastObject] objectForKey:@"updated_at"];
         NSDateFormatter *dateFormatter = [NSDateFormatter 
