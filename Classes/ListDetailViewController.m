@@ -156,6 +156,7 @@
     NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:@"List"
                                                              inManagedObjectContext:context];
     [newManagedObject setValue:textField.text forKey:@"name"];
+    [newManagedObject setTimestamps];
     // Save the context.
     NSError *error = nil;
     if (![context save:&error]) {

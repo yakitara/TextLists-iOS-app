@@ -107,14 +107,19 @@
     if ([[self.item objectID] isTemporaryID]) {
         NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
         [listing setValue:self.item forKey:@"item"];
+        [listing setTimestamps];
         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }
+    [self.item setTimestamps];
     // Save the context.
+    [UIAppDelegate saveWithManagedObjectContext:context];
+/*
     NSError *error = nil;
     if (![context save:&error]) {
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+*/
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     

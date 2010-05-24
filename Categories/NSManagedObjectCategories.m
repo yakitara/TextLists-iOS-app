@@ -19,6 +19,15 @@
     [self setPrimitiveValue:value forKey:key];
     [self didChangeValueForKey:key];
 }
+
+- (void)setTimestamps {
+        
+    NSDate *now = [NSDate date];
+    if (![self valueForKey:@"created_at"]) {
+        [self setValue:now forKey:@"created_at"];
+    }
+    [self setValue:now forKey:@"updated_at"];
+}
 @end
 
 @implementation NSManagedObject (Association )

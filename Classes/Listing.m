@@ -1,5 +1,4 @@
 #import "Listing.h"
-#import "NSManagedObjectCategories.h"
 
 @implementation Listing 
 /*

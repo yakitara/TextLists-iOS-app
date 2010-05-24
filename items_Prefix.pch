@@ -17,3 +17,5 @@
 
 // ASIHTTPRequest
 #define REACHABILITY_20_API 1
+
+#import "NSManagedObjectCategories.h"

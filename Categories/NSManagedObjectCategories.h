@@ -2,6 +2,7 @@
 
 @interface NSManagedObject ( TimeStamps )
 - (void)setDate:(id)value forKey:(NSString *)key;
+- (void)setTimestamps;
 @end
 
 @interface NSManagedObject (Association )
