@@ -2,7 +2,7 @@
 #import "ItemDetailViewController.h"
 
 @interface ItemsViewController : UITableViewController <ItemDetailDelegate> {
-    NSManagedObject *_list;
+    NSManagedObject *m_list;
 }
 @property (nonatomic, retain) NSManagedObject *list;
 @end

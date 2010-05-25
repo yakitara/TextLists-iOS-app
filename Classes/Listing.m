@@ -10,6 +10,9 @@
 @dynamic list;
 @dynamic item;
 */
+- (void)done {
+    [self setValue:[NSDate date] forKey:@"deleted_at"];
+}
 
 - (NSNumber *)list_id {
     NSManagedObject *list = [self valueForKey:@"list"];

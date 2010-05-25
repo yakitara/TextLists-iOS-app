@@ -1,10 +1,11 @@
 #import "ItemsViewController.h"
 #import "ItemsAppDelegate.h"
 #import "ItemDetailViewController.h"
+#import "Listing.h"
 
 @implementation ItemsViewController
 
-@synthesize list=_list;
+@synthesize list=m_list;
 
 #pragma mark -
 #pragma mark Memory management
@@ -149,8 +150,9 @@
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-        NSManagedObject *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
-        [context deleteObject:listing];
+        Listing *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
+        //[context deleteObject:listing];
+        [listing done];
         // Save the context.
         NSError *error = nil;
         if (![context save:&error]) {

@@ -6,6 +6,7 @@
 }
 @property (nonatomic, assign) NSNumber *list_id;
 @property (nonatomic, assign) NSNumber *item_id;
+- (void)done;
 /*
 @property (nonatomic, retain) NSNumber * id;
 @property (nonatomic, retain) NSNumber * position;
