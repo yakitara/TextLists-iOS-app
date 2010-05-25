@@ -177,7 +177,7 @@
     for (NSManagedObject *l in listings) {
         [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
     }
-    [UIAppDelegate saveWithManagedObjectContext:nil];
+    [UIAppDelegate.managedObjectContext save];
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
 }
 

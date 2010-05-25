@@ -9,4 +9,14 @@
 @dynamic created_at;
 @dynamic listings;
 */
+
+ - (id)proxyForJson {
+     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+     for (NSString *attr in [[[self entity] attributesByName] allKeys]) {
+         [dict setValue:[self valueForKey:attr] forKey:attr];
+     }
+     NSLog(@"proxyForJson:%@", dict);
+     return dict;
+ }
+
 @end

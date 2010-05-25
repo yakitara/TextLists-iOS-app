@@ -60,18 +60,11 @@
  applicationWillTerminate: saves changes in the application's managed object context before the application terminates.
  */
 - (void)applicationWillTerminate:(UIApplication *)application {
-    
-    NSError *error = nil;
     if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            /*
-             Replace this implementation with code to handle the error appropriately.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        } 
+        if ([managedObjectContext hasChanges]) {
+            //[self saveWithManagedObjectContext:managedObjectContext];
+            [managedObjectContext save];
+        }
     }
 }
 
@@ -95,32 +88,6 @@
         [managedObjectContext setPersistentStoreCoordinator: coordinator];
     }
     return managedObjectContext;
-}
-
-// Save the context.
-// FIXME: Implement as a protocol of NSManagedObjectContext
-- (void)saveWithManagedObjectContext:(NSManagedObjectContext *)context {
-    if (!context) {
-        context = self.managedObjectContext;
-    }
-    NSError *error = nil;
-    if (![context save:&error]) {
-        /*
-            Replace this implementation with code to handle the error appropriately.
-            
-            abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-        */
-        NSLog(@"unresolved error(s): %@", error);
-        NSArray *detailErrors = [[error userInfo] objectForKey:@"NSDetailedErrors"];
-        if (detailErrors) {
-            for (NSError *detailError in [[error userInfo] objectForKey:@"NSDetailedErrors"]) {
-                NSLog(@"detail error: %@", [detailError userInfo]);
-            }
-        } else {
-            NSLog(@"detail error: %@", [error userInfo]);
-        }
-        abort();
-    }
 }
 
 /**
@@ -197,22 +164,37 @@
 #pragma mark -
 #pragma mark Sync
 
+//TODO: A path may contain paramaters. consider to sepalate it from the path.
+- (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
+    if (auth) {
+        NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
+        NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
+        if (key) {
+            return [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000%@?user_id=%@&key=%@", path, user_id, key]];
+        } else {
+            return nil;
+        }
+    } else {
+        return [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000%@", path]];
+    }
+}
+
 - (void)sync {
-    NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-    NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
-    if (key) {
-        NSLog(@"sync with user_id:%@ and key:%@", user_id, key);
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000/api/changes?user_id=%@&key=%@", user_id, key]];
+//     NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
+//     NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
+    NSURL *url = [self requestURLForPath:@"/api/changes" auth:YES];
+    if (url) {
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
         [request setDelegate:self];
         [request startAsynchronous];
     } else {
         // get api key through web
-        [UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
+        //[UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
+        [UIApp openURL:[self requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
     }
 }
 
-- (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName withContext:(NSManagedObjectContext *)context {
+- (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
     for (NSDictionary *dict in changes) {
         NSNumber *record_id = [dict objectForKey:@"id"];
         NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
@@ -220,12 +202,15 @@
         [fetchRequest setEntity:entity];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", record_id];
         [fetchRequest setPredicate:predicate];
+        NSArray *records = [context executeFetchRequest:fetchRequest];
+/*
         NSError *error;
         NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
         if (!records) {
             NSLog(@"Fetching %@ failed:%@, $@", entityName, error, [error userInfo]);
             abort();
         }
+*/
         NSManagedObject *record = [records lastObject];
         if (record) {
             NSDate *localDate = [record valueForKey:@"updated_at"];
@@ -252,6 +237,40 @@
     }
 }
 
+- (void)uploadChangesOfEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == nil"];
+    [fetchRequest setPredicate:predicate];
+    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"updated_at" ascending:YES] autorelease];
+    NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    for (NSManagedObject *record in [context executeFetchRequest:fetchRequest]) {
+        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, @"item", nil] JSONRepresentation];
+        NSLog(@"uploading JSON:%@", json);
+        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        [request appendPostData:[json dataUsingEncoding:NSUTF8StringEncoding]];
+        // Default becomes POST when you use appendPostData: / appendPostDataFromFile: / setPostBody:
+        request.requestMethod = @"POST";
+        [request addRequestHeader:@"Content-Type" value:@"application/json"];
+        [request addRequestHeader:@"Accept" value:@"application/json"];
+        //request.didFinishSelector = @selector(postFinished:);
+        // FIXME: do it async
+        [request startSynchronous];
+        NSError *error = [request error];
+        if (error) {
+            [error prettyPrint];
+            abort();
+        }
+        NSString *responseJSON = [request responseString];
+        NSLog(@"responseJSON: %@", responseJSON);
+        NSDictionary *responseDict = [responseJSON JSONValue];
+        [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
+    }
+}
+
 - (void)requestFinished:(ASIHTTPRequest *)request {
     // Use when fetching text data
     NSString *responseString = [request responseString];
@@ -261,13 +280,18 @@
         NSDictionary *changes = [responseString JSONValue];
         NSLog(@"  changes:%@", changes);
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-        // items
-        // TODO: implemente Item class inherited from NSManagedObject
         //NSMutableArray *uploadingItems = [NSMutableArray array];
-        [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" withContext:context];
-        [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" withContext:context];
-        [self mergeChanges:[changes objectForKey:@"listings"] forEntityName:@"Listing" withContext:context];
-        [self saveWithManagedObjectContext:context];
+#if 0
+        // Download from web
+        [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" inContext:context];
+        [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" inContext:context];
+        [self mergeChanges:[changes objectForKey:@"listings"] forEntityName:@"Listing" inContext:context];
+        //[self saveWithManagedObjectContext:context];
+        [context save];
+#endif
+        // Upload to web
+        //NSString *itemsJson = [[NSDictionary dictionaryWithObjectsAndKeys:uploadingItems, @"items", nil] JSONRepresentation];
+        [self uploadChangesOfEntityName:@"Item" inContext:context];
 /*
         // upload
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:

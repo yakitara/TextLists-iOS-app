@@ -45,6 +45,9 @@
 		68BDB4D811A1978500B65297 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4D711A1978500B65297 /* SystemConfiguration.framework */; };
 		68BDB4DE11A197A200B65297 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4DD11A197A200B65297 /* MobileCoreServices.framework */; };
 		68BDB4E411A197ED00B65297 /* libz.1.1.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4E311A197ED00B65297 /* libz.1.1.3.dylib */; };
+		68C5A2FF11AB65DD00753370 /* NSManagedObjectContextCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */; };
+		68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A31D11AB94B900753370 /* NSErrorCategories.m */; };
+		68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A36611ABB92C00753370 /* NSDateCategories.m */; };
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
 		68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4EC011A8D01E002F1FBA /* Listing.m */; };
 		68EA4F0211A95E88002F1FBA /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4F0111A95E88002F1FBA /* Item.m */; };
@@ -128,6 +131,12 @@
 		68BDB4DD11A197A200B65297 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		68BDB4E311A197ED00B65297 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
 		68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 2.xcdatamodel"; sourceTree = "<group>"; };
+		68C5A2FD11AB65DD00753370 /* NSManagedObjectContextCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSManagedObjectContextCategories.h; path = Categories/NSManagedObjectContextCategories.h; sourceTree = SOURCE_ROOT; };
+		68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSManagedObjectContextCategories.m; path = Categories/NSManagedObjectContextCategories.m; sourceTree = SOURCE_ROOT; };
+		68C5A31C11AB94B900753370 /* NSErrorCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSErrorCategories.h; path = ../Categories/NSErrorCategories.h; sourceTree = "<group>"; };
+		68C5A31D11AB94B900753370 /* NSErrorCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSErrorCategories.m; path = ../Categories/NSErrorCategories.m; sourceTree = "<group>"; };
+		68C5A36511ABB92C00753370 /* NSDateCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSDateCategories.h; path = Categories/NSDateCategories.h; sourceTree = SOURCE_ROOT; };
+		68C5A36611ABB92C00753370 /* NSDateCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSDateCategories.m; path = Categories/NSDateCategories.m; sourceTree = SOURCE_ROOT; };
 		68EA4E7A11A8C52A002F1FBA /* NSManagedObjectCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSManagedObjectCategories.h; path = Categories/NSManagedObjectCategories.h; sourceTree = SOURCE_ROOT; };
 		68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSManagedObjectCategories.m; path = Categories/NSManagedObjectCategories.m; sourceTree = SOURCE_ROOT; };
 		68EA4EBF11A8D01E002F1FBA /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Listing.h; sourceTree = "<group>"; };
@@ -334,6 +343,12 @@
 			children = (
 				68EA4E7A11A8C52A002F1FBA /* NSManagedObjectCategories.h */,
 				68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */,
+				68C5A2FD11AB65DD00753370 /* NSManagedObjectContextCategories.h */,
+				68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */,
+				68C5A31C11AB94B900753370 /* NSErrorCategories.h */,
+				68C5A31D11AB94B900753370 /* NSErrorCategories.m */,
+				68C5A36511ABB92C00753370 /* NSDateCategories.h */,
+				68C5A36611ABB92C00753370 /* NSDateCategories.m */,
 			);
 			name = Categories;
 			path = Classes;
@@ -459,6 +474,9 @@
 				68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */,
 				68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */,
 				68EA4F0211A95E88002F1FBA /* Item.m in Sources */,
+				68C5A2FF11AB65DD00753370 /* NSManagedObjectContextCategories.m in Sources */,
+				68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */,
+				68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

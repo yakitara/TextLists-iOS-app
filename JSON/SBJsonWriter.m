@@ -83,7 +83,7 @@ static NSMutableCharacterSet *kEscapeChars;
         
 
     [self clearErrorTrace];
-    [self addErrorWithCode:EFRAGMENT description:@"Not valid type for JSON"];
+    [self addErrorWithCode:EFRAGMENT description:[NSString stringWithFormat:@"Not valid type for JSON:%@", value]];
     return nil;
 }
 

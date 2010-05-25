@@ -11,9 +11,9 @@
 
 - (void)setDate:(id)value forKey:(NSString *)key {
     if ([value isKindOfClass:[NSString class]]) {
-        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
-        value = [dateFormatter dateFromString:value];
+//        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+//        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
+        value = [[NSDate JSONDateFormatter] dateFromString:value];
     }
     [self willChangeValueForKey:key];
     [self setPrimitiveValue:value forKey:key];

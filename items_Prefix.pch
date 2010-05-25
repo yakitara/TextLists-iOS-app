@@ -1,4 +1,4 @@
-//
+// ;-*-ObjC-*-
 // Prefix header for all source files of the 'ItemsCoreData' target in the 'ItemsCoreData' project
 //
 
@@ -19,3 +19,6 @@
 #define REACHABILITY_20_API 1
 
 #import "NSManagedObjectCategories.h"
+#import "NSManagedObjectContextCategories.h"
+#import "NSErrorCategories.h"
+#import "NSDateCategories.h"

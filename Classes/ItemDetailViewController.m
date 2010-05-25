@@ -112,14 +112,7 @@
     }
     [self.item setTimestamps];
     // Save the context.
-    [UIAppDelegate saveWithManagedObjectContext:context];
-/*
-    NSError *error = nil;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-*/
+    [context save];
     // refresh list.items
     [context refreshObject:self.list mergeChanges:NO];
     
