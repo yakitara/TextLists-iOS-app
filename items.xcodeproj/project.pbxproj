@@ -21,6 +21,7 @@
 		6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DC341187F2F700B056CB /* ItemsViewController.m */; };
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
+		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */; };
 		68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45011A1926300B65297 /* ASIFormDataRequest.m */; };
 		68BDB48E11A1926300B65297 /* ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45211A1926300B65297 /* ASIHTTPRequest.m */; };
@@ -83,6 +84,9 @@
 		6885DE6B11886AB600B056CB /* ListDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDetailViewController.h; sourceTree = "<group>"; };
 		6885DE6C11886AB600B056CB /* ListDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListDetailViewController.m; sourceTree = "<group>"; };
 		6885DE6D11886AB600B056CB /* ListDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListDetailViewController.xib; sourceTree = "<group>"; };
+		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
+		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
+		6896D10011AE15310014F3EA /* ResourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceProtocol.h; sourceTree = "<group>"; };
 		68BDB44D11A1926300B65297 /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		68BDB44F11A1926300B65297 /* ASIFormDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIFormDataRequest.h; sourceTree = "<group>"; };
@@ -198,8 +202,11 @@
 				6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */,
 				68EA4EBF11A8D01E002F1FBA /* Listing.h */,
 				68EA4EC011A8D01E002F1FBA /* Listing.m */,
+				6896D0E811AE01240014F3EA /* ItemList.h */,
+				6896D0E911AE01240014F3EA /* ItemList.m */,
 				68EA4F0011A95E88002F1FBA /* Item.h */,
 				68EA4F0111A95E88002F1FBA /* Item.m */,
+				6896D10011AE15310014F3EA /* ResourceProtocol.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -350,8 +357,7 @@
 				68C5A36511ABB92C00753370 /* NSDateCategories.h */,
 				68C5A36611ABB92C00753370 /* NSDateCategories.m */,
 			);
-			name = Categories;
-			path = Classes;
+			path = Categories;
 			sourceTree = "<group>";
 		};
 		68F7BB3D11A4D9430026480C /* JSON */ = {
@@ -477,6 +483,7 @@
 				68C5A2FF11AB65DD00753370 /* NSManagedObjectContextCategories.m in Sources */,
 				68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */,
 				68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */,
+				6896D0EA11AE01240014F3EA /* ItemList.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

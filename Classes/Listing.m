@@ -10,6 +10,10 @@
 @dynamic list;
 @dynamic item;
 */
++ (NSString *)resourcePath {
+    return @"/api/listings";
+}
+
 - (void)done {
     [self setValue:[NSDate date] forKey:@"deleted_at"];
 }

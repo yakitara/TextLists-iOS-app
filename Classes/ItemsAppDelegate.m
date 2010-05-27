@@ -4,6 +4,7 @@
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
 #import "Item.h"
+#import "ResourceProtocol.h"
 
 //#define API_CHANGES_URL
 
@@ -238,18 +239,19 @@
 }
 
 - (void)uploadChangesOfEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
-    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     [fetchRequest setEntity:entity];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == nil"];
     [fetchRequest setPredicate:predicate];
     NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"updated_at" ascending:YES] autorelease];
     NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
     [fetchRequest setSortDescriptors:sortDescriptors];
-    for (NSManagedObject *record in [context executeFetchRequest:fetchRequest]) {
-        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, @"item", nil] JSONRepresentation];
+    for (NSManagedObject <ResourceSupport> *record in [context executeFetchRequest:fetchRequest]) {
+        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil] JSONRepresentation];
         NSLog(@"uploading JSON:%@", json);
-        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
+//        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
+        NSURL *url = [self requestURLForPath:[[record class] resourcePath] auth:YES];
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
         [request appendPostData:[json dataUsingEncoding:NSUTF8StringEncoding]];
         // Default becomes POST when you use appendPostData: / appendPostDataFromFile: / setPostBody:
@@ -291,7 +293,9 @@
 #endif
         // Upload to web
         //NSString *itemsJson = [[NSDictionary dictionaryWithObjectsAndKeys:uploadingItems, @"items", nil] JSONRepresentation];
+        [self uploadChangesOfEntityName:@"List" inContext:context];
         [self uploadChangesOfEntityName:@"Item" inContext:context];
+        [self uploadChangesOfEntityName:@"Listing" inContext:context];
 /*
         // upload
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:

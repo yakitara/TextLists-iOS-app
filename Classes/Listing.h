@@ -1,7 +1,7 @@
 #import <CoreData/CoreData.h>
+#import "ResourceProtocol.h"
 
-
-@interface Listing :  NSManagedObject  
+@interface Listing :  NSManagedObject < ResourceSupport >
 {
 }
 @property (nonatomic, assign) NSNumber *list_id;

@@ -3,20 +3,21 @@
 
 @class Listing;
 
-@interface Item :  NSManagedObject  < ResourceSupport >
+@interface ItemList :  NSManagedObject < ResourceSupport >
 {
 }
 /*
-@property (nonatomic, retain) NSDate * updated_at;
 @property (nonatomic, retain) NSNumber * id;
-@property (nonatomic, retain) NSString * content;
+@property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSNumber * position;
 @property (nonatomic, retain) NSDate * created_at;
+@property (nonatomic, retain) NSDate * updated_at;
 @property (nonatomic, retain) NSSet* listings;
 */
 @end
 
 /*
-@interface Item (CoreDataGeneratedAccessors)
+@interface ItemList (CoreDataGeneratedAccessors)
 - (void)addListingsObject:(Listing *)value;
 - (void)removeListingsObject:(Listing *)value;
 - (void)addListings:(NSSet *)value;

@@ -30,7 +30,7 @@
 }
 @end
 
-@implementation NSManagedObject (Association )
+@implementation NSManagedObject ( Association )
 - (void)setBelongsToId:(id)value forKey:(NSString *)key entityName:(NSString *)entityName {
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
@@ -48,4 +48,20 @@
     [self setValue:[records lastObject] forKey:key];
 }
 
+@end
+
+@implementation NSManagedObject ( JSON )
+- (id)proxyForJson {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    for (NSString *attr in [[[self entity] attributesByName] allKeys]) {
+        [dict setValue:[self valueForKey:attr] forKey:attr];
+    }
+    for (NSString *relationship in [[[self entity] relationshipsByName] allKeys]) {
+        NSString *key = [relationship stringByAppendingString:@"_id"];
+        NSString *value = [[self valueForKey:relationship] valueForKey:@"id"];
+        [dict setValue:value forKey:key];
+    }
+    NSLog(@"proxyForJson:%@", dict);
+    return dict;
+}
 @end
