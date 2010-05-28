@@ -42,8 +42,12 @@
     // edit
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     // toolbar new item button
-    UIBarButtonItem *newItemButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)];
-    self.toolbarItems = [[[NSArray alloc] initWithObjects:newItemButton, nil] autorelease];
+    NSMutableArray *toolbarItems = [NSMutableArray array];
+    self.toolbarItems = toolbarItems;
+    //   spacer
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+    //   new item button
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
 #else
     // set Add button
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
@@ -69,13 +73,14 @@
     // set srot order for listings
     NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
     NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
-    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
-    NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
+    NSSortDescriptor *positionSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
+    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"created_at" ascending:NO] autorelease];
+    NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:positionSortDescriptor, createdSortDescriptor, nil] autorelease];
     [fetchRequest setSortDescriptors:sortDescriptors];
     // eager loading listings.item
     [fetchRequest setRelationshipKeyPathsForPrefetching:[NSArray arrayWithObject:@"item"]];
     
-    [self.navigationController setToolbarHidden:NO animated:YES];
+    [self.navigationController setToolbarHidden:NO animated:NO];
 }
 
 /*
@@ -173,6 +178,19 @@
 
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+#if 1
+    NSMutableArray *array = [NSMutableArray array];
+    NSUInteger count = [[self.list valueForKeyPath:@"fetchedListings"] count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[NSNumber numberWithInt:i]];
+    }
+    [array removeObjectAtIndex:toIndexPath.row];
+    [array insertObject:[NSNumber numberWithInt:toIndexPath.row] atIndex:fromIndexPath.row];
+    int i=0;
+    for (NSManagedObject *l in [self.list valueForKeyPath:@"fetchedListings"]) {
+        [l setValue:[array objectAtIndex:i++] forKey:@"position"];
+    }
+#else
     NSMutableArray *listings = [[[self.list valueForKeyPath:@"fetchedListings"] mutableCopy] autorelease];
     NSManagedObject *listing = [[[listings objectAtIndex:fromIndexPath.row] retain] autorelease];
     [listings removeObjectAtIndex:fromIndexPath.row];
@@ -181,6 +199,7 @@
     for (NSManagedObject *l in listings) {
         [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
     }
+#endif
     [UIAppDelegate.managedObjectContext save];
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
 }

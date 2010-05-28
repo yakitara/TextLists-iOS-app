@@ -33,11 +33,13 @@
     [addButton release];
     // toolbar items
     NSMutableArray *toolbarItems = [NSMutableArray array];
-    //   new item button
-    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
+    self.toolbarItems = toolbarItems;
     //   sync item button
     [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
-    self.toolbarItems = toolbarItems;
+    //   spacer
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+    //   new item button
+    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
     
     // fetch lists
     NSError *error = nil;
@@ -56,7 +58,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController setToolbarHidden:NO animated:YES];
+    [self.navigationController setToolbarHidden:NO animated:NO];
 }
 
 /*
@@ -212,7 +214,7 @@
         NSLog(@"list(%@)", [l valueForKey:@"name"]);
         [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
     }
-    //NOTE: save is delayed
+    [UIAppDelegate.managedObjectContext save];
     
     //NOTE: I don't believe that it is needed to perfoeme fetch, though to work around for editing status cells
     // after editing done.
@@ -270,8 +272,10 @@
     //[fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    //NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES];
+    NSSortDescriptor *positionSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
+    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"created_at" ascending:YES] autorelease];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:positionSortDescriptor, createdSortDescriptor, nil];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
@@ -283,7 +287,7 @@
     
     [aFetchedResultsController release];
     [fetchRequest release];
-    [sortDescriptor release];
+    //[sortDescriptor release];
     [sortDescriptors release];
     
     return _fetchedResultsController;

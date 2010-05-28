@@ -26,8 +26,8 @@
     [view release];
     // disable back
     self.navigationItem.hidesBackButton = YES;
-    // Done
-    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(edited)] autorelease];
+    //   save button
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(edited)] autorelease];
     self.navigationItem.rightBarButtonItem = button;
 /*  
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -74,6 +74,10 @@
     if ([[self.item objectID] isTemporaryID]) {
         NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
         [listing setValue:self.item forKey:@"item"];
+#if 0
+        int position = [[[[self.list valueForKey:@"fetchedListings"] lastObject] valueForKey:@"position"] intValue] + 1;
+        [listing setValue:[NSNumber numberWithInt:position] forKey:@"position"];
+#endif
         [listing setTimestamps];
         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }

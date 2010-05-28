@@ -1,7 +1,6 @@
 #import "ListDetailViewController.h"
 #import "ItemsAppDelegate.h"
 
-
 @implementation ListDetailViewController
 @synthesize nameCell=_nameCell;
 
@@ -25,11 +24,12 @@
     [super viewWillAppear:animated];
 }
 */
-/*
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [nameField becomeFirstResponder];
 }
-*/
+
 /*
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
@@ -153,16 +153,11 @@
 
 - (IBAction)nameDidEnter:(UITextField *)textField {
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:@"List"
-                                                             inManagedObjectContext:context];
-    [newManagedObject setValue:textField.text forKey:@"name"];
-    [newManagedObject setTimestamps];
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
+    NSManagedObject *list = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
+    [list setValue:textField.text forKey:@"name"];
+    [list setValue:[NSNumber numberWithInt:999] forKey:@"position"];
+    [list setTimestamps];
+    [context save];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
