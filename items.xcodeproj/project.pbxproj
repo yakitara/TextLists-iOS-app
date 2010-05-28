@@ -21,6 +21,7 @@
 		6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DC341187F2F700B056CB /* ItemsViewController.m */; };
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
+		6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */; };
 		68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45011A1926300B65297 /* ASIFormDataRequest.m */; };
@@ -84,6 +85,7 @@
 		6885DE6B11886AB600B056CB /* ListDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDetailViewController.h; sourceTree = "<group>"; };
 		6885DE6C11886AB600B056CB /* ListDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListDetailViewController.m; sourceTree = "<group>"; };
 		6885DE6D11886AB600B056CB /* ListDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListDetailViewController.xib; sourceTree = "<group>"; };
+		6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
 		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
 		6896D10011AE15310014F3EA /* ResourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceProtocol.h; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				68BDB4D811A1978500B65297 /* SystemConfiguration.framework in Frameworks */,
 				68BDB4DE11A197A200B65297 /* MobileCoreServices.framework in Frameworks */,
 				68BDB4E411A197ED00B65297 /* libz.1.1.3.dylib in Frameworks */,
+				6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +270,7 @@
 				68BDB4D711A1978500B65297 /* SystemConfiguration.framework */,
 				68BDB4DD11A197A200B65297 /* MobileCoreServices.framework */,
 				68BDB4E311A197ED00B65297 /* libz.1.1.3.dylib */,
+				6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

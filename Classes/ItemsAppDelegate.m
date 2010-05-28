@@ -5,7 +5,10 @@
 #import "ListsViewController.h"
 #import "Item.h"
 #import "ResourceProtocol.h"
-
+//#define DUMP_SQLITE 1
+#if DUMP_SQLITE
+#include <sqlite3.h>
+#endif
 //#define API_CHANGES_URL
 
 @interface ItemsAppDelegate (PrivateCoreDataStack)
@@ -104,6 +107,16 @@
     return managedObjectModel;
 }
 
+#if DUMP_SQLITE
+int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
+    int i;
+    for (i = 0; i < numCols; i++) {
+        if (texts[i])
+            NSLog(@"%s: %@\n", names[i], [NSString stringWithUTF8String:texts[i]]);
+    }
+    return 0;
+}
+#endif
 
 /**
  Returns the persistent store coordinator for the application.
@@ -116,7 +129,22 @@
     }
     
     NSURL *storeUrl = [NSURL fileURLWithPath: [[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ItemsCoreData.sqlite"]];
-    
+#if DUMP_SQLITE
+    sqlite3 *db = NULL;
+    NSLog(@"db:%s\n", [[storeUrl path] UTF8String]);
+    int dbrc = sqlite3_open([[storeUrl path] UTF8String], &db);
+    if (dbrc) {
+        NSLog(@"couldn't open db.");
+        abort();
+    }
+    //int dbrc = sqlite3_prepare_v2(db, ".dump", -1, &dbps, NULL);
+    //sqlite3_finalize(dbps);
+    if (SQLITE_ABORT == sqlite3_exec(db, "SELECT zcontent FROM zitem;", sqlite3_exec_callback, NULL, NULL)) {
+        NSLog(@"couldn't exec.");
+        abort();
+    }
+    sqlite3_close(db);
+#endif
     NSError *error = nil;
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,

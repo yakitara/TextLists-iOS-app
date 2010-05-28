@@ -1,8 +1,12 @@
 #import "ItemContentEditingViewController.h"
+#import "ItemsAppDelegate.h"
 
+@interface ItemContentEditingViewController ()
+- (void)back;
+@end
 
 @implementation ItemContentEditingViewController
-@synthesize item=_item;
+@synthesize item=m_item, list=m_list, delegate=m_delegate;
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -50,6 +54,11 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    if (!self.item) {
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
+                                         inManagedObjectContext:context];
+    }
     ((UITextView *)self.view).text = [self.item valueForKey:@"content"];
     [self.view becomeFirstResponder];
 }
@@ -60,10 +69,35 @@
 }
 */
 -(void)edited {
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
-    [self.navigationController popViewControllerAnimated:YES];
+    if ([[self.item objectID] isTemporaryID]) {
+        NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+        [listing setValue:self.item forKey:@"item"];
+        [listing setTimestamps];
+        [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+    }
+    [self.item setTimestamps];
+    [context save];
+    [context refreshObject:self.list mergeChanges:NO];
+    
+//    [self.navigationController popViewControllerAnimated:YES];
+    // back where from
+    if ([self.delegate respondsToSelector:@selector(itemContentEditingViewController:didSaveItem:)]) {
+        [self.delegate itemContentEditingViewController:self didSaveItem:self.item];
+    } else {
+        [self back];
+    }
 }
 
+-(void)back {
+    //TODO: re-think away to check modal
+    if (self.parentViewController.parentViewController.modalViewController) {
+        [self dismissModalViewControllerAnimated:YES];
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
 
 
 
@@ -86,6 +120,7 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    self.list = nil;
     self.item = nil;
 }
 

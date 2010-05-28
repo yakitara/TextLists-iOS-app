@@ -2,7 +2,11 @@
 #import "ItemsViewController.h"
 #import "ListDetailViewController.h"
 #import "ItemsAppDelegate.h"
+#if 1
+#import "ItemContentEditingViewController.h"
+#else
 #import "ItemDetailViewController.h"
+#endif
 
 @interface ListsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -118,7 +122,11 @@
 }
 
 - (void)newItem {
+#if 1
+    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+#else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+#endif
     itemController.list = self.inbox;
     //[self presentModalViewController:itemController animated:YES];
     UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];

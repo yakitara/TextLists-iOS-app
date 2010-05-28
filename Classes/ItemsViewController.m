@@ -1,6 +1,10 @@
 #import "ItemsViewController.h"
 #import "ItemsAppDelegate.h"
+#if 1
+#import "ItemContentEditingViewController.h"
+#else
 #import "ItemDetailViewController.h"
+#endif
 #import "Listing.h"
 
 @implementation ItemsViewController
@@ -193,21 +197,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSManagedObject *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
     NSManagedObject *item = [listing valueForKey:@"item"];
+#if 1
+    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+#else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+#endif
     itemController.list = self.list;
     itemController.item = item;
     itemController.delegate = self;
     [self.navigationController pushViewController:itemController animated:YES];
-    
-    
-    // Navigation logic may go here. Create and push another view controller.
-	/*
-	 <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-	 [self.navigationController pushViewController:detailViewController animated:YES];
-	 [detailViewController release];
-	 */
 }
 /*
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -227,7 +225,11 @@
 
 //REFACTOR: merge with -[ListsViewController newItem] if possible
 - (void)newItem {
+#if 1
+    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+#else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
+#endif
     itemController.list = self.list;
     itemController.delegate = self;
     //[self presentModalViewController:itemController animated:YES];
@@ -235,7 +237,8 @@
     [self presentModalViewController:navigationController animated:YES];
 }
 
-- (void)itemDetailViewController:(ItemDetailViewController *)itemDetailViewController didSaveItem:(NSManagedObject *)item {
+//- (void)itemDetailViewController:(ItemDetailViewController *)itemDetailViewController didSaveItem:(NSManagedObject *)item {
+- (void)itemContentEditingViewController:(ItemContentEditingViewController *)controller didSaveItem:(NSManagedObject *)item {
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
     [self.tableView reloadData];
     //REFACTOR: DRY with -[ItemDetailViewController back]

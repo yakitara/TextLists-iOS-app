@@ -1,3 +1,4 @@
+// ;-*-ObjC-*-
 #import <UIKit/UIKit.h>
 @protocol ItemDetailDelegate;
 
