@@ -24,8 +24,11 @@
     view.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.view = view;
     [view release];
+    // cancel button
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(back)] autorelease];
+    self.navigationItem.leftBarButtonItem = cancelButton;
     // disable back
-    self.navigationItem.hidesBackButton = YES;
+    //self.navigationItem.hidesBackButton = YES;
     //   save button
     UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(edited)] autorelease];
     self.navigationItem.rightBarButtonItem = button;
