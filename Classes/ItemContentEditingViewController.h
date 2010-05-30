@@ -5,12 +5,14 @@
 @interface ItemContentEditingViewController : UIViewController {
     NSManagedObject *m_item;
     NSManagedObject *m_list;
-    BOOL keyboardShown;
     id <ItemContentEditingDelegate> m_delegate;
+    UISegmentedControl *m_segmented;    
+    BOOL keyboardShown;
 }
 @property (nonatomic, retain) NSManagedObject *item;
 @property (nonatomic, retain) NSManagedObject *list;
-@property(nonatomic, assign) id <ItemContentEditingDelegate> delegate;
+@property (nonatomic, assign) id <ItemContentEditingDelegate> delegate;
+@property (nonatomic, assign) UISegmentedControl *segmented;
 @end
 
 @protocol ItemContentEditingDelegate <NSObject>

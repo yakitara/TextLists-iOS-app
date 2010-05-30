@@ -1,12 +1,19 @@
 #import "ItemContentEditingViewController.h"
 #import "ItemsAppDelegate.h"
 
+enum {
+    SEGMENT_LIST = 0,
+    SEGMENT_SAVE = 1
+};
+
 @interface ItemContentEditingViewController ()
+- (void)changeList;
 - (void)back;
+- (void)save;
 @end
 
 @implementation ItemContentEditingViewController
-@synthesize item=m_item, list=m_list, delegate=m_delegate;
+@synthesize item=m_item, list=m_list, delegate=m_delegate, segmented=m_segmented;
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -29,12 +36,23 @@
     self.navigationItem.leftBarButtonItem = cancelButton;
     // disable back
     //self.navigationItem.hidesBackButton = YES;
+#if 1    
+    NSArray *segments = [NSArray arrayWithObjects: @"label", @"save", nil];
+    UISegmentedControl *segmentedControl = [[[UISegmentedControl alloc] initWithItems: segments] autorelease];
+    self.segmented = segmentedControl;
+    [segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
+    segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
+    segmentedControl.momentary = YES;
+    UIBarButtonItem *segmentBarItem = [[[UIBarButtonItem alloc] initWithCustomView:segmentedControl] autorelease];
+    self.navigationItem.rightBarButtonItem = segmentBarItem;
+#else
     //   save button
-    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(edited)] autorelease];
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
     self.navigationItem.rightBarButtonItem = button;
+#endif
 /*  
     UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                       target:self action:@selector(edited)];
+                                                       target:self action:@selector(save)];
     self.navigationItem.rightBarButtonItem = button;
     [button release];
 
@@ -63,6 +81,7 @@
                                          inManagedObjectContext:context];
     }
     ((UITextView *)self.view).text = [self.item valueForKey:@"content"];
+    [self.segmented setTitle:[NSString stringWithFormat:@"list:%@", [self.list valueForKey:@"name"]] forSegmentAtIndex:SEGMENT_LIST];
     [self.view becomeFirstResponder];
 }
 /*
@@ -71,7 +90,25 @@
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
 }
 */
--(void)edited {
+
+- (void)segmentAction:(id)sender
+{
+    //NSLog(@"segmentAction: selected segment = %d", [sender selectedSegmentIndex]);
+    switch ([sender selectedSegmentIndex]) {
+    case SEGMENT_LIST:
+        [self changeList];
+        break;
+    case SEGMENT_SAVE:
+        [self save];
+        break;
+    }
+}
+
+- (void)changeList {
+    
+}
+
+- (void)save {
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
     if ([[self.item objectID] isTemporaryID]) {
@@ -97,7 +134,7 @@
     }
 }
 
--(void)back {
+- (void)back {
     //TODO: re-think away to check modal
     if (self.parentViewController.parentViewController.modalViewController) {
         [self dismissModalViewControllerAnimated:YES];
