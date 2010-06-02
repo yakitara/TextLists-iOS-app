@@ -165,10 +165,13 @@ enum {
 
 - (void)save {
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    // to refresh result of fetchedListings
-    [context refreshObject:self.item mergeChanges:NO];
-    
+    // refresh not new object to avoid NSUnderlyingException = Cannot update object that was never inserted.;
+    if (![[self.item objectID] isTemporaryID]) {
+        // to refresh result of fetchedListings
+        [context refreshObject:self.item mergeChanges:NO];
+    }
     [self.item setValue:[m_textView text] forKey:@"content"];
+    [self.item setTimestamps];
     // NOTE: assuming only one listing
     Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
     // remove lastListing if list is changed
@@ -179,7 +182,6 @@ enum {
         [listing setTimestamps];
         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }
-    [self.item setTimestamps];
     [context save];
     [context refreshObject:self.list mergeChanges:NO];
     
