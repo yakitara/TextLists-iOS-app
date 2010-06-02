@@ -217,7 +217,8 @@
     NSManagedObject *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
     NSManagedObject *item = [listing valueForKey:@"item"];
 #if 1
-    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+//    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+    ItemContentEditingViewController *itemController = [[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil];
 #else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
 #endif
@@ -245,7 +246,8 @@
 //REFACTOR: merge with -[ListsViewController newItem] if possible
 - (void)newItem {
 #if 1
-    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+//    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+    ItemContentEditingViewController *itemController = [[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil];
 #else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
 #endif

@@ -65,3 +65,9 @@
     return dict;
 }
 @end
+
+@implementation NSManagedObject ( Identity )
+- (BOOL)isIdentical:(NSManagedObject*)anManagedObject {
+    return [[self objectID] isEqual:[anManagedObject objectID]];
+}
+@end

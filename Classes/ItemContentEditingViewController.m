@@ -1,19 +1,25 @@
 #import "ItemContentEditingViewController.h"
 #import "ItemsAppDelegate.h"
+#import "ListsViewController.h"
+#import "Listing.h"
 
+/*
 enum {
     SEGMENT_LIST = 0,
     SEGMENT_SAVE = 1
 };
+*/
 
 @interface ItemContentEditingViewController ()
-- (void)changeList;
 - (void)back;
 - (void)save;
 @end
 
 @implementation ItemContentEditingViewController
-@synthesize item=m_item, list=m_list, delegate=m_delegate, segmented=m_segmented;
+@synthesize item = m_item;
+@synthesize list = m_list;
+@synthesize delegate = m_delegate;
+//@synthesize segmented = m_segmented;
 /*
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -24,7 +30,40 @@ enum {
 }
 */
 
+- (void)updateListView {
+    NSString *title = [NSString stringWithFormat:@"list: %@", [self.list valueForKey:@"name"]];
+    [m_listButton setTitle:title forState:UIControlStateNormal];
+}
 
+#if 1
+// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    if (!self.item) {
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
+                                         inManagedObjectContext:context];
+    }
+    // represent item and list
+    [m_textView setText:[self.item valueForKey:@"content"]];
+    [self updateListView];
+    
+    // cancel button
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(back)] autorelease];
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    //   save button
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
+    self.navigationItem.rightBarButtonItem = button;
+
+    // register for keyboard notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                          selector:@selector(keyboardWasShown:)
+                                          name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                          selector:@selector(keyboardWasHidden:)
+                                          name:UIKeyboardDidHideNotification object:nil];
+}
+#else
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     UITextView *view = [[UITextView alloc] init];
@@ -36,13 +75,15 @@ enum {
     self.navigationItem.leftBarButtonItem = cancelButton;
     // disable back
     //self.navigationItem.hidesBackButton = YES;
-#if 1    
-    NSArray *segments = [NSArray arrayWithObjects: @"label", @"save", nil];
+#if 1
+    NSArray *segments = [NSArray arrayWithObjects: @"list:in-box", @"save", nil];
     UISegmentedControl *segmentedControl = [[[UISegmentedControl alloc] initWithItems: segments] autorelease];
     self.segmented = segmentedControl;
     [segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
     segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
     segmentedControl.momentary = YES;
+    CGSize size = [@"save" sizeWithFont:[UIFont systemFontOfSize:[UIFont systemFontSize]]];
+    [segmentedControl setWidth:size.width + 8 forSegmentAtIndex:SEGMENT_SAVE];
     UIBarButtonItem *segmentBarItem = [[[UIBarButtonItem alloc] initWithCustomView:segmentedControl] autorelease];
     self.navigationItem.rightBarButtonItem = segmentBarItem;
 #else
@@ -65,32 +106,41 @@ enum {
 //                                          selector:@selector(keyboardWasHidden:)
 //                                          name:UIKeyboardDidHideNotification object:nil];
 }
-
-/*
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-*/
+#endif
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (!self.item) {
-        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-        self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
-                                         inManagedObjectContext:context];
-    }
-    ((UITextView *)self.view).text = [self.item valueForKey:@"content"];
-    [self.segmented setTitle:[NSString stringWithFormat:@"list:%@", [self.list valueForKey:@"name"]] forSegmentAtIndex:SEGMENT_LIST];
+/*
+    NSString *title = [NSString stringWithFormat:@"list:%@", [self.list valueForKey:@"name"]];
+    CGFloat maxWidth = 200;
+    UIFont *font = [UIFont systemFontOfSize:[UIFont systemFontSize]];
+    NSString *truncatedTitle = [title stringByTruncatingStringWithFont:font forWidth:maxWidth lineBreakMode:UILineBreakModeClip];
+    [self.segmented setTitle:truncatedTitle forSegmentAtIndex:SEGMENT_LIST];
+    CGSize size = [truncatedTitle sizeWithFont:font];
+    [self.segmented setWidth:(maxWidth > size.width ? size.width : maxWidth)  + 8 forSegmentAtIndex:SEGMENT_LIST];
+*/
+#if 0 // to fix layout in case of chenged list
+    [self.navigationController.navigationBar setNeedsDisplay];
+    [self.navigationController.navigationBar setNeedsLayout];
+//    [self.segmented setNeedsLayout];
+//    [self.navigationController.navigationBar layoutSubviews];
+    //self.navigationItem.rightBarButtonItem = nil;
+    UIBarButtonItem *segmentBarItem = [[[UIBarButtonItem alloc] initWithCustomView:self.segmented] autorelease];
+    self.navigationItem.rightBarButtonItem = segmentBarItem;
+#endif
+
+#if 1
+    [m_textView becomeFirstResponder];
+#else
     [self.view becomeFirstResponder];
+#endif
 }
 /*
 - (void)viewWillDisappear:(BOOL)animated {
-    NSLog(@"viewWillDisappear");
-    [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
+    //[self.item setValue:[m_textView text] forKey:@"content"];
 }
 */
-
+/*
 - (void)segmentAction:(id)sender
 {
     //NSLog(@"segmentAction: selected segment = %d", [sender selectedSegmentIndex]);
@@ -103,21 +153,29 @@ enum {
         break;
     }
 }
+*/
 
-- (void)changeList {
-    
+- (IBAction)changeList:(id)sender {
+    ListsViewController *listsController = [[[ListsViewController alloc] init] autorelease];
+    listsController.delegate = self;
+    listsController.checkedList = self.list;
+    UINavigationController *navController = [[[UINavigationController alloc] initWithRootViewController:listsController] autorelease];
+    [self presentModalViewController:navController animated:YES];
 }
 
 - (void)save {
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    [self.item setValue:((UITextView *)self.view).text forKey:@"content"];
-    if ([[self.item objectID] isTemporaryID]) {
+    // to refresh result of fetchedListings
+    [context refreshObject:self.item mergeChanges:NO];
+    
+    [self.item setValue:[m_textView text] forKey:@"content"];
+    // NOTE: assuming only one listing
+    Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
+    // remove lastListing if list is changed
+    if (![self.list isIdentical:[lastListing valueForKey:@"list"]]) {
+        [lastListing done];
         NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
         [listing setValue:self.item forKey:@"item"];
-#if 0
-        int position = [[[[self.list valueForKey:@"fetchedListings"] lastObject] valueForKey:@"position"] intValue] + 1;
-        [listing setValue:[NSNumber numberWithInt:position] forKey:@"position"];
-#endif
         [listing setTimestamps];
         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }
@@ -143,7 +201,11 @@ enum {
     }
 }
 
-
+- (void)listsViewController:(ListsViewController *)listsController didCheckList:(NSManagedObject *)list {
+    self.list = list;
+    [self updateListView];
+    [self dismissModalViewControllerAnimated:YES];
+}
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -166,6 +228,7 @@ enum {
     // e.g. self.myOutlet = nil;
     self.list = nil;
     self.item = nil;
+//    self.segmented = nil;
 }
 
 
@@ -180,13 +243,13 @@ enum {
 {
     if (keyboardShown)
         return;
- 
+    
     NSDictionary* info = [aNotification userInfo];
- 
+    
     // Get the size of the keyboard.
     NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
     CGSize keyboardSize = [aValue CGRectValue].size;
- 
+    
     // Resize the scroll view (which is the root view of the window)
     CGRect viewFrame = [self.view frame];
     viewFrame.size.height -= keyboardSize.height;
@@ -199,4 +262,7 @@ enum {
     keyboardShown = YES;
 }
 
+- (void)keyboardWasHidden:(NSNotification*)aNotification {
+    keyboardShown = NO;
+}
 @end

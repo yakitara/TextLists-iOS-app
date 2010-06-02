@@ -22,6 +22,7 @@
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
 		6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */; };
+		6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */; };
 		68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45011A1926300B65297 /* ASIFormDataRequest.m */; };
@@ -50,6 +51,7 @@
 		68C5A2FF11AB65DD00753370 /* NSManagedObjectContextCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */; };
 		68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A31D11AB94B900753370 /* NSErrorCategories.m */; };
 		68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A36611ABB92C00753370 /* NSDateCategories.m */; };
+		68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */; };
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
 		68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4EC011A8D01E002F1FBA /* Listing.m */; };
 		68EA4F0211A95E88002F1FBA /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4F0111A95E88002F1FBA /* Item.m */; };
@@ -86,6 +88,8 @@
 		6885DE6C11886AB600B056CB /* ListDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListDetailViewController.m; sourceTree = "<group>"; };
 		6885DE6D11886AB600B056CB /* ListDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListDetailViewController.xib; sourceTree = "<group>"; };
 		6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegatingFetchedResultsController.h; sourceTree = "<group>"; };
+		6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegatingFetchedResultsController.m; sourceTree = "<group>"; };
 		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
 		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
 		6896D10011AE15310014F3EA /* ResourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceProtocol.h; sourceTree = "<group>"; };
@@ -143,6 +147,8 @@
 		68C5A31D11AB94B900753370 /* NSErrorCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSErrorCategories.m; path = ../Categories/NSErrorCategories.m; sourceTree = "<group>"; };
 		68C5A36511ABB92C00753370 /* NSDateCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSDateCategories.h; path = Categories/NSDateCategories.h; sourceTree = SOURCE_ROOT; };
 		68C5A36611ABB92C00753370 /* NSDateCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSDateCategories.m; path = Categories/NSDateCategories.m; sourceTree = SOURCE_ROOT; };
+		68DF15FF11B4BF0400E84BD2 /* NSString+Truncate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Truncate.h"; sourceTree = "<group>"; };
+		68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Truncate.m"; sourceTree = "<group>"; };
 		68EA4E7A11A8C52A002F1FBA /* NSManagedObjectCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSManagedObjectCategories.h; path = Categories/NSManagedObjectCategories.h; sourceTree = SOURCE_ROOT; };
 		68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSManagedObjectCategories.m; path = Categories/NSManagedObjectCategories.m; sourceTree = SOURCE_ROOT; };
 		68EA4EBF11A8D01E002F1FBA /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Listing.h; sourceTree = "<group>"; };
@@ -210,6 +216,8 @@
 				68EA4F0011A95E88002F1FBA /* Item.h */,
 				68EA4F0111A95E88002F1FBA /* Item.m */,
 				6896D10011AE15310014F3EA /* ResourceProtocol.h */,
+				6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */,
+				6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -360,6 +368,8 @@
 				68C5A31D11AB94B900753370 /* NSErrorCategories.m */,
 				68C5A36511ABB92C00753370 /* NSDateCategories.h */,
 				68C5A36611ABB92C00753370 /* NSDateCategories.m */,
+				68DF15FF11B4BF0400E84BD2 /* NSString+Truncate.h */,
+				68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -488,6 +498,8 @@
 				68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */,
 				68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */,
 				6896D0EA11AE01240014F3EA /* ItemList.m in Sources */,
+				6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */,
+				68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

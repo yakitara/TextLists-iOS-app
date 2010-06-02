@@ -22,3 +22,4 @@
 #import "NSManagedObjectContextCategories.h"
 #import "NSErrorCategories.h"
 #import "NSDateCategories.h"
+#import "NSString+Truncate.h"

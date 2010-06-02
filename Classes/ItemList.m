@@ -13,4 +13,8 @@
 @dynamic updated_at;
 @dynamic listings;
 */
+
+- (id)retain {
+    return [super retain];
+}
 @end

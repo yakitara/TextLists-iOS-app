@@ -26,6 +26,7 @@
 @synthesize window;
 @synthesize navigationController;
 @synthesize managedObjectContext;
+@synthesize listsFetchedResultsController=m_listsFetchedResultsController;
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -181,6 +182,60 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     return persistentStoreCoordinator;
 }
 
+#pragma mark -
+#pragma mark Lists fetched result controller
+
+- (NSFetchedResultsController *)listsFetchedResultsController {
+    
+    if (m_listsFetchedResultsController != nil) {
+        return m_listsFetchedResultsController;
+    }
+    NSManagedObjectContext *context = self.managedObjectContext;
+    /*
+     Set up the fetched results controller.
+    */
+    // Create the fetch request for the entity.
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    // Edit the entity name as appropriate.
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"List" inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    
+    // Set the batch size to a suitable number.
+    //[fetchRequest setFetchBatchSize:20];
+    
+    // Edit the sort key as appropriate.
+    //NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES];
+    NSSortDescriptor *positionSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
+    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"created_at" ascending:YES] autorelease];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:positionSortDescriptor, createdSortDescriptor, nil];
+    
+    [fetchRequest setSortDescriptors:sortDescriptors];
+    
+    // Edit the section name key path and cache name if appropriate.
+    // nil for section name key path means "no sections".
+    DelegatingFetchedResultsController *aFetchedResultsController = [[DelegatingFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:@"List"];
+    aFetchedResultsController.delegate = aFetchedResultsController; // delegating oneself
+    m_listsFetchedResultsController = aFetchedResultsController;
+    
+    //[aFetchedResultsController release];
+    [fetchRequest release];
+    //[sortDescriptor release];
+    [sortDescriptors release];
+#if 1
+    // fetch lists
+    NSError *error = nil;
+    if (![m_listsFetchedResultsController performFetch:&error]) {
+        /*
+         Replace this implementation with code to handle the error appropriately.
+         
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+         */
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+#endif
+    return m_listsFetchedResultsController;
+}    
 
 #pragma mark -
 #pragma mark Application Helper
@@ -359,7 +414,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 #pragma mark Memory management
 
 - (void)dealloc {
-    
+    [m_listsFetchedResultsController release];
     [managedObjectContext release];
     [managedObjectModel release];
     [persistentStoreCoordinator release];

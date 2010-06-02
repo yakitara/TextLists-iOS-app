@@ -1,3 +1,4 @@
+// ;-*-ObjC-*-
 #import <CoreData/CoreData.h>
 
 @interface NSManagedObject ( TimeStamps )
@@ -5,6 +6,10 @@
 - (void)setTimestamps;
 @end
 
-@interface NSManagedObject (Association )
+@interface NSManagedObject ( Association )
 - (void)setBelongsToId:(id)value forKey:(NSString *)key entityName:(NSString *)entityName;
+@end
+
+@interface NSManagedObject ( Identity )
+- (BOOL)isIdentical:(NSManagedObject*)anManagedObject;
 @end

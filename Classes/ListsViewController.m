@@ -14,9 +14,10 @@
 
 
 @implementation ListsViewController
-
-@synthesize fetchedResultsController=_fetchedResultsController;
-@synthesize inbox=_inbox;
+@synthesize fetchedResultsController = m_fetchedResultsController;
+@synthesize inbox = m_inbox;
+@synthesize checkedList = m_checkedList;
+@synthesize delegate = m_delegate;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -31,34 +32,36 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
-    // toolbar items
-    NSMutableArray *toolbarItems = [NSMutableArray array];
-    self.toolbarItems = toolbarItems;
-    //   sync item button
-    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
-    //   spacer
-    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-    //   new item button
-    [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
     
+    if (!self.checkedList) {
+        // toolbar items
+        NSMutableArray *toolbarItems = [NSMutableArray array];
+        self.toolbarItems = toolbarItems;
+        //   sync item button
+        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
+        //   spacer
+        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+        //   new item button
+        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(newItem)] autorelease]];
+    }
+#if 1
+    [UIAppDelegate.listsFetchedResultsController addTableView:self.tableView];
+    self.fetchedResultsController = UIAppDelegate.listsFetchedResultsController;
+#else
     // fetch lists
     NSError *error = nil;
     if (![self.fetchedResultsController performFetch:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-         */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+#endif
     // find or create inbox
     [self inbox];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController setToolbarHidden:NO animated:NO];
+    [self.navigationController setToolbarHidden:(self.checkedList ? YES : NO) animated:NO];
 }
 
 /*
@@ -90,6 +93,9 @@
     
     NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = [[managedObject valueForKey:@"name"] description];
+    if ([[self.checkedList objectID] isEqual:[managedObject objectID]]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
 }
 
 
@@ -124,8 +130,10 @@
 }
 
 - (void)newItem {
+    //TODO: release itemController
 #if 1
-    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+//    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
+    ItemContentEditingViewController *itemController = [[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil];
 #else
     ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
 #endif
@@ -229,16 +237,30 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here -- for example, create and push another view controller.
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    ItemsViewController *itemsController = [[ItemsViewController alloc] initWithStyle:UITableViewStylePlain];
-    NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-    //NSSet *items = [selectedObject valueForKeyPath:@"listings.item"];
-    //NSMutableArray *items = [selectedObject mutableArrayValueForKeyPath:@"listings.item"];
-    itemsController.list = selectedObject;
-    [[self navigationController] pushViewController:itemsController animated:YES];
-    [itemsController release];
-    
+    //[tableView deselectRowAtIndexPath:indexPath animated:NO];
+    if (!self.checkedList) {
+        ItemsViewController *itemsController = [[ItemsViewController alloc] initWithStyle:UITableViewStylePlain];
+        NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        //NSSet *items = [selectedObject valueForKeyPath:@"listings.item"];
+        //NSMutableArray *items = [selectedObject mutableArrayValueForKeyPath:@"listings.item"];
+        itemsController.list = selectedObject;
+        [[self navigationController] pushViewController:itemsController animated:YES];
+        [itemsController release];
+    } else {
+        // uncheck last list
+        NSIndexPath *lastIndexPath = [self.fetchedResultsController indexPathForObject:self.checkedList];
+        UITableViewCell *lastCell = [self.tableView cellForRowAtIndexPath:lastIndexPath];
+        lastCell.accessoryType = UITableViewCellAccessoryNone;
+        // check new list
+        UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        newCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.checkedList = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        if ([self.delegate respondsToSelector:@selector(listsViewController:didCheckList:)]) {
+            [self.delegate listsViewController:self didCheckList: self.checkedList];
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
+    }
     /*
      <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
      NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
@@ -252,16 +274,14 @@
 
 #pragma mark -
 #pragma mark Fetched results controller
-
+/*
 - (NSFetchedResultsController *)fetchedResultsController {
     
     if (_fetchedResultsController != nil) {
         return _fetchedResultsController;
     }
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    /*
-     Set up the fetched results controller.
-    */
+    // Set up the fetched results controller.
     // Create the fetch request for the entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
@@ -292,14 +312,14 @@
     
     return _fetchedResultsController;
 }    
-
+*/
 - (NSManagedObject*)inbox {
-    if (!_inbox) {
+    if (!m_inbox) {
         for (NSManagedObject *list in [self.fetchedResultsController fetchedObjects]) {
             NSString *listName = [list valueForKey:@"name"];
             if ([listName compare:@"in-box"] == NSOrderedSame) {
                 self.inbox = list;
-                return _inbox;
+                return m_inbox;
             }
         }
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
@@ -309,13 +329,13 @@
         [self.inbox setTimestamps];
         //NOTE: will be inserted at next save or destruction of context, end of the app
     }
-    return _inbox;
+    return m_inbox;
 }
 
 #pragma mark -
 #pragma mark Fetched results controller delegate
 
-
+/*
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     [self.tableView beginUpdates];
 }
@@ -367,7 +387,7 @@
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     [self.tableView endUpdates];
 }
-
+*/
 
 /*
 // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed. 
@@ -391,13 +411,18 @@
 
 
 - (void)viewDidUnload {
+    [UIAppDelegate.listsFetchedResultsController removeTableView:self.tableView];
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    self.fetchedResultsController = nil;
+    self.inbox = nil;
+    self.checkedList = nil;
 }
 
 
 - (void)dealloc {
-    self.fetchedResultsController = nil;
+    //self.fetchedResultsController = nil;
+    [self viewDidUnload];
     [super dealloc];
 }
 
