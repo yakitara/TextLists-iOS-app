@@ -155,7 +155,7 @@
     NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
     NSManagedObject *list = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
     [list setValue:textField.text forKey:@"name"];
-    [list setValue:[NSNumber numberWithInt:999] forKey:@"position"];
+    [list setValue:[NSNumber numberWithInt:999] forKey:@"position"]; // The magic number 999 must be same as lists created at web.
     [list setTimestamps];
     [context save];
     [self.navigationController popViewControllerAnimated:YES];
