@@ -56,10 +56,14 @@
     for (NSString *attr in [[[self entity] attributesByName] allKeys]) {
         [dict setValue:[self valueForKey:attr] forKey:attr];
     }
-    for (NSString *relationship in [[[self entity] relationshipsByName] allKeys]) {
-        NSString *key = [relationship stringByAppendingString:@"_id"];
-        NSString *value = [[self valueForKey:relationship] valueForKey:@"id"];
-        [dict setValue:value forKey:key];
+    for (NSRelationshipDescription *relationship in [[[self entity] relationshipsByName] allValues]) {
+        // because of toMany relationships don't have foreign key, but the other side does
+        if (![relationship isToMany]) {
+            NSString *name = [relationship name];
+            NSString *key = [name stringByAppendingString:@"_id"];
+            NSString *value = [[self valueForKey:name] valueForKey:@"id"];
+            [dict setValue:value forKey:key];
+        }
     }
     NSLog(@"proxyForJson:%@", dict);
     return dict;
