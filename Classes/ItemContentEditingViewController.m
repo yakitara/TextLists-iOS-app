@@ -228,13 +228,13 @@ enum {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-    self.list = nil;
-    self.item = nil;
-//    self.segmented = nil;
 }
 
 
 - (void)dealloc {
+    self.list = nil;
+    self.item = nil;
+//    self.segmented = nil;
     [super dealloc];
 }
 

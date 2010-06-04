@@ -19,6 +19,10 @@
     [self.tableViews removeObject:tableView];
 }
 
+// - (id)retain {
+//     return [super retain];
+// }
+
 - (void)dealloc {
     [m_tableViews release];
     [super dealloc];

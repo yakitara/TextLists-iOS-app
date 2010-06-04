@@ -403,6 +403,7 @@
 #pragma mark Memory management
 
 - (void)didReceiveMemoryWarning {
+    [UIAppDelegate.listsFetchedResultsController removeTableView:self.tableView];
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
@@ -411,18 +412,19 @@
 
 
 - (void)viewDidUnload {
-    [UIAppDelegate.listsFetchedResultsController removeTableView:self.tableView];
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
-    self.fetchedResultsController = nil;
-    self.inbox = nil;
-    self.checkedList = nil;
+    [super viewDidUnload];
 }
 
 
 - (void)dealloc {
+    [UIAppDelegate.listsFetchedResultsController removeTableView:self.tableView];
+    self.fetchedResultsController = nil;
+    self.inbox = nil;
+    self.checkedList = nil;
     //self.fetchedResultsController = nil;
-    [self viewDidUnload];
+    //[self viewDidUnload];
     [super dealloc];
 }
 

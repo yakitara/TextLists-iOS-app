@@ -20,10 +20,10 @@
 }
 
 - (void)viewDidUnload {
-    self.list = nil;
 }
 
 - (void)dealloc {
+    self.list = nil;
     [super dealloc];
 }
 
