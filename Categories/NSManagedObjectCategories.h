@@ -13,3 +13,7 @@
 @interface NSManagedObject ( Identity )
 - (BOOL)isIdentical:(NSManagedObject*)anManagedObject;
 @end
+
+@interface NSManagedObject ( UndefinedKey )
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key;
+@end

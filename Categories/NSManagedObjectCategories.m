@@ -9,11 +9,16 @@
     [self setDate:value forKey:@"created_at"];
 }
 
+- (void)setDeleted_at:(id)value {
+    [self setDate:value forKey:@"deleted_at"];
+}
+
 - (void)setDate:(id)value forKey:(NSString *)key {
     if ([value isKindOfClass:[NSString class]]) {
-//        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-//        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
-        value = [[NSDate JSONDateFormatter] dateFromString:value];
+        BOOL isUTC = ([value rangeOfString:@"Z" options:NSBackwardsSearch].location != NSNotFound);
+        value = [[NSDate JSONDateFormatter:isUTC] dateFromString:value];
+    } else if ([value isKindOfClass:[NSNull class]]) {
+        value = nil;
     }
     [self willChangeValueForKey:key];
     [self setPrimitiveValue:value forKey:key];
@@ -73,5 +78,11 @@
 @implementation NSManagedObject ( Identity )
 - (BOOL)isIdentical:(NSManagedObject*)anManagedObject {
     return [[self objectID] isEqual:[anManagedObject objectID]];
+}
+@end
+
+@implementation NSManagedObject ( UndefinedKey )
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
+    NSLog(@"%@: Ignoring setValue:%@ forUndefinedKey:%@", self, value, key);
 }
 @end

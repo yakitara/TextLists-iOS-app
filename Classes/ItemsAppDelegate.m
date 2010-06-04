@@ -287,14 +287,6 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", record_id];
         [fetchRequest setPredicate:predicate];
         NSArray *records = [context executeFetchRequest:fetchRequest];
-/*
-        NSError *error;
-        NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
-        if (!records) {
-            NSLog(@"Fetching %@ failed:%@, $@", entityName, error, [error userInfo]);
-            abort();
-        }
-*/
         NSManagedObject *record = [records lastObject];
         if (record) {
             NSDate *localDate = [record valueForKey:@"updated_at"];
@@ -315,6 +307,9 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
             record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
             NSLog(@"new Record:%@", record);
             for (NSString *key in dict) {
+                // exclude unknown key
+                //[entity 
+                
                 [record setValue:[dict objectForKey:key] forKey:key];
             }
         }
@@ -342,17 +337,20 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         [request addRequestHeader:@"Content-Type" value:@"application/json"];
         [request addRequestHeader:@"Accept" value:@"application/json"];
         //request.didFinishSelector = @selector(postFinished:);
-        // FIXME: do it async
+        // TODO: do it async? or 
         [request startSynchronous];
         NSError *error = [request error];
-        if (error) {
+        if (!error) {
+            NSString *responseJSON = [request responseString];
+            NSLog(@"responseJSON: %@", responseJSON);
+            NSDictionary *responseDict = [responseJSON JSONValue];
+            [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
+            // one request, one transaction
+            [context save];
+        } else {
             [error prettyPrint];
-            abort();
+            abort(); // TODO: store error info and skip
         }
-        NSString *responseJSON = [request responseString];
-        NSLog(@"responseJSON: %@", responseJSON);
-        NSDictionary *responseDict = [responseJSON JSONValue];
-        [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
     }
 }
 
@@ -366,7 +364,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         NSLog(@"  changes:%@", changes);
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
         //NSMutableArray *uploadingItems = [NSMutableArray array];
-#if 0
+#if 1
         // Download from web
         [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" inContext:context];
         [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" inContext:context];

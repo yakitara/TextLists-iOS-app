@@ -2,5 +2,5 @@
 
 
 @interface NSDate (JSON)
-+ (NSDateFormatter *)JSONDateFormatter;
++ (NSDateFormatter *)JSONDateFormatter:(BOOL)isUTC;
 @end
