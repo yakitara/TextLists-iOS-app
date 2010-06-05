@@ -191,18 +191,7 @@
         // Delete the managed object for the given index path
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
-        // Save the context.
-        NSError *error = nil;
-        if (![context save:&error]) {
-            /*
-             Replace this implementation with code to handle the error appropriately.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
+        [context save];
     }   
 }
 
@@ -327,7 +316,7 @@
                                           inManagedObjectContext:context];
         [self.inbox setValue:@"in-box" forKey:@"name"];
         [self.inbox setTimestamps];
-        //NOTE: will be inserted at next save or destruction of context, end of the app
+        [context save];
     }
     return m_inbox;
 }

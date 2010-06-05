@@ -11,8 +11,9 @@ enum {
 */
 
 @interface ItemContentEditingViewController ()
-- (void)back;
 - (void)save;
+- (void)cancel;
+- (void)back;
 @end
 
 @implementation ItemContentEditingViewController
@@ -49,7 +50,7 @@ enum {
     [self updateListView];
     
     // cancel button
-    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(back)] autorelease];
+    UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)] autorelease];
     self.navigationItem.leftBarButtonItem = cancelButton;
     //   save button
     UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
@@ -192,6 +193,12 @@ enum {
     } else {
         [self back];
     }
+}
+
+- (void)cancel {
+    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+    [context rollback];
+    [self back];
 }
 
 - (void)back {

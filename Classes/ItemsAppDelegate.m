@@ -67,8 +67,10 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     if (managedObjectContext != nil) {
         if ([managedObjectContext hasChanges]) {
-            //[self saveWithManagedObjectContext:managedObjectContext];
-            [managedObjectContext save];
+            // NOTE: don't save because inconsistent objects may cause validation errors.
+            // (e.g. new item without cancel or save don't have NOT NULL attributes like created_at)
+            //[managedObjectContext save];
+            // TODO: not saved items should be saved as drafts
         }
     }
 }

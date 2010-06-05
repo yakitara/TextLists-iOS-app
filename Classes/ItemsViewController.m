@@ -162,12 +162,7 @@
         Listing *listing = [[self.list valueForKeyPath:@"fetchedListings"] objectAtIndex:[indexPath row]];
         //[context deleteObject:listing];
         [listing done];
-        // Save the context.
-        NSError *error = nil;
-        if (![context save:&error]) {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
+        [context save];
         [context refreshObject:self.list mergeChanges:NO];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }   
