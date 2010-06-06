@@ -1,16 +1,10 @@
 #import "NSManagedObjectContextCategories.h"
 
-@implementation NSManagedObjectContext (ErrorHandling)
-- (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest {
-    NSError *error = nil;
-    NSArray *records = [self executeFetchRequest:fetchRequest error:&error];
-    if (!records) {
-        [error prettyPrint];
-        abort();
-    }
-    return records;
-}
+@interface NSManagedObjectContext ()
+- (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest;
+@end
 
+@implementation NSManagedObjectContext ( Convenience )
 - (void)save {
     NSError *error = nil;
     if (![self save:&error]) {
@@ -22,5 +16,25 @@
         [error prettyPrint];
         abort();
     }
+}
+
+- (NSArray *)fetchFromEntityName:(NSString *)entityName withPredicateFormat:(NSString *)predicateFormat argumentArray:(NSArray *)arguments
+{
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:arguments];
+    [fetchRequest setPredicate:predicate];
+    return [self executeFetchRequest:fetchRequest];
+}
+
+- (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest {
+    NSError *error = nil;
+    NSArray *records = [self executeFetchRequest:fetchRequest error:&error];
+    if (!records) {
+        [error prettyPrint];
+        abort();
+    }
+    return records;
 }
 @end

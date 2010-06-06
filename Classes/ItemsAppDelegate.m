@@ -283,12 +283,16 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 - (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
     for (NSDictionary *dict in changes) {
         NSNumber *record_id = [dict objectForKey:@"id"];
+#if 1
+        NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObject:record_id]];
+#else
         NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
         NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
         [fetchRequest setEntity:entity];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", record_id];
         [fetchRequest setPredicate:predicate];
         NSArray *records = [context executeFetchRequest:fetchRequest];
+#endif
         NSManagedObject *record = [records lastObject];
         if (record) {
             NSDate *localDate = [record valueForKey:@"updated_at"];
@@ -305,13 +309,19 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
                 //FIXME: [uploadingItems addObject:item];
             }
         } else {
-            // web -> app: INSERT
-            record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
-            NSLog(@"new Record:%@", record);
+            // If there is an object with identical properties, use the object instead of new one.
+            NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+            id managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
+            NSManagedObject *record = nil;
+            if ([managedObjectClass respondsToSelector:@selector(fetchObjectIdenticalToValues:inManagedObjectContext:)]) {
+                record = [managedObjectClass fetchObjectIdenticalToValues:dict inManagedObjectContext:context];
+            }
+            if (!record) {
+                // web -> app: INSERT
+                record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+            }
+            //NSLog(@"new Record:%@", record);
             for (NSString *key in dict) {
-                // exclude unknown key
-                //[entity 
-                
                 [record setValue:[dict objectForKey:key] forKey:key];
             }
         }
@@ -320,6 +330,11 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 
 - (void)uploadChangesOfEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+#if 0
+    // TODO: implement convenient fetch method including sort
+    NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == nil" argumentArray:[NSArray array] sortKeysAndAscendings];
+    for (NSManagedObject <ResourceSupport> *record in records) {
+#else
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     [fetchRequest setEntity:entity];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == nil"];
@@ -328,6 +343,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
     [fetchRequest setSortDescriptors:sortDescriptors];
     for (NSManagedObject <ResourceSupport> *record in [context executeFetchRequest:fetchRequest]) {
+#endif
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil] JSONRepresentation];
         NSLog(@"uploading JSON:%@", json);
 //        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
