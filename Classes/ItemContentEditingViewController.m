@@ -239,6 +239,7 @@ enum {
 
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.list = nil;
     self.item = nil;
 //    self.segmented = nil;
