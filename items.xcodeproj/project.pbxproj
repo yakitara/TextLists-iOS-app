@@ -21,6 +21,7 @@
 		6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DC341187F2F700B056CB /* ItemsViewController.m */; };
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
+		6886FB3811BBC959007D360F /* UITableViewControllerCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 6886FB3711BBC959007D360F /* UITableViewControllerCategories.m */; };
 		6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */; };
 		6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
@@ -87,6 +88,8 @@
 		6885DE6B11886AB600B056CB /* ListDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDetailViewController.h; sourceTree = "<group>"; };
 		6885DE6C11886AB600B056CB /* ListDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListDetailViewController.m; sourceTree = "<group>"; };
 		6885DE6D11886AB600B056CB /* ListDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListDetailViewController.xib; sourceTree = "<group>"; };
+		6886FB3611BBC959007D360F /* UITableViewControllerCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITableViewControllerCategories.h; sourceTree = "<group>"; };
+		6886FB3711BBC959007D360F /* UITableViewControllerCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITableViewControllerCategories.m; sourceTree = "<group>"; };
 		6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegatingFetchedResultsController.h; sourceTree = "<group>"; };
 		6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegatingFetchedResultsController.m; sourceTree = "<group>"; };
@@ -370,6 +373,8 @@
 				68C5A36611ABB92C00753370 /* NSDateCategories.m */,
 				68DF15FF11B4BF0400E84BD2 /* NSString+Truncate.h */,
 				68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */,
+				6886FB3611BBC959007D360F /* UITableViewControllerCategories.h */,
+				6886FB3711BBC959007D360F /* UITableViewControllerCategories.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -500,6 +505,7 @@
 				6896D0EA11AE01240014F3EA /* ItemList.m in Sources */,
 				6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */,
 				68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */,
+				6886FB3811BBC959007D360F /* UITableViewControllerCategories.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

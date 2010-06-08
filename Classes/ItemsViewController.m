@@ -173,28 +173,11 @@
 
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-#if 1
-    NSMutableArray *array = [NSMutableArray array];
-    NSUInteger count = [[self.list valueForKeyPath:@"fetchedListings"] count];
-    for (int i = 0; i < count; i++) {
-        [array addObject:[NSNumber numberWithInt:i]];
-    }
-    [array removeObjectAtIndex:toIndexPath.row];
-    [array insertObject:[NSNumber numberWithInt:toIndexPath.row] atIndex:fromIndexPath.row];
+    NSArray *array = [self reorderedArrayAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
     int i=0;
     for (NSManagedObject *l in [self.list valueForKeyPath:@"fetchedListings"]) {
         [l setValue:[array objectAtIndex:i++] forKey:@"position"];
     }
-#else
-    NSMutableArray *listings = [[[self.list valueForKeyPath:@"fetchedListings"] mutableCopy] autorelease];
-    NSManagedObject *listing = [[[listings objectAtIndex:fromIndexPath.row] retain] autorelease];
-    [listings removeObjectAtIndex:fromIndexPath.row];
-    [listings insertObject:listing atIndex:toIndexPath.row];
-    int pos = 0;
-    for (NSManagedObject *l in listings) {
-        [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
-    }
-#endif
     [UIAppDelegate.managedObjectContext save];
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
 }

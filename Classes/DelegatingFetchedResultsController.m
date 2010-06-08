@@ -33,7 +33,9 @@
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
     for (UITableView *tableView in self.tableViews) {
-        [tableView beginUpdates];
+        // NOTE: begin/endUpdates at saving in moveRowAtIndexPath cause odd movement of rows
+        if (!tableView.editing)
+            [tableView beginUpdates];
     }
 }
 
@@ -65,12 +67,12 @@
         case NSFetchedResultsChangeDelete:
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
-        case NSFetchedResultsChangeUpdate:
-//            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
-            break;
         case NSFetchedResultsChangeMove:
 //            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 //            [tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]withRowAnimation:UITableViewRowAnimationFade];
+            break;
+        case NSFetchedResultsChangeUpdate:
+//            [tableView.delegate configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
             break;
         }
     }
@@ -79,7 +81,9 @@
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     for (UITableView *tableView in self.tableViews) {
-        [tableView endUpdates];
+        // NOTE: begin/endUpdates at saving in moveRowAtIndexPath cause odd movement of rows
+        if (!tableView.editing)
+            [tableView endUpdates];
     }
 }
 

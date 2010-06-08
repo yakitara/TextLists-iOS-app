@@ -202,24 +202,13 @@
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-    NSMutableArray *lists = [[self.fetchedResultsController.fetchedObjects mutableCopy] autorelease];
-    NSManagedObject *list = [[[lists objectAtIndex:fromIndexPath.row] retain] autorelease];
-    [lists removeObjectAtIndex:fromIndexPath.row];
-    [lists insertObject:list atIndex:toIndexPath.row];
-    int pos = 0;
-    for (NSManagedObject *l in lists) {
-        NSLog(@"list(%@)", [l valueForKey:@"name"]);
-        [l setValue:[NSNumber numberWithInt:pos++] forKey:@"position"];
+    NSArray *array = [self reorderedArrayAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
+    int i=0;
+    for (NSManagedObject *l in self.fetchedResultsController.fetchedObjects) {
+        NSLog(@"row:%@ -> %@", [l valueForKey:@"position"], [array objectAtIndex:i]);
+        [l setValue:[array objectAtIndex:i++] forKey:@"position"];
     }
     [UIAppDelegate.managedObjectContext save];
-    
-    //NOTE: I don't believe that it is needed to perfoeme fetch, though to work around for editing status cells
-    // after editing done.
-    NSError *error = nil;
-    if (![self.fetchedResultsController performFetch:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
 }
 
 #pragma mark -
