@@ -17,3 +17,7 @@
 @interface NSManagedObject ( UndefinedKey )
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key;
 @end
+
+@protocol NSManagedObjectClassFetch
+- (NSManagedObject *)fetchObjectIdenticalToValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
+@end

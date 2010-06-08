@@ -215,7 +215,9 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    DelegatingFetchedResultsController *aFetchedResultsController = [[DelegatingFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:@"List"];
+//    DelegatingFetchedResultsController *aFetchedResultsController = [[DelegatingFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:@"List"];
+    DelegatingFetchedResultsController *aFetchedResultsController = [[DelegatingFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:nil];
+
     aFetchedResultsController.delegate = aFetchedResultsController; // delegating oneself
     m_listsFetchedResultsController = aFetchedResultsController;
     
@@ -311,7 +313,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         } else {
             // If there is an object with identical properties, use the object instead of new one.
             NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-            id managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
+            id <NSObject, NSManagedObjectClassFetch> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
             NSManagedObject *record = nil;
             if ([managedObjectClass respondsToSelector:@selector(fetchObjectIdenticalToValues:inManagedObjectContext:)]) {
                 record = [managedObjectClass fetchObjectIdenticalToValues:dict inManagedObjectContext:context];
