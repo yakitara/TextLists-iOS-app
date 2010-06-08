@@ -363,10 +363,12 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         if (!error) {
             NSString *responseJSON = [request responseString];
             NSLog(@"responseJSON: %@", responseJSON);
-            NSDictionary *responseDict = [responseJSON JSONValue];
-            [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
-            // one request, one transaction
-            [context save];
+            if (request.responseStatusCode == 200) {
+                NSDictionary *responseDict = [responseJSON JSONValue];
+                [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
+                // one request, one transaction
+                [context save];
+            }
         } else {
             [error prettyPrint];
             abort(); // TODO: store error info and skip
