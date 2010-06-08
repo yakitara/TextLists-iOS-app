@@ -23,10 +23,10 @@
 
 @implementation ItemsAppDelegate
 
-@synthesize window;
-@synthesize navigationController;
-@synthesize managedObjectContext;
-@synthesize listsFetchedResultsController=m_listsFetchedResultsController;
+@synthesize window = m_window;
+@synthesize navigationController = m_navigationController;
+@synthesize managedObjectContext = m_managedObjectContext;
+@synthesize listsFetchedResultsController = m_listsFetchedResultsController;
 
 #pragma mark -
 #pragma mark Application lifecycle
@@ -56,8 +56,8 @@
         }
     }
     
-	[window addSubview:[navigationController view]];
-	[window makeKeyAndVisible];
+	[self.window addSubview:[self.navigationController view]];
+	[self.window makeKeyAndVisible];
     return YES;
 }
 
@@ -65,8 +65,8 @@
  applicationWillTerminate: saves changes in the application's managed object context before the application terminates.
  */
 - (void)applicationWillTerminate:(UIApplication *)application {
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges]) {
+    if (self.managedObjectContext != nil) {
+        if ([self.managedObjectContext hasChanges]) {
             // NOTE: don't save because inconsistent objects may cause validation errors.
             // (e.g. new item without cancel or save don't have NOT NULL attributes like created_at)
             //[managedObjectContext save];
@@ -85,16 +85,16 @@
  */
 - (NSManagedObjectContext *) managedObjectContext {
     
-    if (managedObjectContext != nil) {
-        return managedObjectContext;
+    if (m_managedObjectContext != nil) {
+        return m_managedObjectContext;
     }
     
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    NSPersistentStoreCoordinator *coordinator = self.persistentStoreCoordinator;
     if (coordinator != nil) {
-        managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [managedObjectContext setPersistentStoreCoordinator: coordinator];
+        m_managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [m_managedObjectContext setPersistentStoreCoordinator: coordinator];
     }
-    return managedObjectContext;
+    return m_managedObjectContext;
 }
 
 /**
@@ -103,11 +103,11 @@
  */
 - (NSManagedObjectModel *)managedObjectModel {
     
-    if (managedObjectModel != nil) {
-        return managedObjectModel;
+    if (m_managedObjectModel != nil) {
+        return m_managedObjectModel;
     }
-    managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
-    return managedObjectModel;
+    m_managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
+    return m_managedObjectModel;
 }
 
 #if DUMP_SQLITE
@@ -127,8 +127,8 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     
-    if (persistentStoreCoordinator != nil) {
-        return persistentStoreCoordinator;
+    if (m_persistentStoreCoordinator != nil) {
+        return m_persistentStoreCoordinator;
     }
     
     NSURL *storeUrl = [NSURL fileURLWithPath: [[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ItemsCoreData.sqlite"]];
@@ -152,8 +152,8 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
                                           [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
-    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+    m_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
+    if (![m_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -177,11 +177,11 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        [error prettyPrint];
         abort();
     }    
     
-    return persistentStoreCoordinator;
+    return m_persistentStoreCoordinator;
 }
 
 #pragma mark -
@@ -390,7 +390,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         NSLog(@"sync response: %@", responseString);
         NSDictionary *changes = [responseString JSONValue];
         NSLog(@"  changes:%@", changes);
-        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        NSManagedObjectContext *context = self.managedObjectContext;
         //NSMutableArray *uploadingItems = [NSMutableArray array];
 #if 1
         // Download from web
@@ -441,12 +441,11 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 
 - (void)dealloc {
     [m_listsFetchedResultsController release];
-    [managedObjectContext release];
-    [managedObjectModel release];
-    [persistentStoreCoordinator release];
-    
-    [navigationController release];
-    [window release];
+    [m_managedObjectContext release];
+    [m_managedObjectModel release];
+    [m_persistentStoreCoordinator release];
+    self.navigationController = nil;
+    self.window = nil;
     [super dealloc];
 }
 

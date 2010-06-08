@@ -4,12 +4,12 @@
 
 @interface ItemsAppDelegate : NSObject <UIApplicationDelegate> {
     
-    NSManagedObjectModel *managedObjectModel;
-    NSManagedObjectContext *managedObjectContext;
-    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    NSManagedObjectModel *m_managedObjectModel;
+    NSManagedObjectContext *m_managedObjectContext;
+    NSPersistentStoreCoordinator *m_persistentStoreCoordinator;
 
-    UIWindow *window;
-    UINavigationController *navigationController;
+    UIWindow *m_window;
+    UINavigationController *m_navigationController;
     
     DelegatingFetchedResultsController *m_listsFetchedResultsController;
 }
