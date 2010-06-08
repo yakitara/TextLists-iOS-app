@@ -304,7 +304,7 @@
         self.inbox = [NSEntityDescription insertNewObjectForEntityForName:@"List"
                                           inManagedObjectContext:context];
         [self.inbox setValue:@"in-box" forKey:@"name"];
-        [self.inbox setTimestamps];
+        //[self.inbox setTimestamps];
         [context save];
     }
     return m_inbox;

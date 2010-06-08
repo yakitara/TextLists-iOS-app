@@ -172,7 +172,7 @@ enum {
         [context refreshObject:self.item mergeChanges:NO];
     }
     [self.item setValue:[m_textView text] forKey:@"content"];
-    [self.item setTimestamps];
+    //[self.item setTimestamps];
     // NOTE: assuming only one listing
     Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
     // remove lastListing if list is changed
@@ -180,7 +180,7 @@ enum {
         [lastListing done];
         NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
         [listing setValue:self.item forKey:@"item"];
-        [listing setTimestamps];
+        //[listing setTimestamps];
         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }
     [context save];

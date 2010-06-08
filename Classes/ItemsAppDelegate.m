@@ -93,6 +93,7 @@
     if (coordinator != nil) {
         m_managedObjectContext = [[NSManagedObjectContext alloc] init];
         [m_managedObjectContext setPersistentStoreCoordinator: coordinator];
+        [m_managedObjectContext setRecordTimestamps:YES];
     }
     return m_managedObjectContext;
 }
@@ -440,6 +441,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 #pragma mark Memory management
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [m_listsFetchedResultsController release];
     [m_managedObjectContext release];
     [m_managedObjectModel release];

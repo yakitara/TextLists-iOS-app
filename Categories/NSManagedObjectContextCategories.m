@@ -38,3 +38,51 @@
     return records;
 }
 @end
+
+@interface NSManagedObject ( Timestamp )
+- (BOOL)changed;
+@end
+
+@implementation NSManagedObject ( Timestamp )
+- (BOOL)changed {
+    NSSet *changedSet = [NSSet setWithArray:[[self changedValues] allKeys]];
+    NSEntityDescription *entity = [self entity];
+    NSSet *attributesSet = [NSSet setWithArray:[[entity attributesByName] allKeys]];
+    // at least one attribute is changed
+    if ([changedSet intersectsSet:attributesSet]) {
+        return YES;
+    }
+    // or an aka belongs_to is changed
+    for (NSRelationshipDescription *relationship in [[entity relationshipsByName] allValues]) {
+        if (![relationship isToMany] && [changedSet containsObject:[relationship name]]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+@end
+
+// automatically set timestamps like ActiveRecord::Timestamp
+@implementation NSManagedObjectContext ( Timestamp )
+- (void)setRecordTimestamps:(BOOL)recordTimestamp {
+    if (recordTimestamp) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willSaveNotification:) name:NSManagedObjectContextWillSaveNotification object:self];
+    } else {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextWillSaveNotification object:self];
+    }
+}
+// TODO: it must be better to implement delegate class for the observer object
+- (void)willSaveNotification:(NSNotification *)aNotification {
+    for (NSManagedObject *managedObject in [self updatedObjects]) {
+        if ([managedObject changed]) {
+            [managedObject setTimestamps];
+        }
+    }
+    for (NSManagedObject *managedObject in [self insertedObjects]) {
+        if ([managedObject changed]) {
+            [managedObject setTimestamps];
+        }
+    }
+}
+@end
+
