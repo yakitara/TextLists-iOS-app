@@ -254,16 +254,22 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 
 //TODO: A path may contain paramaters. consider to sepalate it from the path.
 - (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
+    // FIXME: use preferences or...
+#if __arm__
+    NSString *baseURLString = [NSString stringWithFormat:@"http://items.yakitara.com:8000%@", path];
+#else
+    NSString *baseURLString = [NSString stringWithFormat:@"http://localhost:3000%@", path];
+#endif
     if (auth) {
         NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
         NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
         if (key) {
-            return [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000%@?user_id=%@&key=%@", path, user_id, key]];
+            return [NSURL URLWithString:[NSString stringWithFormat:@"%@?user_id=%@&key=%@", baseURLString, user_id, key]];
         } else {
             return nil;
         }
     } else {
-        return [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:3000%@", path]];
+        return [NSURL URLWithString:baseURLString];
     }
 }
 
