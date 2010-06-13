@@ -1,8 +1,8 @@
 #import "NSManagedObjectContextCategories.h"
 
-@interface NSManagedObjectContext ()
-- (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest;
-@end
+// @interface NSManagedObjectContext ()
+// - (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest;
+// @end
 
 @implementation NSManagedObjectContext ( Convenience )
 - (void)save {
@@ -40,12 +40,16 @@
 @end
 
 @interface NSManagedObject ( Timestamp )
-- (BOOL)changed;
+- (BOOL)needUpdateTimestamp;
 @end
 
 @implementation NSManagedObject ( Timestamp )
-- (BOOL)changed {
+- (BOOL)needUpdateTimestamp {
     NSSet *changedSet = [NSSet setWithArray:[[self changedValues] allKeys]];
+    // if updated_at is modified, don't overwrite the value
+    if ([changedSet member:@"updated_at"]) {
+        return NO;
+    }
     NSEntityDescription *entity = [self entity];
     NSSet *attributesSet = [NSSet setWithArray:[[entity attributesByName] allKeys]];
     // at least one attribute is changed
@@ -74,12 +78,12 @@
 // TODO: it must be better to implement delegate class for the observer object
 - (void)willSaveNotification:(NSNotification *)aNotification {
     for (NSManagedObject *managedObject in [self updatedObjects]) {
-        if ([managedObject changed]) {
+        if ([managedObject needUpdateTimestamp]) {
             [managedObject setTimestamps];
         }
     }
     for (NSManagedObject *managedObject in [self insertedObjects]) {
-        if ([managedObject changed]) {
+        if ([managedObject needUpdateTimestamp]) {
             [managedObject setTimestamps];
         }
     }

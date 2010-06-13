@@ -5,6 +5,7 @@
 #import "ListsViewController.h"
 #import "Item.h"
 #import "ResourceProtocol.h"
+#import "HTTPResource.h"
 //#define DUMP_SQLITE 1
 #if DUMP_SQLITE
 #include <sqlite3.h>
@@ -292,36 +293,51 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 - (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
     for (NSDictionary *dict in changes) {
         NSNumber *record_id = [dict objectForKey:@"id"];
-#if 1
         NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObject:record_id]];
-#else
-        NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-        [fetchRequest setEntity:entity];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", record_id];
-        [fetchRequest setPredicate:predicate];
-        NSArray *records = [context executeFetchRequest:fetchRequest];
-#endif
         NSManagedObject *record = [records lastObject];
         if (record) {
             NSDate *localDate = [record valueForKey:@"updated_at"];
-            NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
-            NSDate *remoteDate = [dateFormatter dateFromString:[dict objectForKey:@"updated_at"]];
-            if ([remoteDate compare:localDate] > 0) {
+            //NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+            //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
+            //NSDate *remoteDate = [dateFormatter dateFromString:[dict objectForKey:@"updated_at"]];
+            NSDate *remoteDate = [NSDate dateFromJSONDateString:[dict objectForKey:@"updated_at"]];
+            //NSComparisonResult compResult = [remoteDate compare:localDate];
+            // NOTE: ignoring differences less than a second
+            NSTimeInterval diffInSeconds = [remoteDate timeIntervalSinceDate:localDate];
+            if (diffInSeconds >= 1.0) {
                 //  web -> app: UPDATE
+#if 1
+                // changes only have id and updated_at, so get whole of the resource
+                NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
+                NSURL *url = [self requestURLForPath:path auth:YES];
+                //NSDictionary *values = [WebResource getJSONValueFrom:url];
+                NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
+                for (id key in values) {
+                    [record setValue:[values objectForKey:key] forKey:key];
+                }
+#else
                 for (id key in dict) {
                     [record setValue:[dict objectForKey:key] forKey:key];
                 }
-            } else {
+#endif
+            } else if (diffInSeconds <= -1.0) {
                 // web <- app: keep record to be uploaded
-                //FIXME: [uploadingItems addObject:item];
+                NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
+                NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
+                NSURL *url = [self requestURLForPath:path auth:YES];
+                [HTTPResource putJSONValue:value onURL:url];
+                //TODO: error check
+                //id *record_id = [[responseDict valueForKey:@"id"] forKey:@"id"];
+                //TODO: should use response code of the request
+//                 if (record_id != [NSNull null]) {
+//                     [record setValue:record_id];
+//                     [context save]; // one request, one transaction
+//                 }
             }
         } else {
             // If there is an object with identical properties, use the object instead of new one.
             NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
             id <NSObject, NSManagedObjectClassFetch> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
-            NSManagedObject *record = nil;
             if ([managedObjectClass respondsToSelector:@selector(fetchObjectIdenticalToValues:inManagedObjectContext:)]) {
                 record = [managedObjectClass fetchObjectIdenticalToValues:dict inManagedObjectContext:context];
             }
@@ -329,11 +345,22 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
                 // web -> app: INSERT
                 record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
             }
-            //NSLog(@"new Record:%@", record);
+            //NSLog(@"merged record:%@", record);
+#if 1
+            NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
+            NSURL *url = [self requestURLForPath:path auth:YES];
+            //NSDictionary *values = [WebResource getJSONValueFrom:url];
+            NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
+            for (id key in values) {
+                [record setValue:[values objectForKey:key] forKey:key];
+            }
+#else
             for (NSString *key in dict) {
                 [record setValue:[dict objectForKey:key] forKey:key];
             }
+#endif
         }
+        [context save];
     }
 }
 
@@ -353,6 +380,18 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     [fetchRequest setSortDescriptors:sortDescriptors];
     for (NSManagedObject <ResourceSupport> *record in [context executeFetchRequest:fetchRequest]) {
 #endif
+
+#if 1
+        NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
+        NSURL *url = [self requestURLForPath:[[record class] resourcePath] auth:YES];
+        NSDictionary *responseDict = [HTTPResource postJSONValue:value toURL:url];
+        id record_id = [responseDict valueForKey:@"id"];
+        //TODO: should use response code of the request
+        if (record_id != [NSNull null]) {
+            [record setValue:record_id forKey:@"id"];
+            [context save]; // one request, one transaction
+        }
+#else
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil] JSONRepresentation];
         NSLog(@"uploading JSON:%@", json);
 //        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
@@ -380,6 +419,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
             [error prettyPrint];
             abort(); // TODO: store error info and skip
         }
+#endif
     }
 }
 
@@ -388,38 +428,24 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     NSString *responseString = [request responseString];
     int status = request.responseStatusCode;
     if (status == 200) {
-        NSLog(@"sync response: %@", responseString);
+        //NSLog(@"sync response: %@", responseString);
         NSDictionary *changes = [responseString JSONValue];
-        NSLog(@"  changes:%@", changes);
+        //NSLog(@"  changes:%@", changes);
         NSManagedObjectContext *context = self.managedObjectContext;
         //NSMutableArray *uploadingItems = [NSMutableArray array];
-#if 1
+        // disable auto timestamp
+        // TODO: it is needed to use another context than default one when sync is executed on a worker thread
+        //[m_managedObjectContext setRecordTimestamps:NO];
         // Download from web
         [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" inContext:context];
         [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" inContext:context];
         [self mergeChanges:[changes objectForKey:@"listings"] forEntityName:@"Listing" inContext:context];
-        //[self saveWithManagedObjectContext:context];
-        [context save];
-#endif
         // Upload to web
         //NSString *itemsJson = [[NSDictionary dictionaryWithObjectsAndKeys:uploadingItems, @"items", nil] JSONRepresentation];
         [self uploadChangesOfEntityName:@"List" inContext:context];
         [self uploadChangesOfEntityName:@"Item" inContext:context];
         [self uploadChangesOfEntityName:@"Listing" inContext:context];
-/*
-        // upload
-        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:
-                                            uploadingItems, @"items",
-                                        nil] JSONRepresentation];
-*/
-//        NSLog(@"TODO: uploading json:\n%@", json);
-#if 0
-        NSString *updated_at = [[[changes objectForKey:@"items"] lastObject] objectForKey:@"updated_at"];
-        NSDateFormatter *dateFormatter = [NSDateFormatter 
-            [dateFormatter  (NSDate *)dateFromString:(NSString *)string
-
-           
-#endif   
+        //[m_managedObjectContext setRecordTimestamps:NO];
     } else if (status == 403) {
         // key is not correct. Retry from login
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];

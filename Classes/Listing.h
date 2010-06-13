@@ -1,3 +1,4 @@
+// ;-*-ObjC-*-
 #import <CoreData/CoreData.h>
 #import "ResourceProtocol.h"
 

@@ -15,8 +15,9 @@
 
 - (void)setDate:(id)value forKey:(NSString *)key {
     if ([value isKindOfClass:[NSString class]]) {
-        BOOL isUTC = ([value rangeOfString:@"Z" options:NSBackwardsSearch].location != NSNotFound);
-        value = [[NSDate JSONDateFormatter:isUTC] dateFromString:value];
+//         BOOL isUTC = ([value rangeOfString:@"Z" options:NSBackwardsSearch].location != NSNotFound);
+//         value = [[NSDate JSONDateFormatter:isUTC] dateFromString:value];
+        value = [NSDate dateFromJSONDateString:value];
     } else if ([value isKindOfClass:[NSNull class]]) {
         value = nil;
     }
