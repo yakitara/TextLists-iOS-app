@@ -291,6 +291,9 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 }
 
 - (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
+    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+    id <NSObject, NSManagedObjectClassFetch, ResourceSupport> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
+    
     for (NSDictionary *dict in changes) {
         NSNumber *record_id = [dict objectForKey:@"id"];
         NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObject:record_id]];
@@ -308,7 +311,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
                 //  web -> app: UPDATE
 #if 1
                 // changes only have id and updated_at, so get whole of the resource
-                NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
+                NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
                 NSURL *url = [self requestURLForPath:path auth:YES];
                 //NSDictionary *values = [WebResource getJSONValueFrom:url];
                 NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
@@ -323,7 +326,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
             } else if (diffInSeconds <= -1.0) {
                 // web <- app: keep record to be uploaded
                 NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
-                NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
+                NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
                 NSURL *url = [self requestURLForPath:path auth:YES];
                 [HTTPResource putJSONValue:value onURL:url];
                 //TODO: error check
@@ -336,29 +339,21 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
             }
         } else {
             // If there is an object with identical properties, use the object instead of new one.
-            NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-            id <NSObject, NSManagedObjectClassFetch> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
+            NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
+            NSURL *url = [self requestURLForPath:path auth:YES];
+            NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
+
             if ([managedObjectClass respondsToSelector:@selector(fetchObjectIdenticalToValues:inManagedObjectContext:)]) {
-                record = [managedObjectClass fetchObjectIdenticalToValues:dict inManagedObjectContext:context];
+                record = [managedObjectClass fetchObjectIdenticalToValues:values inManagedObjectContext:context];
             }
             if (!record) {
                 // web -> app: INSERT
                 record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
             }
             //NSLog(@"merged record:%@", record);
-#if 1
-            NSString *path = [NSString stringWithFormat:@"%@/%@", [[record class] resourcePath], record_id];
-            NSURL *url = [self requestURLForPath:path auth:YES];
-            //NSDictionary *values = [WebResource getJSONValueFrom:url];
-            NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
             for (id key in values) {
                 [record setValue:[values objectForKey:key] forKey:key];
             }
-#else
-            for (NSString *key in dict) {
-                [record setValue:[dict objectForKey:key] forKey:key];
-            }
-#endif
         }
         [context save];
     }
@@ -366,6 +361,8 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 
 - (void)uploadChangesOfEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
+    id <NSObject, NSManagedObjectClassFetch, ResourceSupport> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
+    
 #if 0
     // TODO: implement convenient fetch method including sort
     NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == nil" argumentArray:[NSArray array] sortKeysAndAscendings];
@@ -383,7 +380,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 
 #if 1
         NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
-        NSURL *url = [self requestURLForPath:[[record class] resourcePath] auth:YES];
+        NSURL *url = [self requestURLForPath:[managedObjectClass resourcePath] auth:YES];
         NSDictionary *responseDict = [HTTPResource postJSONValue:value toURL:url];
         id record_id = [responseDict valueForKey:@"id"];
         //TODO: should use response code of the request
@@ -395,7 +392,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil] JSONRepresentation];
         NSLog(@"uploading JSON:%@", json);
 //        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
-        NSURL *url = [self requestURLForPath:[[record class] resourcePath] auth:YES];
+        NSURL *url = [self requestURLForPath:[managedObjectClass resourcePath] auth:YES];
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
         [request appendPostData:[json dataUsingEncoding:NSUTF8StringEncoding]];
         // Default becomes POST when you use appendPostData: / appendPostDataFromFile: / setPostBody:
