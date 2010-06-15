@@ -137,6 +137,12 @@ enum {
     [self.view becomeFirstResponder];
 #endif
 }
+
+- (void)viewDidAppear:(BOOL)animated {
+    // move cursor to the top of text
+    [m_textView setSelectedRange:NSMakeRange(0, 0)];
+}
+
 /*
 - (void)viewWillDisappear:(BOOL)animated {
     //[self.item setValue:[m_textView text] forKey:@"content"];
