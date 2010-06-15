@@ -129,6 +129,7 @@ enum {
     UIBarButtonItem *segmentBarItem = [[[UIBarButtonItem alloc] initWithCustomView:self.segmented] autorelease];
     self.navigationItem.rightBarButtonItem = segmentBarItem;
 #endif
+    [self.navigationController setToolbarHidden:YES animated:NO];
 
 #if 1
     [m_textView becomeFirstResponder];
@@ -261,9 +262,15 @@ enum {
     CGSize keyboardSize = [aValue CGRectValue].size;
     
     // Resize the scroll view (which is the root view of the window)
+#if 0
+    CGRect viewFrame = [m_textView frame];
+    viewFrame.size.height -= keyboardSize.height;
+    [m_textView setFrame:viewFrame];
+#else
     CGRect viewFrame = [self.view frame];
     viewFrame.size.height -= keyboardSize.height;
     self.view.frame = viewFrame;
+#endif
 /* 
     // Scroll the active text field into view.
     CGRect textFieldRect = [activeField frame];
