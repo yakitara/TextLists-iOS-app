@@ -44,6 +44,8 @@ enum {
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
         self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
                                          inManagedObjectContext:context];
+        // show keyboard for new item
+        [m_textView becomeFirstResponder];
     }
     // represent item and list
     [m_textView setText:[self.item valueForKey:@"content"]];
@@ -132,7 +134,8 @@ enum {
     [self.navigationController setToolbarHidden:YES animated:NO];
 
 #if 1
-    [m_textView becomeFirstResponder];
+//    [m_textView becomeFirstResponder];
+//    [m_textView setSelectedRange:NSMakeRange(0, 0)];
 #else
     [self.view becomeFirstResponder];
 #endif
@@ -140,7 +143,7 @@ enum {
 
 - (void)viewDidAppear:(BOOL)animated {
     // move cursor to the top of text
-    [m_textView setSelectedRange:NSMakeRange(0, 0)];
+//    [m_textView setSelectedRange:NSMakeRange(0, 0)];
 }
 
 /*
