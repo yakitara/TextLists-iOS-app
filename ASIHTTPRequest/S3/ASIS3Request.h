@@ -11,6 +11,10 @@
 #import <Foundation/Foundation.h>
 #import "ASIHTTPRequest.h"
 
+#if (!TARGET_OS_IPHONE && MAC_OS_X_VERSION_MAX_ALLOWED < __MAC_10_6) || (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_4_0)
+#import "ASINSXMLParserCompat.h"
+#endif
+
 // See http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTAccessPolicy.html for what these mean
 extern NSString *const ASIS3AccessPolicyPrivate; // This is the default in S3 when no access policy header is provided
 extern NSString *const ASIS3AccessPolicyPublicRead;
@@ -23,12 +27,9 @@ typedef enum _ASIS3ErrorType {
 	
 } ASIS3ErrorType;
 
-// Prevent warning about missing NSXMLParserDelegate on Leopard and iPhone
-#if !TARGET_OS_IPHONE && MAC_OS_X_VERSION_10_5 < MAC_OS_X_VERSION_MAX_ALLOWED
+
 @interface ASIS3Request : ASIHTTPRequest <NSCopying, NSXMLParserDelegate> {
-#else
-@interface ASIS3Request : ASIHTTPRequest <NSCopying> {
-#endif
+	
 	// Your S3 access key. Set it on the request, or set it globally using [ASIS3Request setSharedAccessKey:]
 	NSString *accessKey;
 	
@@ -71,11 +72,16 @@ typedef enum _ASIS3ErrorType {
 # pragma mark helpers
 	
 // Returns a date formatter than can be used to parse a date from S3
-+ (NSDateFormatter *)dateFormatter;
++ (NSDateFormatter*)S3ResponseDateFormatter;
+	
+// Returns a date formatter than can be used to send a date header to S3
++ (NSDateFormatter*)S3RequestDateFormatter;
+
 
 // URL-encodes an S3 key so it can be used in a url
 // You shouldn't normally need to use this yourself
 + (NSString *)stringByURLEncodingForS3Path:(NSString *)key;
+
 
 
 @property (retain) NSString *dateString;
