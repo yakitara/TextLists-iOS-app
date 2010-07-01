@@ -51,10 +51,11 @@ static Synchronizer *s_singleton = NULL;
 }
 
 - (void)postChangeLog:(NSManagedObject <EntityName> *)record {
-    NSMutableDictionary *log = [NSMutableDictionary dictionary];
+    id log = nil;
     if ([record isKindOfClass:[ChangeLog class]]) {
-        
+        log = record;
     } else {
+        log = [NSMutableDictionary dictionary];
         [log setObject:[[record class] entityName] forKey:@"record_type"];
         [log setObject:[record JSONRepresentation] forKey:@"json"];
         [log setObject:[NSDate date] forKey:@"created_at"];
