@@ -1,8 +1,8 @@
-// ;-*-ObjC-*-
+// -*-ObjC-*-
 #import <CoreData/CoreData.h>
 #import "ResourceProtocol.h"
 
-@interface Listing :  NSManagedObject < ResourceSupport >
+@interface Listing :  NSManagedObject < ResourceSupport, ChangeLog, EntityName >
 {
 }
 @property (nonatomic, assign) NSNumber *list_id;

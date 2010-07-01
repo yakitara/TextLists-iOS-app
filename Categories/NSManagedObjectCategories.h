@@ -3,7 +3,7 @@
 
 @interface NSManagedObject ( TimeStamps )
 - (void)setDate:(id)value forKey:(NSString *)key;
-- (void)setTimestamps;
+- (void)setTimestamps:(NSDate *)date;
 @end
 
 @interface NSManagedObject ( Association )
@@ -20,4 +20,16 @@
 
 @protocol NSManagedObjectClassFetch
 - (NSManagedObject *)fetchObjectIdenticalToValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
+@end
+
+@protocol ChangeLog
+- (BOOL)needChangeLog;
+@end
+
+@interface NSManagedObject ( Change )
+- (NSDictionary *)selfChangedValues;
+@end
+
+@protocol EntityName
++ (NSString *)entityName;
 @end

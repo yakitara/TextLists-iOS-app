@@ -39,6 +39,11 @@
         self.toolbarItems = toolbarItems;
         //   sync item button
         [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
+        //   syncActivityIndicator
+        UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
+        activityIndicator.hidesWhenStopped = YES;
+        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:activityIndicator] autorelease]];
+        UIAppDelegate.syncActivityIndicator = activityIndicator;
         //   spacer
         [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
         //   new item button

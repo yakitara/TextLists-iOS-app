@@ -1,10 +1,10 @@
-// ;-*-ObjC-*-
+// -*-ObjC-*-
 #import <CoreData/CoreData.h>
 #import "ResourceProtocol.h"
 
 @class Listing;
 
-@interface Item :  NSManagedObject  < ResourceSupport >
+@interface Item :  NSManagedObject  < ResourceSupport, ChangeLog, EntityName >
 {
 }
 /*

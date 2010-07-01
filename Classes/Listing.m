@@ -13,6 +13,11 @@
 + (NSString *)resourcePath {
     return @"/api/listings";
 }
+// In principle, an managed object class can be refered by multiple entity, but in most case,
+// we can use a managed object class for single entity.
++ (NSString *)entityName {
+    return @"Listing";
+}
 
 - (void)done {
     [self setValue:[NSDate date] forKey:@"deleted_at"];
@@ -35,5 +40,9 @@
 - (void)setItem_id:(NSNumber *)value {
     [self setBelongsToId:value forKey:@"item" entityName:@"Item"];
 }
-
+#pragma mark -
+#pragma mark ChangeLog protocol
+- (BOOL)needChangeLog {
+    return YES;
+}
 @end

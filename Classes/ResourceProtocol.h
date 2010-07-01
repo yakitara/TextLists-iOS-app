@@ -1,3 +1,4 @@
+// -*-ObjC-*-
 //#import <Cocoa/Cocoa.h>
 
 @protocol ResourceSupport

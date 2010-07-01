@@ -6,6 +6,10 @@
 #import "Item.h"
 #import "ResourceProtocol.h"
 #import "HTTPResource.h"
+#define SYNCHRONIZER 1
+#if SYNCHRONIZER
+#import "Synchronizer.h"
+#endif
 //#define DUMP_SQLITE 1
 #if DUMP_SQLITE
 #include <sqlite3.h>
@@ -28,14 +32,23 @@
 @synthesize navigationController = m_navigationController;
 @synthesize managedObjectContext = m_managedObjectContext;
 @synthesize listsFetchedResultsController = m_listsFetchedResultsController;
+@synthesize syncActivityIndicator = m_syncActivityIndicator;
 
 #pragma mark -
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
     NSLog(@"launchOptions:%@", launchOptions);
-    // parse url
+    // handle url
     NSURL *url = [launchOptions objectForKey:@"UIApplicationLaunchOptionsURLKey"];
+    [self application:application handleOpenURL:url];
+    
+	[self.window addSubview:[self.navigationController view]];
+	[self.window makeKeyAndVisible];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     if (url) {
         NSString *action = [url host];
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -56,11 +69,9 @@
             [self sync];
         }
     }
-    
-	[self.window addSubview:[self.navigationController view]];
-	[self.window makeKeyAndVisible];
     return YES;
 }
+
 
 /**
  applicationWillTerminate: saves changes in the application's managed object context before the application terminates.
@@ -276,6 +287,16 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 }
 
 - (void)sync {
+#if SYNCHRONIZER
+    [Synchronizer sync];
+//     UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
+//     activityIndicator.frame = CGRectMake(0,0,30,30);
+//     [activityIndicator startAnimating];
+//     UIAppDelegate.syncButton.customView = activityIndicator;
+#if 1
+    
+#endif
+#else
 //     NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
 //     NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
     NSURL *url = [self requestURLForPath:@"/api/changes" auth:YES];
@@ -288,6 +309,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
         //[UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
         [UIApp openURL:[self requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
     }
+#endif
 }
 
 - (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
@@ -471,6 +493,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     [m_persistentStoreCoordinator release];
     self.navigationController = nil;
     self.window = nil;
+    self.syncActivityIndicator = nil;
     [super dealloc];
 }
 

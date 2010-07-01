@@ -26,6 +26,8 @@
 		6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */; };
 		6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
+		68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FF9D11D98734007AC834 /* Synchronizer.m */; };
+		68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FFB311D99898007AC834 /* ChangeLog.m */; };
 		68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */; };
 		68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45011A1926300B65297 /* ASIFormDataRequest.m */; };
 		68BDB48E11A1926300B65297 /* ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45211A1926300B65297 /* ASIHTTPRequest.m */; };
@@ -100,6 +102,11 @@
 		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
 		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
 		6896D10011AE15310014F3EA /* ResourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceProtocol.h; sourceTree = "<group>"; };
+		68A0FF9C11D98734007AC834 /* Synchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Synchronizer.h; sourceTree = "<group>"; };
+		68A0FF9D11D98734007AC834 /* Synchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Synchronizer.m; sourceTree = "<group>"; };
+		68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 4.xcdatamodel"; sourceTree = "<group>"; };
+		68A0FFB211D99898007AC834 /* ChangeLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeLog.h; sourceTree = "<group>"; };
+		68A0FFB311D99898007AC834 /* ChangeLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangeLog.m; sourceTree = "<group>"; };
 		68BDB44D11A1926300B65297 /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		68BDB44F11A1926300B65297 /* ASIFormDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIFormDataRequest.h; sourceTree = "<group>"; };
@@ -222,11 +229,15 @@
 				6896D0E911AE01240014F3EA /* ItemList.m */,
 				68EA4F0011A95E88002F1FBA /* Item.h */,
 				68EA4F0111A95E88002F1FBA /* Item.m */,
+				68A0FFB211D99898007AC834 /* ChangeLog.h */,
+				68A0FFB311D99898007AC834 /* ChangeLog.m */,
 				6896D10011AE15310014F3EA /* ResourceProtocol.h */,
 				6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */,
 				6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */,
 				682AEE1111C3C5C5008BE7E1 /* HTTPResource.h */,
 				682AEE1211C3C5C5008BE7E1 /* HTTPResource.m */,
+				68A0FF9C11D98734007AC834 /* Synchronizer.h */,
+				68A0FF9D11D98734007AC834 /* Synchronizer.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -513,6 +524,8 @@
 				68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */,
 				6886FB3811BBC959007D360F /* UITableViewControllerCategories.m in Sources */,
 				682AEE1311C3C5C5008BE7E1 /* HTTPResource.m in Sources */,
+				68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */,
+				68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,8 +621,9 @@
 				28860B760F44E54D00985440 /* ItemsCoreData.xcdatamodel */,
 				68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */,
 				6819BA7811BDE18000A37FF5 /* ItemsCoreData 3.xcdatamodel */,
+				68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */,
 			);
-			currentVersion = 6819BA7811BDE18000A37FF5 /* ItemsCoreData 3.xcdatamodel */;
+			currentVersion = 68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */;
 			path = ItemsCoreData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

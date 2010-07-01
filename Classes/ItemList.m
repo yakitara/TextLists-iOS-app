@@ -26,4 +26,9 @@
     NSString *name = [values objectForKey:@"name"];
     return [[context fetchFromEntityName:[self entityName] withPredicateFormat:@"name == %@" argumentArray:[NSArray arrayWithObject:name]] lastObject];
 }
+#pragma mark -
+#pragma mark ChangeLog protocol
+- (BOOL)needChangeLog {
+    return YES;
+}
 @end
