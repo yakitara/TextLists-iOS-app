@@ -88,6 +88,7 @@ static Synchronizer *s_singleton = NULL;
         } else {
             // set id for new record
             [record setValue:[responseValue valueForKey:@"id"] forKey:@"id"];
+            [record setValue:[NSDate date] forKey:@"synched_at"];
             [[record managedObjectContext] save];
         }
         // remove the object from the queue

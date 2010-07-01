@@ -105,6 +105,12 @@
         if (!record_id) {
             return NO;
         }
+        // if synched_at is changed, it must be a change from GET /api/changes or setting id for new record
+        // FIXME: this condition seems to be a duplication with a condition in selfChangedValues
+//         if ([change valueForKey:@"synched_at"]) {
+//             return NO; 
+//         }
+        
         for (NSString *key in [change allKeys]) {
             id property = [change objectForKey:key];
             if ([property isKindOfClass:[NSManagedObject class]]) { // it implies to-one relationship
@@ -137,12 +143,14 @@
     NSEntityDescription *entity = [self entity];
     // exclude to-many relationships (they don't have related columns), and convert to-one to *_id
     for (NSRelationshipDescription *relationship in [[entity relationshipsByName] allValues]) {
-        [change removeObjectForKey:[relationship name]];
-        if (![relationship isToMany]) {
-            NSString *name = [relationship name];
-            NSString *key = [name stringByAppendingString:@"_id"];
-            NSNumber *value = [[self valueForKey:name] valueForKey:@"id"];
-            [change setValue:value forKey:key];
+        if ([change objectForKey:[relationship name]]) {
+            [change removeObjectForKey:[relationship name]];
+            if (![relationship isToMany]) {
+                NSString *name = [relationship name];
+                NSString *key = [name stringByAppendingString:@"_id"];
+                NSNumber *value = [[self valueForKey:name] valueForKey:@"id"];
+                [change setValue:value forKey:key];
+            }
         }
     }
     if ([change count] == 0)
