@@ -20,6 +20,11 @@ static Synchronizer *s_singleton = NULL;
 @implementation Synchronizer
 @synthesize postQueue=m_postQueue;
 + (void)sync {
+    // Quick and dirty way of preventing multiple sync
+    if ([UIAppDelegate.syncActivityIndicator isAnimating]) {
+        return;
+    }
+    
     if (s_singleton) {
         [s_singleton stop];
     } else {
