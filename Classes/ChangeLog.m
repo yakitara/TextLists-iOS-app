@@ -1,5 +1,6 @@
 #import "ChangeLog.h"
 #import "ItemsAppDelegate.h"
+#import "NSManagedObjectContextCategories.h"
 
 @implementation ChangeLog 
 

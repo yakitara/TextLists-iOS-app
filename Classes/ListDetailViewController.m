@@ -1,5 +1,6 @@
 #import "ListDetailViewController.h"
 #import "ItemsAppDelegate.h"
+#import "NSManagedObjectContextCategories.h"
 
 @implementation ListDetailViewController
 @synthesize nameCell=_nameCell;

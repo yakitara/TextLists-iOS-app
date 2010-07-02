@@ -1,6 +1,7 @@
 #import "HTTPResource.h"
 #import "ASIHTTPRequest.h"
 #import "JSON.h"
+#import "NSErrorCategories.h"
 
 @interface HTTPResource ()
 + (id)handleRequest:(ASIHTTPRequest *)request;

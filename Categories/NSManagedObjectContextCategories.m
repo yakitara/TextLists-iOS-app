@@ -1,4 +1,6 @@
 #import "NSManagedObjectContextCategories.h"
+#import "NSManagedObjectCategories.h"
+#import "NSErrorCategories.h"
 
 // @interface NSManagedObjectContext ()
 // - (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest;

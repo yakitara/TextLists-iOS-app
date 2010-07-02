@@ -2,6 +2,9 @@
 #import "ItemsViewController.h"
 #import "ListDetailViewController.h"
 #import "ItemsAppDelegate.h"
+#import "NSManagedObjectContextCategories.h"
+#import "UITableViewControllerCategories.h"
+
 #if 1
 #import "ItemContentEditingViewController.h"
 #else

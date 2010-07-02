@@ -2,6 +2,8 @@
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
 #import "Listing.h"
+#import "NSManagedObjectContextCategories.h"
+#import "NSManagedObjectCategories.h"
 
 /*
 enum {

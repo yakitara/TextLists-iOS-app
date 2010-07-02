@@ -1,6 +1,7 @@
 #import "ItemDetailViewController.h"
 #import "ItemsAppDelegate.h"
 #import "ItemContentEditingViewController.h"
+#import "NSManagedObjectContextCategories.h"
 
 @interface ItemDetailViewController ()
 -(void)back;
