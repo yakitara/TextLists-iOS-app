@@ -1,8 +1,7 @@
 // -*-ObjC-*-
 #import <CoreData/CoreData.h>
 
-
-@interface ChangeLog :  NSManagedObject < ChangeLog >
+@interface ChangeLog :  NSManagedObject
 {
 }
 

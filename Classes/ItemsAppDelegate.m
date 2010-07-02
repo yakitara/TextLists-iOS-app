@@ -6,6 +6,11 @@
 #import "Item.h"
 #import "ResourceProtocol.h"
 #import "HTTPResource.h"
+#import "NSManagedObjectContextCategories.h"
+#import "NSManagedObjectCategories.h"
+#import "NSErrorCategories.h"
+#import "NSDateCategories.h"
+
 #define SYNCHRONIZER 1
 #if SYNCHRONIZER
 #import "Synchronizer.h"

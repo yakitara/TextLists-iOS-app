@@ -3,6 +3,9 @@
 #import "NSManagedObjectCategories.h"
 #import "NSManagedObjectContextCategories.h"
 #import "ChangeLog.h"
+#import "NSDateCategories.h"
+#import "ChangeLogProtocol.h"
+#import "EntityNameProtocol.h"
 
 @implementation NSManagedObject ( TimeStamps )
 - (void)setUpdated_at:(id)value {
@@ -95,7 +98,7 @@
 
 @implementation NSManagedObject ( Change )
 - (BOOL)insertChangeLog {
-    if (![(id< ChangeLog >)self needChangeLog]) {
+    if (![self respondsToSelector:@selector(needChangeLog)] || ![(id< ChangeLog >)self needChangeLog]) {
         return NO;
     }
     NSMutableDictionary *change = [self selfChangedValues];
@@ -177,5 +180,13 @@
         }
     }
     return NO;
+}
+@end
+
+@implementation NSManagedObject ( Convenience )
+- (void)setValues:(NSDictionary *)values {
+    for (NSString *key in [values allKeys]) {
+        [self setValue:[values objectForKey:key] forKey:key];
+    }
 }
 @end

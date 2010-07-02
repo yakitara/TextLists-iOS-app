@@ -27,6 +27,17 @@
     [fetchRequest setPredicate:predicate];
     return [self executeFetchRequest:fetchRequest];
 }
+
+- (NSManagedObject *)fetchFirstFromEntityName:(NSString *)entityName withPredicateFormat:(NSString *)predicateFormat argumentArray:(NSArray *)arguments {
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:predicateFormat argumentArray:arguments];
+    [fetchRequest setPredicate:predicate];
+    [fetchRequest setFetchLimit:1];
+    return [[self executeFetchRequest:fetchRequest] lastObject];
+}
+
 /*
 - (NSManagedObject *)fetchFirstFromEntityName:(NSString *)entityName withPredicateFormat:(NSString *)predicateFormat argumentArray:(NSArray *)arguments {
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
@@ -38,7 +49,6 @@
     return [[self executeFetchRequest:fetchRequest] lastObject];
 }
 */
-
 - (NSArray *)executeFetchRequest:(NSFetchRequest *)fetchRequest {
     NSError *error = nil;
     NSArray *records = [self executeFetchRequest:fetchRequest error:&error];

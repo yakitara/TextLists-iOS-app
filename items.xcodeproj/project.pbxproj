@@ -87,6 +87,8 @@
 		6819BA7811BDE18000A37FF5 /* ItemsCoreData 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 3.xcdatamodel"; sourceTree = "<group>"; };
 		682AEE1111C3C5C5008BE7E1 /* HTTPResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPResource.h; sourceTree = "<group>"; };
 		682AEE1211C3C5C5008BE7E1 /* HTTPResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTPResource.m; sourceTree = "<group>"; };
+		683B0B1011DDB2C4001F2AAE /* ChangeLogProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeLogProtocol.h; sourceTree = "<group>"; };
+		683B0B1411DDB5AB001F2AAE /* EntityNameProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityNameProtocol.h; sourceTree = "<group>"; };
 		6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemContentEditingViewController.h; sourceTree = "<group>"; };
 		6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemContentEditingViewController.m; sourceTree = "<group>"; };
 		6885DC331187F2F700B056CB /* ItemsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsViewController.h; sourceTree = "<group>"; };
@@ -211,6 +213,9 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				683B0B1011DDB2C4001F2AAE /* ChangeLogProtocol.h */,
+				6896D10011AE15310014F3EA /* ResourceProtocol.h */,
+				683B0B1411DDB5AB001F2AAE /* EntityNameProtocol.h */,
 				1D3623240D0F684500981E51 /* ItemsAppDelegate.h */,
 				1D3623250D0F684500981E51 /* ItemsAppDelegate.m */,
 				28C286DF0D94DF7D0034E888 /* ListsViewController.h */,
@@ -231,7 +236,6 @@
 				68EA4F0111A95E88002F1FBA /* Item.m */,
 				68A0FFB211D99898007AC834 /* ChangeLog.h */,
 				68A0FFB311D99898007AC834 /* ChangeLog.m */,
-				6896D10011AE15310014F3EA /* ResourceProtocol.h */,
 				6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */,
 				6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */,
 				682AEE1111C3C5C5008BE7E1 /* HTTPResource.h */,

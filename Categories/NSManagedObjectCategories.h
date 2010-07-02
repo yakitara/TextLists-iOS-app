@@ -22,14 +22,12 @@
 - (NSManagedObject *)fetchObjectIdenticalToValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 @end
 
-@protocol ChangeLog
-- (BOOL)needChangeLog;
-@end
-
 @interface NSManagedObject ( Change )
-- (NSDictionary *)selfChangedValues;
+- (BOOL)insertChangeLog;
+- (BOOL)needUpdate;
+- (NSMutableDictionary *)selfChangedValues;
 @end
 
-@protocol EntityName
-+ (NSString *)entityName;
+@interface NSManagedObject ( Convenience )
+- (void)setValues:(NSDictionary *)values;
 @end

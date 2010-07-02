@@ -4,12 +4,16 @@
 #import "Synchronizer.h"
 #import "ChangeLog.h"
 #import "ItemsAppDelegate.h"
+#import "NSManagedObjectContextCategories.h"
+#import "NSManagedObjectCategories.h"
+#import "EntityNameProtocol.h"
 
 static Synchronizer *s_singleton = NULL;
 
 @interface Synchronizer ()
 - (void)postChangeLog:(NSManagedObject *)record;
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth;
+- (void)getChangeLog;
 - (void)stop;
 @end
 
@@ -45,8 +49,8 @@ static Synchronizer *s_singleton = NULL;
     if ([self.postQueue count] > 0) {
         [self postChangeLog:[self.postQueue objectAtIndex:0]];
     } else {
-        //[self getChangeLog];
-        [self stop];
+        [self getChangeLog];
+        //[self stop];
     }
 }
 
@@ -74,11 +78,12 @@ static Synchronizer *s_singleton = NULL;
 
 - (void)postChangeLogRequestFinished:(ASIHTTPRequest *)request {
     if (request.responseStatusCode / 100 == 5) {
+        // TODO: alert the user with error
         [self stop];
-        return;
     } else if (request.responseStatusCode == 403) {
         // Authentication failed. Retry from login phase
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];
+        [self sync];
     } else if(request.responseStatusCode / 100 == 2) {
         NSManagedObject *record = [request.userInfo objectForKey:@"record"];
         NSDictionary *responseValue = [request.responseString JSONValue];
@@ -87,15 +92,15 @@ static Synchronizer *s_singleton = NULL;
             [[record managedObjectContext] deleteObject:record];
         } else {
             // set id for new record
-            [record setValue:[responseValue valueForKey:@"id"] forKey:@"id"];
+            [record setValue:[responseValue valueForKey:@"id"] forKey:@"id"]; // the name of key should be record_id instead
             [record setValue:[NSDate date] forKey:@"synched_at"];
             [[record managedObjectContext] save];
         }
         // remove the object from the queue
         [self.postQueue removeObject:record];
+        // what's next?
+        [self sync];
     }
-    // what's next?
-    [self sync];
 }
 
 - (NSMutableArray *)postQueue {
@@ -122,6 +127,50 @@ static Synchronizer *s_singleton = NULL;
         [m_postQueue addObjectsFromArray:[context executeFetchRequest:fetchRequest]];
     }
     return m_postQueue;
+}
+
+- (void)getChangeLog {
+    NSInteger lastLogId = [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"];
+    
+    NSString *path = [NSString stringWithFormat:@"/api/changes/next/%d", lastLogId];
+    NSURL *url = [[self class] requestURLForPath:path auth:YES];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    [request addRequestHeader:@"Accept" value:@"application/json"];
+    request.delegate = self;
+    request.didFinishSelector = @selector(getChangeLogRequestFinished:);
+    [request startAsynchronous];
+}
+
+- (void)getChangeLogRequestFinished:(ASIHTTPRequest *)request {
+    if (request.responseStatusCode / 100 == 5) {
+        // TODO: alert the user with error
+        [self stop];
+    } else if (request.responseStatusCode == 403) {
+        // Authentication failed. Retry from login phase
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];
+        [self sync];
+    } else if (request.responseStatusCode == 204) { // '204 No Content' means no more log newer than given log id
+        [self stop];
+    } else if(request.responseStatusCode == 200) {
+        NSDictionary *log = [request.responseString JSONValue];
+        //
+        NSManagedObjectContext *context = [UIAppDelegate managedObjectContext];
+        NSString *entityName = [log objectForKey:@"record_type"];
+        NSNumber *record_id = [log objectForKey:@"record_id"];
+        NSManagedObject *record = [context fetchFirstFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObjects:record_id, nil]];
+        if (!record) {
+            record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+        }
+        [record setValues:[[log objectForKey:@"json"] JSONValue]];
+        // update LastLogId
+        NSNumber *lastLogId = [log objectForKey:@"id"];
+        [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
+        // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
+        [context save];
+        // what's next?
+        [self sync];
+    }
 }
 
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {

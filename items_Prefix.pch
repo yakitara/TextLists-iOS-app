@@ -19,9 +19,9 @@
 #define REACHABILITY_20_API 1
 
 // Categories
-#import "NSManagedObjectCategories.h"
-#import "NSManagedObjectContextCategories.h"
-#import "NSErrorCategories.h"
-#import "NSDateCategories.h"
-#import "NSString+Truncate.h"
-#import "UITableViewControllerCategories.h"
+// #import "NSManagedObjectCategories.h"
+// #import "NSManagedObjectContextCategories.h"
+// #import "NSErrorCategories.h"
+// #import "NSDateCategories.h"
+// #import "NSString+Truncate.h"
+// #import "UITableViewControllerCategories.h"

@@ -1,8 +1,7 @@
 // -*-ObjC-*-
 #import <CoreData/CoreData.h>
 #import "ResourceProtocol.h"
-
-@class Listing;
+#import "ChangeLogProtocol.h"
 
 @interface ItemList :  NSManagedObject < ResourceSupport, ChangeLog >
 {
