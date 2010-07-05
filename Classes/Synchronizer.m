@@ -95,6 +95,7 @@ static Synchronizer *s_singleton = NULL;
         if ([record isKindOfClass:[ChangeLog class]]) {
             // delete the change log
             [[record managedObjectContext] deleteObject:record];
+            [[record managedObjectContext] save];
         } else {
             // set id for new record
             [record setValue:[responseValue valueForKey:@"id"] forKey:@"id"]; // the name of key should be record_id instead
