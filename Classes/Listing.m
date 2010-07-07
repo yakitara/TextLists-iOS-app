@@ -41,6 +41,11 @@
 - (void)setItem_id:(NSNumber *)value {
     [self setBelongsToId:value forKey:@"item" entityName:@"Item"];
 }
+
+- (void)setDeleted_at:(id)value {
+    [self setDate:value forKey:@"deleted_at"];
+}
+
 #pragma mark -
 #pragma mark ChangeLog protocol
 - (BOOL)needChangeLog {
