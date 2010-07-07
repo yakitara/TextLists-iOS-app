@@ -7,7 +7,7 @@
     if (isUTC) {
         [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
     } else {
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:sszzz"];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     }
     return dateFormatter;
 }
