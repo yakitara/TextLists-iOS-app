@@ -184,17 +184,22 @@ enum {
         [context refreshObject:self.item mergeChanges:NO];
     }
     [self.item setValue:[m_textView text] forKey:@"content"];
-    //[self.item setTimestamps];
-    // NOTE: assuming only one listing
-    Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
-    // remove lastListing if list is changed
-    if (![self.list isIdentical:[lastListing valueForKey:@"list"]]) {
-        [lastListing done];
-        NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+    Listing *listing = [[self.item valueForKey:@"listings"] anyObject];
+    if (!listing) {
+        listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+        //[[self.item valueForKey:@"listings"] addObject:listing];
         [listing setValue:self.item forKey:@"item"];
-        //[listing setTimestamps];
-        [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
     }
+    [listing setValue:self.list forKey:@"list"];
+//     Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
+//     // remove lastListing if list is changed
+//     if (![self.list isIdentical:[lastListing valueForKey:@"list"]]) {
+//         [lastListing done];
+//         NSManagedObject *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+//         [listing setValue:self.item forKey:@"item"];
+//         //[listing setTimestamps];
+//         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
+//     }
     [context save];
     [context refreshObject:self.list mergeChanges:NO];
     
