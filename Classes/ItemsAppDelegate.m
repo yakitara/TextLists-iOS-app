@@ -219,6 +219,9 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     // Edit the entity name as appropriate.
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"List" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
+    // exclude deleted lists
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deleted_at == nil"];
+    [fetchRequest setPredicate:predicate];
     
     // Set the batch size to a suitable number.
     //[fetchRequest setFetchBatchSize:20];

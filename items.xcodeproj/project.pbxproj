@@ -91,6 +91,7 @@
 		683B0B1411DDB5AB001F2AAE /* EntityNameProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityNameProtocol.h; sourceTree = "<group>"; };
 		6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemContentEditingViewController.h; sourceTree = "<group>"; };
 		6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemContentEditingViewController.m; sourceTree = "<group>"; };
+		686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 5.xcdatamodel"; sourceTree = "<group>"; };
 		6885DC331187F2F700B056CB /* ItemsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsViewController.h; sourceTree = "<group>"; };
 		6885DC341187F2F700B056CB /* ItemsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemsViewController.m; sourceTree = "<group>"; };
 		6885DE6B11886AB600B056CB /* ListDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDetailViewController.h; sourceTree = "<group>"; };
@@ -626,8 +627,9 @@
 				68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */,
 				6819BA7811BDE18000A37FF5 /* ItemsCoreData 3.xcdatamodel */,
 				68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */,
+				686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */,
 			);
-			currentVersion = 68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */;
+			currentVersion = 686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */;
 			path = ItemsCoreData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -4,6 +4,8 @@
 #import "ItemsAppDelegate.h"
 #import "NSManagedObjectContextCategories.h"
 #import "UITableViewControllerCategories.h"
+#import "ItemList.h"
+#import "Listing.h"
 
 #if 1
 #import "ItemContentEditingViewController.h"
@@ -200,7 +202,16 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the managed object for the given index path
         NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+#if 1
+        ItemList *list = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        NSDate *date = [NSDate date];
+        [list setValue:date forKey:@"deleted_at"];
+        for (Listing *listing in [list valueForKey:@"listings"]) {
+            [listing setValue:date forKey:@"deleted_at"];
+        }
+#else
         [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+#endif
         [context save];
     }   
 }
