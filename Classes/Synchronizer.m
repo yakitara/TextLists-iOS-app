@@ -174,6 +174,12 @@ static Synchronizer *s_singleton = NULL;
         [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
         // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
         [context save];
+        // FIXME: Don't do such a entity specific thing here.
+        // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
+        if ([entityName isEqual:@"Listing"]) {
+            [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
+        }
+//        [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
         // what's next?
         [self sync];
     }
