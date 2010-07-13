@@ -170,11 +170,12 @@ static Synchronizer *s_singleton = NULL;
             record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
         }
         [record setValues:[[log objectForKey:@"json"] JSONValue]];
+        // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
+        [context save];
         // update LastLogId
         NSNumber *lastLogId = [log objectForKey:@"id"];
         [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
-        // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
-        [context save];
+        [[NSUserDefaults standardUserDefaults] synchronize];
         // FIXME: Don't do such a entity specific thing here.
         // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
         if ([entityName isEqual:@"Listing"]) {
