@@ -92,6 +92,9 @@
     }
 }
 
+- (void)refreshUI {
+    [[(ListsViewController *)[self.navigationController topViewController] tableView] reloadData];
+}
 
 #pragma mark -
 #pragma mark Core Data stack

@@ -37,6 +37,7 @@ static Synchronizer *s_singleton = NULL;
 - (void)stop {
     self.postQueue = nil;
     [UIAppDelegate.syncActivityIndicator stopAnimating];
+    [UIAppDelegate refreshUI];
 }
 
 - (void)dealloc {

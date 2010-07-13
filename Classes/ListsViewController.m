@@ -6,6 +6,7 @@
 #import "UITableViewControllerCategories.h"
 #import "ItemList.h"
 #import "Listing.h"
+#import "Synchronizer.h"
 
 #if 1
 #import "ItemContentEditingViewController.h"
@@ -43,7 +44,7 @@
         NSMutableArray *toolbarItems = [NSMutableArray array];
         self.toolbarItems = toolbarItems;
         //   sync item button
-        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:UIAppDelegate action:@selector(sync)] autorelease]];
+        [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(sync)] autorelease]];
         //   syncActivityIndicator
         UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
         activityIndicator.hidesWhenStopped = YES;
@@ -126,6 +127,10 @@
     //[self presentModalViewController:itemController animated:YES];
     UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];
     [self presentModalViewController:navigationController animated:YES];
+}
+
+- (void)sync {
+    [Synchronizer sync];
 }
 
 #pragma mark -

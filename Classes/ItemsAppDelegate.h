@@ -20,7 +20,7 @@
 @property (nonatomic, retain) UIActivityIndicatorView *syncActivityIndicator;
 
 - (NSString *)applicationDocumentsDirectory;
-
+- (void)refreshUI;
 @end
 
 #define UIApp [UIApplication sharedApplication]
