@@ -34,7 +34,7 @@
     // edit button
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
     // add button
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject)];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newList)];
     self.navigationItem.rightBarButtonItem = addButton;
     [addButton release];
     
@@ -112,43 +112,16 @@
 
 
 #pragma mark -
-#pragma mark Add a new object
+#pragma mark Actions
 
-- (void)insertNewObject {
-   //TODO: initWithNibName でロードする
-//    ListDetailViewController *listController = [[ListDetailViewController alloc] initWithStyle:UITableViewStylePlain];
+- (void)newList {
     ListDetailViewController *listController = [[ListDetailViewController alloc] initWithNibName:@"ListDetailViewController" bundle:nil];
-
-//    itemsController.selectedRegion = [regions objectAtIndex:indexPath.row];
     [[self navigationController] pushViewController:listController animated:YES];
     [listController release];
-    
-/*    
-    // Create a new instance of the entity managed by the fetched results controller.
-    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
-    
-    // If appropriate, configure the new managed object.
-    [newManagedObject setValue:[NSDate date] forKey:@"timeStamp"];
-    
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-    */
 }
 
 - (void)newItem {
-    //TODO: release itemController
-#if 1
-//    ItemContentEditingViewController *itemController =[[ItemContentEditingViewController alloc] init];
-    ItemContentEditingViewController *itemController = [[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil];
-#else
-    ItemDetailViewController *itemController = [[[ItemDetailViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease];
-#endif
+    ItemContentEditingViewController *itemController = [[[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil] autorelease];
     itemController.list = self.inbox;
     //[self presentModalViewController:itemController animated:YES];
     UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];
