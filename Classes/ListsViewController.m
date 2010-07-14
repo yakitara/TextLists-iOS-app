@@ -292,6 +292,8 @@
 */
 - (NSManagedObject*)inbox {
     if (!m_inbox) {
+        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
+        BOOL saveAllowed = ![context hasChanges];
         for (NSManagedObject *list in [self.fetchedResultsController fetchedObjects]) {
             NSString *listName = [list valueForKey:@"name"];
             if ([listName compare:@"in-box"] == NSOrderedSame) {
@@ -299,12 +301,13 @@
                 return m_inbox;
             }
         }
-        NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
         self.inbox = [NSEntityDescription insertNewObjectForEntityForName:@"List"
                                           inManagedObjectContext:context];
         [self.inbox setValue:@"in-box" forKey:@"name"];
         //[self.inbox setTimestamps];
-        [context save];
+        if (saveAllowed) {
+            [context save];
+        }
     }
     return m_inbox;
 }
