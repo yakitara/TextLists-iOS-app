@@ -14,6 +14,7 @@
 @property (nonatomic, retain) NSDate * created_at;
 @property (nonatomic, retain) NSSet* listings;
 */
++ (NSUInteger)contentMaxLength;
 @end
 
 /*

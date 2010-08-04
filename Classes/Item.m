@@ -10,6 +10,10 @@
 @dynamic created_at;
 @dynamic listings;
 */
++ (NSUInteger)contentMaxLength {
+    return 4000; //TODO:
+}
+
 + (NSString *)resourcePath {
     return @"/api/items";
 }

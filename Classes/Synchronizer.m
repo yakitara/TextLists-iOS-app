@@ -189,10 +189,10 @@ static Synchronizer *s_singleton = NULL;
 
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
     // FIXME: use preferences or...
-#if __arm__
-    NSString *baseURLString = [NSString stringWithFormat:@"http://items.yakitara.com:8000%@", path];
+#if TARGET_IPHONE_SIMULATOR
+    NSString *baseURLString = [NSString stringWithFormat:@"http://local.items.yakitara.com:3000%@", path];
 #else
-    NSString *baseURLString = [NSString stringWithFormat:@"http://localhost:3000%@", path];
+    NSString *baseURLString = [NSString stringWithFormat:@"http://textlists.yakitara.com%@", path];
 #endif
     if (auth) {
         NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];

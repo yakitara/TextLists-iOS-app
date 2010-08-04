@@ -11,6 +11,7 @@
     BOOL keyboardShown;
     IBOutlet id m_textView;
     IBOutlet id m_listButton;
+    IBOutlet id m_characterCounterLabel;
 }
 @property (nonatomic, retain) NSManagedObject *item;
 @property (nonatomic, retain) NSManagedObject *list;

@@ -2,6 +2,7 @@
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
 #import "Listing.h"
+#import "Item.h"
 #import "NSManagedObjectContextCategories.h"
 #import "NSManagedObjectCategories.h"
 
@@ -49,9 +50,6 @@ enum {
         // show keyboard for new item
         [m_textView becomeFirstResponder];
     }
-    // represent item and list
-    [m_textView setText:[self.item valueForKey:@"content"]];
-    [self updateListView];
     
     // cancel button
     UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)] autorelease];
@@ -59,6 +57,11 @@ enum {
     //   save button
     UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
     self.navigationItem.rightBarButtonItem = button;
+    
+    // represent item and list
+    [m_textView setText:[self.item valueForKey:@"content"]];
+    [self updateListView];
+    [self textViewDidChange:m_textView];
 
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -200,10 +203,9 @@ enum {
 //         //[listing setTimestamps];
 //         [[self.list mutableSetValueForKeyPath:@"listings"] addObject:listing];
 //     }
+    
     [context save];
     [context refreshObject:self.list mergeChanges:NO];
-    
-//    [self.navigationController popViewControllerAnimated:YES];
     // back where from
     if ([self.delegate respondsToSelector:@selector(itemContentEditingViewController:didSaveItem:)]) {
         [self.delegate itemContentEditingViewController:self didSaveItem:self.item];
@@ -262,6 +264,19 @@ enum {
 //    self.segmented = nil;
     [super dealloc];
 }
+
+#pragma mark -
+#pragma mark UITextView delegate methods
+- (void)textViewDidChange:(UITextView *)textView {
+    NSInteger count = [Item contentMaxLength] - [textView.text length];
+    [m_characterCounterLabel setText:[NSString stringWithFormat:@"%d", count]];
+    [m_characterCounterLabel setHighlighted:(count < 0)];
+    //[self.item setValue:[textView text] forKey:@"content"];
+    NSError *error;
+    NSString *value = [textView text];
+    self.navigationItem.rightBarButtonItem.enabled = [self.item validateValue:&value forKey:@"content" error:&error];
+}
+
 
 #pragma mark -
 #pragma mark keyboard notifications
