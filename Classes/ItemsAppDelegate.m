@@ -163,7 +163,8 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     }
     //int dbrc = sqlite3_prepare_v2(db, ".dump", -1, &dbps, NULL);
     //sqlite3_finalize(dbps);
-    if (SQLITE_ABORT == sqlite3_exec(db, "SELECT zcontent FROM zitem;", sqlite3_exec_callback, NULL, NULL)) {
+//    if (SQLITE_ABORT == sqlite3_exec(db, "SELECT zcontent FROM zitem;", sqlite3_exec_callback, NULL, NULL)) {
+    if (SQLITE_ABORT == sqlite3_exec(db, "UPDATE zitem SET zcontent = ' ' WHERE zcontent = '' OR zcontent IS NULL;", sqlite3_exec_callback, NULL, NULL)) {
         NSLog(@"couldn't exec.");
         abort();
     }
