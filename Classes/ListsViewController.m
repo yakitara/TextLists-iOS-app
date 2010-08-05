@@ -101,13 +101,16 @@
 
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    
     NSManagedObject *managedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = [[managedObject valueForKey:@"name"] description];
-    if ([[self.checkedList objectID] isEqual:[managedObject objectID]]) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    if (self.checkedList) {
+        if ([[self.checkedList objectID] isEqual:[managedObject objectID]]) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
     } else {
-        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 }
 
