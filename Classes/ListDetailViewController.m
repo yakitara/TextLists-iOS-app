@@ -1,6 +1,7 @@
 #import "ListDetailViewController.h"
 #import "ItemsAppDelegate.h"
 #import "NSManagedObjectContextCategories.h"
+#import "ItemList.h"
 
 @implementation ListDetailViewController
 @synthesize nameCell=_nameCell;
@@ -121,6 +122,22 @@
     return YES;
 }
 */
+
+#pragma mark -
+#pragma mark Text view delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    NSUInteger maxLength = [ItemList nameMaxLength];
+    if ([textField.text length] <= maxLength) {
+        return YES;
+    } else {
+        NSString *msg = [NSString stringWithFormat:@"Name is too long (maximum is %d characters)", maxLength];
+        UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"" message:msg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] autorelease];
+        [alert show];   
+        return NO;
+    }
+
+}
 
 
 #pragma mark -

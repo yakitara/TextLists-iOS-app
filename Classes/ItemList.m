@@ -11,6 +11,9 @@
 @dynamic updated_at;
 @dynamic listings;
 */
++ (NSUInteger)nameMaxLength {
+    return 20;
+}
 
 + (NSString *)resourcePath {
     return @"/api/lists";
