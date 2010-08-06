@@ -56,7 +56,6 @@
 		68C5A2FF11AB65DD00753370 /* NSManagedObjectContextCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */; };
 		68C5A31E11AB94B900753370 /* NSErrorCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A31D11AB94B900753370 /* NSErrorCategories.m */; };
 		68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A36611ABB92C00753370 /* NSDateCategories.m */; };
-		68D17CDA120AF95600904723 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 68D17CD9120AF95600904723 /* Default.png */; };
 		68D17D2B120BC68500904723 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 68D17D2A120BC68500904723 /* iTunesArtwork */; };
 		68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */; };
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
@@ -76,7 +75,6 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* ItemsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* ItemsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemsAppDelegate.m; sourceTree = "<group>"; };
-		1D6058910D05DD3D006BFB54 /* items.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = items.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28860B760F44E54D00985440 /* ItemsCoreData.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = ItemsCoreData.xcdatamodel; sourceTree = "<group>"; };
 		28860BE40F44EE6400985440 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -95,6 +93,7 @@
 		6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemContentEditingViewController.h; sourceTree = "<group>"; };
 		6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemContentEditingViewController.m; sourceTree = "<group>"; };
 		686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 5.xcdatamodel"; sourceTree = "<group>"; };
+		68780038120BE33100562343 /* items.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = items.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885DC331187F2F700B056CB /* ItemsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsViewController.h; sourceTree = "<group>"; };
 		6885DC341187F2F700B056CB /* ItemsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemsViewController.m; sourceTree = "<group>"; };
 		6885DE6B11886AB600B056CB /* ListDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDetailViewController.h; sourceTree = "<group>"; };
@@ -168,7 +167,6 @@
 		68C5A31D11AB94B900753370 /* NSErrorCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSErrorCategories.m; path = ../Categories/NSErrorCategories.m; sourceTree = "<group>"; };
 		68C5A36511ABB92C00753370 /* NSDateCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSDateCategories.h; path = Categories/NSDateCategories.h; sourceTree = SOURCE_ROOT; };
 		68C5A36611ABB92C00753370 /* NSDateCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSDateCategories.m; path = Categories/NSDateCategories.m; sourceTree = SOURCE_ROOT; };
-		68D17CD9120AF95600904723 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		68D17D2A120BC68500904723 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		68DF15FF11B4BF0400E84BD2 /* NSString+Truncate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Truncate.h"; sourceTree = "<group>"; };
 		68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Truncate.m"; sourceTree = "<group>"; };
@@ -256,7 +254,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* items.app */,
+				68780038120BE33100562343 /* items.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -296,7 +294,6 @@
 				6885DE6D11886AB600B056CB /* ListDetailViewController.xib */,
 				68F74379118C6799008399A7 /* ItemDetailViewController.xib */,
 				8D1107310486CEB800E47090 /* items-Info.plist */,
-				68D17CD9120AF95600904723 /* Default.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -447,7 +444,7 @@
 			);
 			name = items;
 			productName = ItemsCoreData;
-			productReference = 1D6058910D05DD3D006BFB54 /* items.app */;
+			productReference = 68780038120BE33100562343 /* items.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -484,7 +481,6 @@
 				6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */,
 				68F7437B118C6799008399A7 /* ItemDetailViewController.xib in Resources */,
 				68B5A00C1207DD4200303B30 /* app_57.png in Resources */,
-				68D17CDA120AF95600904723 /* Default.png in Resources */,
 				68D17D2B120BC68500904723 /* iTunesArtwork in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -553,7 +549,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hiroshi Saito";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hiroshi Saito (7CP3DWFH9B)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -561,11 +557,42 @@
 				GCC_PREFIX_HEADER = items_Prefix.pch;
 				INFOPLIST_FILE = "items-Info.plist";
 				PRODUCT_NAME = items;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "86F21FD4-CE6C-4972-BD10-91A4B97FC803";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E7C7D151-266D-461F-92FF-74FC1B174A7B";
 			};
 			name = Debug;
 		};
 		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hiroshi Saito (7CP3DWFH9B)";
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = items_Prefix.pch;
+				INFOPLIST_FILE = "items-Info.plist";
+				PRODUCT_NAME = items;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E7C7D151-266D-461F-92FF-74FC1B174A7B";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6878004A120BE36500562343 /* AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hiroshi Saito";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C6E2EDD1-AEAB-40BC-81C5-2810C10B31ED";
+				SDKROOT = iphoneos4.0;
+			};
+			name = AppStore;
+		};
+		6878004B120BE36500562343 /* AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -575,10 +602,10 @@
 				GCC_PREFIX_HEADER = items_Prefix.pch;
 				INFOPLIST_FILE = "items-Info.plist";
 				PRODUCT_NAME = items;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "86F21FD4-CE6C-4972-BD10-91A4B97FC803";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "C6E2EDD1-AEAB-40BC-81C5-2810C10B31ED";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = AppStore;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -599,13 +626,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hiroshi Saito (7CP3DWFH9B)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E7C7D151-266D-461F-92FF-74FC1B174A7B";
 				SDKROOT = iphoneos4.0;
 			};
 			name = Release;
@@ -618,6 +646,7 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+				6878004B120BE36500562343 /* AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -627,6 +656,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				6878004A120BE36500562343 /* AppStore */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
