@@ -192,7 +192,10 @@ enum {
         listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
         //[[self.item valueForKey:@"listings"] addObject:listing];
         [listing setValue:self.item forKey:@"item"];
+    } else if (![[listing valueForKey:@"list"] isEqual:self.list]) { // if list is changed
+        [listing setValue:[NSNumber numberWithInt:0] forKey:@"position"];
     }
+
     [listing setValue:self.list forKey:@"list"];
 //     Listing *lastListing = [[self.item valueForKey:@"fetchedListings"] lastObject];
 //     // remove lastListing if list is changed

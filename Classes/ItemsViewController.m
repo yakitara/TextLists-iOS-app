@@ -76,7 +76,7 @@
     NSFetchedPropertyDescription *fetchedDesc = [[[self.list entity] propertiesByName] objectForKey:@"fetchedListings"];
     NSFetchRequest *fetchRequest = [fetchedDesc fetchRequest];
     NSSortDescriptor *positionSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
-    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"created_at" ascending:NO] autorelease];
+    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"updated_at" ascending:NO] autorelease];
     NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:positionSortDescriptor, createdSortDescriptor, nil] autorelease];
     [fetchRequest setSortDescriptors:sortDescriptors];
     // eager loading listings.item
