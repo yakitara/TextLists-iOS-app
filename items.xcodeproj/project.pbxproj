@@ -61,7 +61,6 @@
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
 		68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4EC011A8D01E002F1FBA /* Listing.m */; };
 		68EA4F0211A95E88002F1FBA /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4F0111A95E88002F1FBA /* Item.m */; };
-		68F7437A118C6799008399A7 /* ItemDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F74378118C6799008399A7 /* ItemDetailViewController.m */; };
 		68F7437B118C6799008399A7 /* ItemDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 68F74379118C6799008399A7 /* ItemDetailViewController.xib */; };
 		68F7BB4B11A4D9430026480C /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F7BB4011A4D9430026480C /* NSObject+SBJSON.m */; };
 		68F7BB4C11A4D9430026480C /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F7BB4211A4D9430026480C /* NSString+SBJSON.m */; };
@@ -176,8 +175,6 @@
 		68EA4EC011A8D01E002F1FBA /* Listing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Listing.m; sourceTree = "<group>"; };
 		68EA4F0011A95E88002F1FBA /* Item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Item.h; sourceTree = "<group>"; };
 		68EA4F0111A95E88002F1FBA /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Item.m; sourceTree = "<group>"; };
-		68F74377118C6799008399A7 /* ItemDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemDetailViewController.h; sourceTree = "<group>"; };
-		68F74378118C6799008399A7 /* ItemDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemDetailViewController.m; sourceTree = "<group>"; };
 		68F74379118C6799008399A7 /* ItemDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ItemDetailViewController.xib; sourceTree = "<group>"; };
 		68F7BB3E11A4D9430026480C /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		68F7BB3F11A4D9430026480C /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
@@ -229,8 +226,6 @@
 				6885DC341187F2F700B056CB /* ItemsViewController.m */,
 				6885DE6B11886AB600B056CB /* ListDetailViewController.h */,
 				6885DE6C11886AB600B056CB /* ListDetailViewController.m */,
-				68F74377118C6799008399A7 /* ItemDetailViewController.h */,
-				68F74378118C6799008399A7 /* ItemDetailViewController.m */,
 				6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */,
 				6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */,
 				68EA4EBF11A8D01E002F1FBA /* Listing.h */,
@@ -498,7 +493,6 @@
 				28D3F202112F7DC200FD0661 /* ItemsCoreData.xcdatamodeld in Sources */,
 				6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */,
 				6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */,
-				68F7437A118C6799008399A7 /* ItemDetailViewController.m in Sources */,
 				6849C4DE1191532900DA0D9B /* ItemContentEditingViewController.m in Sources */,
 				68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */,
 				68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */,
@@ -611,13 +605,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hiroshi Saito (7CP3DWFH9B)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1.3;
 				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E7C7D151-266D-461F-92FF-74FC1B174A7B";
 				SDKROOT = iphoneos4.0;
 			};
 			name = Debug;

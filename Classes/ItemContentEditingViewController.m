@@ -47,16 +47,22 @@ enum {
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
         self.item = [NSEntityDescription insertNewObjectForEntityForName:@"Item"
                                          inManagedObjectContext:context];
-        // show keyboard for new item
-        [m_textView becomeFirstResponder];
+//         // show keyboard for new item
+//         [m_textView setEditable:YES];
+//         [m_textView becomeFirstResponder];
+//         //   save button
+//         UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
+//         self.navigationItem.rightBarButtonItem = button;
+        [self edit];
+    } else {
+        [m_textView setEditable:NO];
+        UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(edit)] autorelease];
+        self.navigationItem.rightBarButtonItem = button;
     }
     
     // cancel button
     UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)] autorelease];
     self.navigationItem.leftBarButtonItem = cancelButton;
-    //   save button
-    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
-    self.navigationItem.rightBarButtonItem = button;
     
     // represent item and list
     [m_textView setText:[self.item valueForKey:@"content"]];
@@ -209,9 +215,32 @@ enum {
     // back where from
     if ([self.delegate respondsToSelector:@selector(itemContentEditingViewController:didSaveItem:)]) {
         [self.delegate itemContentEditingViewController:self didSaveItem:self.item];
-    } else {
-        [self back];
+//    } else {
+//        [self back];
     }
+    //
+    [m_textView resignFirstResponder];
+    [m_textView setEditable:NO];
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(edit)] autorelease];
+    self.navigationItem.rightBarButtonItem = button;
+    // back height of view animating
+    [UIView beginAnimations: @"back height" context: nil];
+    [UIView setAnimationDelegate: self];
+    [UIView setAnimationDuration: 0.5];
+    [UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
+    CGRect frame = self.view.frame;
+    frame.size.height += keyboardHeight;
+    self.view.frame = frame;
+    [UIView commitAnimations];
+}
+
+- (void)edit {
+    // show keyboard for new item
+    [m_textView setEditable:YES];
+    //[m_textView becomeFirstResponder];
+    //   save button
+    UIBarButtonItem *button = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(save)] autorelease];
+    self.navigationItem.rightBarButtonItem = button;
 }
 
 - (void)cancel {
@@ -267,6 +296,15 @@ enum {
 
 #pragma mark -
 #pragma mark UITextView delegate methods
+/*
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    [m_textView setDataDetectorTypes:UIDataDetectorTypeNone];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    [m_textView setDataDetectorTypes:UIDataDetectorTypeAll];
+}
+*/
 - (void)textViewDidChange:(UITextView *)textView {
     NSInteger count = [Item contentMaxLength] - [textView.text length];
     [m_characterCounterLabel setText:[NSString stringWithFormat:@"%d", count]];
@@ -283,34 +321,40 @@ enum {
 
 - (void)keyboardWasShown:(NSNotification*)aNotification
 {
-    if (keyboardShown)
+    if (keyboardHeight > 0.0)
         return;
-    
-    NSDictionary* info = [aNotification userInfo];
-    
     // Get the size of the keyboard.
+    NSDictionary* info = [aNotification userInfo];
     NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
     CGSize keyboardSize = [aValue CGRectValue].size;
-    
     // Resize the scroll view (which is the root view of the window)
-#if 0
-    CGRect viewFrame = [m_textView frame];
-    viewFrame.size.height -= keyboardSize.height;
-    [m_textView setFrame:viewFrame];
-#else
     CGRect viewFrame = [self.view frame];
     viewFrame.size.height -= keyboardSize.height;
     self.view.frame = viewFrame;
-#endif
-/* 
-    // Scroll the active text field into view.
-    CGRect textFieldRect = [activeField frame];
-    [scrollView scrollRectToVisible:textFieldRect animated:YES];
-    */
-    keyboardShown = YES;
+    keyboardHeight = keyboardSize.height;
 }
 
 - (void)keyboardWasHidden:(NSNotification*)aNotification {
-    keyboardShown = NO;
+    if (keyboardHeight == 0.0)
+        return;
+/*
+    // Get the size of the keyboard.
+    NSDictionary* info = [aNotification userInfo];
+    NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+    CGSize keyboardSize = [aValue CGRectValue].size;
+    // Resize the scroll view (which is the root view of the window)
+    CGRect viewFrame = [self.view frame];
+    viewFrame.size.height += keyboardSize.height;
+    //[self.view.layer setFrame:viewFrame];
+    
+    
+    [UIView beginAnimations: @"moveField" context: nil];
+    [UIView setAnimationDelegate: self];
+    [UIView setAnimationDuration: 0.5];
+    [UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
+    self.view.frame = viewFrame;
+    [UIView commitAnimations];
+*/
+    keyboardHeight = 0.0;
 }
 @end

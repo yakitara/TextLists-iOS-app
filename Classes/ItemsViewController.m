@@ -242,12 +242,12 @@
 - (void)itemContentEditingViewController:(ItemContentEditingViewController *)controller didSaveItem:(NSManagedObject *)item {
     [UIAppDelegate.managedObjectContext refreshObject:self.list mergeChanges:NO];
     [self.tableView reloadData];
-    //REFACTOR: DRY with -[ItemDetailViewController back]
-    if (self.parentViewController.modalViewController) {
-        [self dismissModalViewControllerAnimated:YES];
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
+//    //REFACTOR: DRY with -[ItemDetailViewController back]
+//    if (self.parentViewController.modalViewController) {
+//        [self dismissModalViewControllerAnimated:YES];
+//    } else {
+//        [self.navigationController popViewControllerAnimated:YES];
+//    }
 }
 
 

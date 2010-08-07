@@ -1,6 +1,6 @@
 // ;-*-ObjC-*-
 #import <UIKit/UIKit.h>
-#import "ItemDetailViewController.h"
+//#import "ItemDetailViewController.h"
 #import "ItemContentEditingViewController.h"
 
 @interface ItemsViewController : UITableViewController <ItemContentEditingDelegate> {

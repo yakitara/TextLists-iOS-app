@@ -8,7 +8,8 @@
     NSManagedObject *m_list;
     id <ItemContentEditingDelegate> m_delegate;
 //    UISegmentedControl *m_segmented;    
-    BOOL keyboardShown;
+//    BOOL keyboardShown;
+    CGFloat keyboardHeight;
     IBOutlet id m_textView;
     IBOutlet id m_listButton;
     IBOutlet id m_characterCounterLabel;
