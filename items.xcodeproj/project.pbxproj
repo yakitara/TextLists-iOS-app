@@ -61,8 +61,6 @@
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
 		68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4EC011A8D01E002F1FBA /* Listing.m */; };
 		68EA4F0211A95E88002F1FBA /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4F0111A95E88002F1FBA /* Item.m */; };
-		68F7437A118C6799008399A7 /* ItemDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F74378118C6799008399A7 /* ItemDetailViewController.m */; };
-		68F7437B118C6799008399A7 /* ItemDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 68F74379118C6799008399A7 /* ItemDetailViewController.xib */; };
 		68F7BB4B11A4D9430026480C /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F7BB4011A4D9430026480C /* NSObject+SBJSON.m */; };
 		68F7BB4C11A4D9430026480C /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F7BB4211A4D9430026480C /* NSString+SBJSON.m */; };
 		68F7BB4D11A4D9430026480C /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F7BB4411A4D9430026480C /* SBJSON.m */; };
@@ -176,9 +174,6 @@
 		68EA4EC011A8D01E002F1FBA /* Listing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Listing.m; sourceTree = "<group>"; };
 		68EA4F0011A95E88002F1FBA /* Item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Item.h; sourceTree = "<group>"; };
 		68EA4F0111A95E88002F1FBA /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Item.m; sourceTree = "<group>"; };
-		68F74377118C6799008399A7 /* ItemDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemDetailViewController.h; sourceTree = "<group>"; };
-		68F74378118C6799008399A7 /* ItemDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemDetailViewController.m; sourceTree = "<group>"; };
-		68F74379118C6799008399A7 /* ItemDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ItemDetailViewController.xib; sourceTree = "<group>"; };
 		68F7BB3E11A4D9430026480C /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		68F7BB3F11A4D9430026480C /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
 		68F7BB4011A4D9430026480C /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
@@ -229,8 +224,6 @@
 				6885DC341187F2F700B056CB /* ItemsViewController.m */,
 				6885DE6B11886AB600B056CB /* ListDetailViewController.h */,
 				6885DE6C11886AB600B056CB /* ListDetailViewController.m */,
-				68F74377118C6799008399A7 /* ItemDetailViewController.h */,
-				68F74378118C6799008399A7 /* ItemDetailViewController.m */,
 				6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */,
 				6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */,
 				68EA4EBF11A8D01E002F1FBA /* Listing.h */,
@@ -292,7 +285,6 @@
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				2899E55F0DE3E45000AC0155 /* ListsViewController.xib */,
 				6885DE6D11886AB600B056CB /* ListDetailViewController.xib */,
-				68F74379118C6799008399A7 /* ItemDetailViewController.xib */,
 				8D1107310486CEB800E47090 /* items-Info.plist */,
 			);
 			name = Resources;
@@ -479,7 +471,6 @@
 				28AD73600D9D9599002E5188 /* MainWindow.xib in Resources */,
 				2899E5600DE3E45000AC0155 /* ListsViewController.xib in Resources */,
 				6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */,
-				68F7437B118C6799008399A7 /* ItemDetailViewController.xib in Resources */,
 				68B5A00C1207DD4200303B30 /* app_57.png in Resources */,
 				68D17D2B120BC68500904723 /* iTunesArtwork in Resources */,
 			);
@@ -498,7 +489,6 @@
 				28D3F202112F7DC200FD0661 /* ItemsCoreData.xcdatamodeld in Sources */,
 				6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */,
 				6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */,
-				68F7437A118C6799008399A7 /* ItemDetailViewController.m in Sources */,
 				6849C4DE1191532900DA0D9B /* ItemContentEditingViewController.m in Sources */,
 				68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */,
 				68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */,
