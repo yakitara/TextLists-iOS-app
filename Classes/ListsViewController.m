@@ -7,12 +7,7 @@
 #import "ItemList.h"
 #import "Listing.h"
 #import "Synchronizer.h"
-
-#if 1
 #import "ItemContentEditingViewController.h"
-#else
-#import "ItemDetailViewController.h"
-#endif
 
 @interface ListsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -125,7 +120,7 @@
 }
 
 - (void)newItem {
-    ItemContentEditingViewController *itemController = [[[ItemContentEditingViewController alloc] initWithNibName:@"ItemDetailViewController" bundle:nil] autorelease];
+    ItemContentEditingViewController *itemController = [[[ItemContentEditingViewController alloc] initWithNibName:nil bundle:nil] autorelease];
     itemController.list = self.inbox;
     //[self presentModalViewController:itemController animated:YES];
     UINavigationController *navigationController = [[[UINavigationController alloc] initWithRootViewController:itemController] autorelease];

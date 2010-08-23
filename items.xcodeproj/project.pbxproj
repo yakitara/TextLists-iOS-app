@@ -19,6 +19,7 @@
 		28D3F202112F7DC200FD0661 /* ItemsCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 28D3F201112F7DC200FD0661 /* ItemsCoreData.xcdatamodeld */; };
 		682AEE1311C3C5C5008BE7E1 /* HTTPResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 682AEE1211C3C5C5008BE7E1 /* HTTPResource.m */; };
 		6849C4DE1191532900DA0D9B /* ItemContentEditingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */; };
+		6853E4DA1222B98F00E392EA /* ItemContentEditingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6853E4D91222B98F00E392EA /* ItemContentEditingViewController.xib */; };
 		6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DC341187F2F700B056CB /* ItemsViewController.m */; };
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
@@ -90,6 +91,7 @@
 		683B0B1411DDB5AB001F2AAE /* EntityNameProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityNameProtocol.h; sourceTree = "<group>"; };
 		6849C4DC1191532900DA0D9B /* ItemContentEditingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemContentEditingViewController.h; sourceTree = "<group>"; };
 		6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemContentEditingViewController.m; sourceTree = "<group>"; };
+		6853E4D91222B98F00E392EA /* ItemContentEditingViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ItemContentEditingViewController.xib; sourceTree = "<group>"; };
 		686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 5.xcdatamodel"; sourceTree = "<group>"; };
 		68780038120BE33100562343 /* items.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = items.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885DC331187F2F700B056CB /* ItemsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemsViewController.h; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				2899E55F0DE3E45000AC0155 /* ListsViewController.xib */,
 				6885DE6D11886AB600B056CB /* ListDetailViewController.xib */,
+				6853E4D91222B98F00E392EA /* ItemContentEditingViewController.xib */,
 				8D1107310486CEB800E47090 /* items-Info.plist */,
 			);
 			name = Resources;
@@ -473,6 +476,7 @@
 				6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */,
 				68B5A00C1207DD4200303B30 /* app_57.png in Resources */,
 				68D17D2B120BC68500904723 /* iTunesArtwork in Resources */,
+				6853E4DA1222B98F00E392EA /* ItemContentEditingViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
