@@ -67,6 +67,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    // To avoid inconsistency of list order between the view and the data when
+    // a list is added, force to refresh the table view.
+    [self.tableView reloadData];
     [self.navigationController setToolbarHidden:(self.checkedList ? YES : NO) animated:NO];
 }
 
