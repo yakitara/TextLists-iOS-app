@@ -26,6 +26,9 @@
 		6886FB3811BBC959007D360F /* UITableViewControllerCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 6886FB3711BBC959007D360F /* UITableViewControllerCategories.m */; };
 		6891FBE211AF52B000B3C8A4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */; };
 		6891FD8811B2A47000B3C8A4 /* DelegatingFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */; };
+		68924699134BE85100DD4AE3 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 68924698134BE85100DD4AE3 /* Settings.bundle */; };
+		6892469B134BEC3300DD4AE3 /* AppDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6892469A134BEC3300DD4AE3 /* AppDefaults.plist */; };
+		689246A6134BF11D00DD4AE3 /* NSUserDefaults+.m in Sources */ = {isa = PBXBuildFile; fileRef = 689246A5134BF11D00DD4AE3 /* NSUserDefaults+.m */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FF9D11D98734007AC834 /* Synchronizer.m */; };
 		68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FFB311D99898007AC834 /* ChangeLog.m */; };
@@ -104,6 +107,10 @@
 		6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		6891FD8611B2A47000B3C8A4 /* DelegatingFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelegatingFetchedResultsController.h; sourceTree = "<group>"; };
 		6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegatingFetchedResultsController.m; sourceTree = "<group>"; };
+		68924698134BE85100DD4AE3 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		6892469A134BEC3300DD4AE3 /* AppDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppDefaults.plist; sourceTree = "<group>"; };
+		689246A4134BF11D00DD4AE3 /* NSUserDefaults+.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "NSUserDefaults+.h"; sourceTree = "<group>"; };
+		689246A5134BF11D00DD4AE3 /* NSUserDefaults+.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+.m"; sourceTree = "<group>"; };
 		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
 		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
 		6896D10011AE15310014F3EA /* ResourceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceProtocol.h; sourceTree = "<group>"; };
@@ -289,6 +296,8 @@
 				6885DE6D11886AB600B056CB /* ListDetailViewController.xib */,
 				6853E4D91222B98F00E392EA /* ItemContentEditingViewController.xib */,
 				8D1107310486CEB800E47090 /* items-Info.plist */,
+				68924698134BE85100DD4AE3 /* Settings.bundle */,
+				6892469A134BEC3300DD4AE3 /* AppDefaults.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -398,6 +407,8 @@
 				68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */,
 				6886FB3611BBC959007D360F /* UITableViewControllerCategories.h */,
 				6886FB3711BBC959007D360F /* UITableViewControllerCategories.m */,
+				689246A4134BF11D00DD4AE3 /* NSUserDefaults+.h */,
+				689246A5134BF11D00DD4AE3 /* NSUserDefaults+.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -478,6 +489,8 @@
 				68B5A00C1207DD4200303B30 /* app_57.png in Resources */,
 				68D17D2B120BC68500904723 /* iTunesArtwork in Resources */,
 				6853E4DA1222B98F00E392EA /* ItemContentEditingViewController.xib in Resources */,
+				68924699134BE85100DD4AE3 /* Settings.bundle in Resources */,
+				6892469B134BEC3300DD4AE3 /* AppDefaults.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +547,7 @@
 				682AEE1311C3C5C5008BE7E1 /* HTTPResource.m in Sources */,
 				68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */,
 				68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */,
+				689246A6134BF11D00DD4AE3 /* NSUserDefaults+.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

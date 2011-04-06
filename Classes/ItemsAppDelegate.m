@@ -10,6 +10,7 @@
 #import "NSManagedObjectCategories.h"
 #import "NSErrorCategories.h"
 #import "NSDateCategories.h"
+#import "NSUserDefaults+.h"
 
 #define SYNCHRONIZER 1
 #if SYNCHRONIZER
@@ -42,7 +43,10 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [NSUserDefaults registerAppDefaults:@"AppDefaults"];
+    //[NSUserDefaults resetToAppDefaults];
+    NSLog(@"defaults:%@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     NSLog(@"launchOptions:%@", launchOptions);
     // handle url
     NSURL *url = [launchOptions objectForKey:@"UIApplicationLaunchOptionsURLKey"];

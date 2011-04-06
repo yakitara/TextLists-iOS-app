@@ -195,22 +195,25 @@ static Synchronizer *s_singleton = NULL;
 
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
     // FIXME: use preferences or...
-#if TARGET_IPHONE_SIMULATOR
-    NSString *baseURLString = [NSString stringWithFormat:@"http://local.items.yakitara.com:3000%@", path];
-#else
-    NSString *baseURLString = [NSString stringWithFormat:@"http://textlists.yakitara.com%@", path];
-#endif
+// #if TARGET_IPHONE_SIMULATOR
+//     NSString *baseURLString = [NSString stringWithFormat:@"http://local.items.yakitara.com:3000%@", path];
+// #else
+//     NSString *baseURLString = [NSString stringWithFormat:@"http://textlists.yakitara.com%@", path];
+// #endif
+    NSURL *rootURL = [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"WebServiceURL"]];
+    NSURL *url = [NSURL URLWithString:path relativeToURL:rootURL];
     if (auth) {
         NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
         NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
         if (key) {
-            return [NSURL URLWithString:[NSString stringWithFormat:@"%@?user_id=%@&key=%@", baseURLString, user_id, key]];
+            //return [NSURL URLWithString:[NSString stringWithFormat:@"%@?user_id=%@&key=%@", baseURLString, user_id, key]];
+            url = [NSURL URLWithString:[NSString stringWithFormat:@"?user_id=%@&key=%@", user_id, key] relativeToURL:url];
         } else {
-            return nil;
+            url = nil;
         }
-    } else {
-        return [NSURL URLWithString:baseURLString];
     }
+    // NOTE: I don' know why, but an URL created by URLWithString:relativeToURL: cannot be opend with -[UIApplication openURL]
+    return [NSURL URLWithString:[url absoluteString]];
 }
 
 @end
