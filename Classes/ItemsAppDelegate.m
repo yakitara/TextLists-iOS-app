@@ -118,6 +118,11 @@
     return m_managedObjectContext;
 }
 
+// - (void)resetManagedObjectContext {
+//     [m_managedObjectModel release];
+//     m_managedObjectModel = nil;
+// }
+
 /**
  Returns the managed object model for the application.
  If the model doesn't already exist, it is created by merging all of the models found in the application bundle.

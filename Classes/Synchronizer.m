@@ -172,6 +172,9 @@ static Synchronizer *s_singleton = NULL;
         [record setValues:[[log objectForKey:@"json"] JSONValue]];
         // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
         [context save];
+        
+        //[context processPendingChanges];
+        
         // update LastLogId
         NSNumber *lastLogId = [log objectForKey:@"id"];
         [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
@@ -182,6 +185,9 @@ static Synchronizer *s_singleton = NULL;
             [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
         }
 //        [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
+        
+//        [UIAppDelegate resetManagedObjectContext];
+        
         // what's next?
         [self sync];
     }

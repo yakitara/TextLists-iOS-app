@@ -58,6 +58,9 @@
         NSLog(@"Fetching %@ failed:%@, $@", entityName, error, [error userInfo]);
         abort();
     }
+    if ([records count] == 0) {
+        NSLog(@"[setBelongsToId:%@ forKey:%@ entityName:%@] not found a record.", value, key, entityName);
+    }
     // set CoreData relation
     [self setValue:[records lastObject] forKey:key];
 }
