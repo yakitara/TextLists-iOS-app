@@ -62,6 +62,7 @@
 		68C5A36711ABB92C00753370 /* NSDateCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C5A36611ABB92C00753370 /* NSDateCategories.m */; };
 		68D17D2B120BC68500904723 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 68D17D2A120BC68500904723 /* iTunesArtwork */; };
 		68DF160111B4BF0400E84BD2 /* NSString+Truncate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */; };
+		68E70425134D80A4003F848B /* app_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 68E70424134D80A4003F848B /* app_114.png */; };
 		68EA4E7C11A8C52A002F1FBA /* NSManagedObjectCategories.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */; };
 		68EA4EC111A8D01E002F1FBA /* Listing.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4EC011A8D01E002F1FBA /* Listing.m */; };
 		68EA4F0211A95E88002F1FBA /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = 68EA4F0111A95E88002F1FBA /* Item.m */; };
@@ -109,7 +110,7 @@
 		6891FD8711B2A47000B3C8A4 /* DelegatingFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DelegatingFetchedResultsController.m; sourceTree = "<group>"; };
 		68924698134BE85100DD4AE3 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		6892469A134BEC3300DD4AE3 /* AppDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppDefaults.plist; sourceTree = "<group>"; };
-		689246A4134BF11D00DD4AE3 /* NSUserDefaults+.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "NSUserDefaults+.h"; sourceTree = "<group>"; };
+		689246A4134BF11D00DD4AE3 /* NSUserDefaults+.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSUserDefaults+.h"; sourceTree = "<group>"; };
 		689246A5134BF11D00DD4AE3 /* NSUserDefaults+.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+.m"; sourceTree = "<group>"; };
 		6896D0E811AE01240014F3EA /* ItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemList.h; sourceTree = "<group>"; };
 		6896D0E911AE01240014F3EA /* ItemList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemList.m; sourceTree = "<group>"; };
@@ -177,6 +178,7 @@
 		68D17D2A120BC68500904723 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		68DF15FF11B4BF0400E84BD2 /* NSString+Truncate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Truncate.h"; sourceTree = "<group>"; };
 		68DF160011B4BF0400E84BD2 /* NSString+Truncate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Truncate.m"; sourceTree = "<group>"; };
+		68E70424134D80A4003F848B /* app_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_114.png; sourceTree = "<group>"; };
 		68EA4E7A11A8C52A002F1FBA /* NSManagedObjectCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSManagedObjectCategories.h; path = Categories/NSManagedObjectCategories.h; sourceTree = SOURCE_ROOT; };
 		68EA4E7B11A8C52A002F1FBA /* NSManagedObjectCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSManagedObjectCategories.m; path = Categories/NSManagedObjectCategories.m; sourceTree = SOURCE_ROOT; };
 		68EA4EBF11A8D01E002F1FBA /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Listing.h; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				68E70424134D80A4003F848B /* app_114.png */,
 				68F7BB3D11A4D9430026480C /* JSON */,
 				68BDB44C11A1926300B65297 /* ASIHTTPRequest */,
 				68EA4E7D11A8C53E002F1FBA /* Categories */,
@@ -491,6 +494,7 @@
 				6853E4DA1222B98F00E392EA /* ItemContentEditingViewController.xib in Resources */,
 				68924699134BE85100DD4AE3 /* Settings.bundle in Resources */,
 				6892469B134BEC3300DD4AE3 /* AppDefaults.plist in Resources */,
+				68E70425134D80A4003F848B /* app_114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

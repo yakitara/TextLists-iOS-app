@@ -1,0 +1,94 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <style type="text/css">
+      body {
+        background-color: #ddd;
+        color: #222;
+        font-family: Helvetica;
+        font-size: 38px;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        width: 256px;
+        height: 256px;
+        /* for x57 icon
+        width: 200px;
+        height: 200px;
+        */
+        /* for x512 app store icon
+        width: 512px;
+        height: 512px;
+        */
+        overflow: hidden;
+      }
+      h1 {
+        margin: 0;
+        padding: 0;
+        background-color: #ccc;
+        border-top: 2px solid #ccd2da;
+        border-bottom: 2px solid #2d3033;
+        color: #FFF;
+        font-size: inherit;
+        padding: 20px 0;
+        text-align: center;
+        text-shadow: 0px -2px 1px #4c545f;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#b5c0ce), to(#6d83a1));
+        position: relative;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul li {
+        background-color: #FFFFFF;
+        border-bottom: 2px solid #e0e0e0;
+        color: #222222;
+        margin-bottom: 0;
+        padding: 21px;
+        position: relative;
+      }
+      canvas#chevron {
+        position: absolute;
+        right: 0px;
+      }
+    </style>
+    <div id="container">
+      <h1>TextLists</h1>
+      <div id="utility">
+        <ul>
+          <li>
+            in-box
+            <canvas id="chevron" width="38" height="38">
+              <script type="text/javascript">
+                try {
+                  var canvas = document.getElementById('chevron');
+                  var ctx = canvas.getContext('2d');
+                  ctx.strokeStyle = '#7f7f7f';
+                  ctx.lineWidth = 6;
+                  ctx.beginPath();
+                  var x = 4, y = 14;
+                  ctx.moveTo(x, y);
+                  ctx.lineTo(x + 11, y + 11);
+                  ctx.lineTo(x, y + 22);
+                  ctx.stroke();
+                  ctx.endPath();
+                } catch(err) {}
+              </script>
+            </canvas>
+          </li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+          <li>&nbsp;</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
