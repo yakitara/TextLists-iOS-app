@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'TextListsTests' target in the 'TextListsTests' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+#endif

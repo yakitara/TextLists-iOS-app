@@ -32,6 +32,12 @@
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FF9D11D98734007AC834 /* Synchronizer.m */; };
 		68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FFB311D99898007AC834 /* ChangeLog.m */; };
+		68A2B420134EF65800C46D6C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		68A2B421134EF65800C46D6C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		68A2B422134EF65800C46D6C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */; };
+		68A2B428134EF65800C46D6C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 68A2B426134EF65800C46D6C /* InfoPlist.strings */; };
+		68A2B42B134EF65800C46D6C /* TextListsTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 68A2B42A134EF65800C46D6C /* TextListsTests.h */; };
+		68A2B42D134EF65800C46D6C /* TextListsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A2B42C134EF65800C46D6C /* TextListsTests.m */; };
 		68B5A00C1207DD4200303B30 /* app_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 68B5A00B1207DD4200303B30 /* app_57.png */; };
 		68BDB48C11A1926300B65297 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */; };
 		68BDB48D11A1926300B65297 /* ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 68BDB45011A1926300B65297 /* ASIFormDataRequest.m */; };
@@ -119,6 +125,12 @@
 		68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 4.xcdatamodel"; sourceTree = "<group>"; };
 		68A0FFB211D99898007AC834 /* ChangeLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeLog.h; sourceTree = "<group>"; };
 		68A0FFB311D99898007AC834 /* ChangeLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangeLog.m; sourceTree = "<group>"; };
+		68A2B41F134EF65800C46D6C /* TextListsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TextListsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		68A2B425134EF65800C46D6C /* TextListsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TextListsTests-Info.plist"; sourceTree = "<group>"; };
+		68A2B427134EF65800C46D6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		68A2B429134EF65800C46D6C /* TextListsTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TextListsTests-Prefix.pch"; sourceTree = "<group>"; };
+		68A2B42A134EF65800C46D6C /* TextListsTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextListsTests.h; sourceTree = "<group>"; };
+		68A2B42C134EF65800C46D6C /* TextListsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextListsTests.m; sourceTree = "<group>"; };
 		68B5A00B1207DD4200303B30 /* app_57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = app_57.png; sourceTree = "<group>"; };
 		68BDB44D11A1926300B65297 /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		68BDB44E11A1926300B65297 /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
@@ -216,6 +228,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		68A2B41B134EF65800C46D6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68A2B420134EF65800C46D6C /* UIKit.framework in Frameworks */,
+				68A2B421134EF65800C46D6C /* Foundation.framework in Frameworks */,
+				68A2B422134EF65800C46D6C /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -257,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				68780038120BE33100562343 /* items.app */,
+				68A2B41F134EF65800C46D6C /* TextListsTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -270,6 +293,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				68A2B423134EF65800C46D6C /* TextListsTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -316,6 +340,26 @@
 				6891FBE111AF52B000B3C8A4 /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		68A2B423134EF65800C46D6C /* TextListsTests */ = {
+			isa = PBXGroup;
+			children = (
+				68A2B42A134EF65800C46D6C /* TextListsTests.h */,
+				68A2B42C134EF65800C46D6C /* TextListsTests.m */,
+				68A2B424134EF65800C46D6C /* Supporting Files */,
+			);
+			path = TextListsTests;
+			sourceTree = "<group>";
+		};
+		68A2B424134EF65800C46D6C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				68A2B425134EF65800C46D6C /* TextListsTests-Info.plist */,
+				68A2B426134EF65800C46D6C /* InfoPlist.strings */,
+				68A2B429134EF65800C46D6C /* TextListsTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		68BDB44C11A1926300B65297 /* ASIHTTPRequest */ = {
@@ -453,6 +497,24 @@
 			productReference = 68780038120BE33100562343 /* items.app */;
 			productType = "com.apple.product-type.application";
 		};
+		68A2B41E134EF65800C46D6C /* TextListsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68A2B42E134EF65800C46D6C /* Build configuration list for PBXNativeTarget "TextListsTests" */;
+			buildPhases = (
+				68A2B41A134EF65800C46D6C /* Sources */,
+				68A2B41B134EF65800C46D6C /* Frameworks */,
+				68A2B41C134EF65800C46D6C /* Resources */,
+				68A2B41D134EF65800C46D6C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TextListsTests;
+			productName = TextListsTests;
+			productReference = 68A2B41F134EF65800C46D6C /* TextListsTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -474,6 +536,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* TextLists */,
+				68A2B41E134EF65800C46D6C /* TextListsTests */,
 			);
 		};
 /* End PBXProject section */
@@ -494,7 +557,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		68A2B41C134EF65800C46D6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68A2B428134EF65800C46D6C /* InfoPlist.strings in Resources */,
+				68A2B42B134EF65800C46D6C /* TextListsTests.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		68A2B41D134EF65800C46D6C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -551,7 +639,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		68A2B41A134EF65800C46D6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68A2B42D134EF65800C46D6C /* TextListsTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		68A2B426134EF65800C46D6C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				68A2B427134EF65800C46D6C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
@@ -622,6 +729,81 @@
 			};
 			name = AppStore;
 		};
+		68A2B42F134EF65800C46D6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/items.app/items";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TextListsTests/TextListsTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "TextListsTests/TextListsTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		68A2B430134EF65800C46D6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/items.app/items";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TextListsTests/TextListsTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "TextListsTests/TextListsTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		68A2B431134EF65800C46D6C /* AppStore */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/items.app/items";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TextListsTests/TextListsTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "TextListsTests/TextListsTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = AppStore;
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -666,6 +848,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		68A2B42E134EF65800C46D6C /* Build configuration list for PBXNativeTarget "TextListsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68A2B42F134EF65800C46D6C /* Debug */,
+				68A2B430134EF65800C46D6C /* Release */,
+				68A2B431134EF65800C46D6C /* AppStore */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TextLists" */ = {
 			isa = XCConfigurationList;
