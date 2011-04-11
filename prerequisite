@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+base_dir=$(dirname $0)
+prerequisites_dir=${base_dir}/Prerequisites
+
+__run()
+{
+    echo prerequisite: $* >&2
+    $*
+}
+
+if [[ ! -d "${prerequisites_dir}" ]]; then
+    __run mkdir "${prerequisites_dir}"
+fi
+
+asihttprequest_archive="${prerequisites_dir}/ASIHTTPRequest.tar.gz"
+if [[ ! -f "${asihttprequest_archive}" ]]; then
+    __run curl -o "${asihttprequest_archive}" --compressed -L https://github.com/pokeb/asi-http-request/tarball/v1.8
+fi
+
+asihttprequest_dir="${prerequisites_dir}/ASIHTTPRequest"
+if [[ ! -d "${asihttprequest_dir}" ]]; then
+    asihttprequest_archive_dir=${prerequisites_dir}/$(tar tzf "${asihttprequest_archive}" | head -1)
+    __run tar -C "${prerequisites_dir}" -xzf "${asihttprequest_archive}"
+    __run mv "${asihttprequest_archive_dir}" "${asihttprequest_dir}"
+fi
