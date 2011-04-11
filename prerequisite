@@ -3,24 +3,57 @@
 base_dir=$(dirname $0)
 prerequisites_dir=${base_dir}/Prerequisites
 
-__run()
+__log()
 {
     echo prerequisite: $* >&2
+}
+
+__run()
+{
+    __log $*
     $*
+}
+
+__get_archive()
+{
+    local url=$1
+    local archive="${prerequisites_dir}/$2"
+    
+    if [[ ! -f "${archive}" ]]; then
+        __run curl -o "${archive}" --compressed -L "${url}"
+    else
+       __log exists: "${archive}"
+    fi
+}
+
+__extract_from_archive()
+{
+    local archive="${prerequisites_dir}/$1"
+    local dir="${prerequisites_dir}/$2"
+    
+    if [[ ! -d "${dir}" ]]; then
+        toplevel_dir=${prerequisites_dir}/$(tar tzf "${archive}" | head -1)
+        __run tar -C "${prerequisites_dir}" -xzf "${archive}"
+        __run mv "${toplevel_dir}" "${dir}"
+    else
+        __log exists: "${dir}"
+    fi
+}
+
+__fetch()
+{
+    __get_archive "$1" "$2"
+    __extract_from_archive "$2" "$3"
 }
 
 if [[ ! -d "${prerequisites_dir}" ]]; then
     __run mkdir "${prerequisites_dir}"
 fi
 
-asihttprequest_archive="${prerequisites_dir}/ASIHTTPRequest.tar.gz"
-if [[ ! -f "${asihttprequest_archive}" ]]; then
-    __run curl -o "${asihttprequest_archive}" --compressed -L https://github.com/pokeb/asi-http-request/tarball/v1.8
-fi
 
-asihttprequest_dir="${prerequisites_dir}/ASIHTTPRequest"
-if [[ ! -d "${asihttprequest_dir}" ]]; then
-    asihttprequest_archive_dir=${prerequisites_dir}/$(tar tzf "${asihttprequest_archive}" | head -1)
-    __run tar -C "${prerequisites_dir}" -xzf "${asihttprequest_archive}"
-    __run mv "${asihttprequest_archive_dir}" "${asihttprequest_dir}"
-fi
+
+
+
+
+__fetch "https://github.com/pokeb/asi-http-request/tarball/v1.8" "ASIHTTPRequest-v1.8.tar.gz" "ASIHTTPRequest"
+__fetch "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
