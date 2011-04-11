@@ -17,6 +17,7 @@ enum {
 - (void)save;
 - (void)cancel;
 - (void)back;
+- (void)textViewDidChange:(UITextView *)textView;
 @end
 
 @implementation ItemContentEditingViewController
@@ -292,8 +293,9 @@ enum {
     NSDictionary* info = [aNotification userInfo];
     
     // Get the size of the keyboard.
-    NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
-    CGSize keyboardSize = [aValue CGRectValue].size;
+    // NSValue* aValue = [info objectForKey:UIKeyboardBoundsUserInfoKey];
+    // CGSize keyboardSize = [aValue CGRectValue].size;
+    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     
     // Resize the scroll view (which is the root view of the window)
 #if 0
