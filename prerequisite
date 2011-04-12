@@ -57,3 +57,10 @@ fi
 
 __fetch "https://github.com/pokeb/asi-http-request/tarball/v1.8" "ASIHTTPRequest-v1.8.tar.gz" "ASIHTTPRequest"
 __fetch "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
+
+ocmock_dir="${prerequisites_dir}/OCMock"
+if [[ ! -d "${ocmock_dir}" ]]; then
+    __run svn co -r77 "http://svn.mulle-kybernetik.com/OCMock/trunk" "${ocmock_dir}"
+else
+    __log exists: "${ocmock_dir}"
+fi
