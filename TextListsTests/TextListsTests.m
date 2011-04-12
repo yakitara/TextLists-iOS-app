@@ -1,5 +1,5 @@
 #import <SenTestingKit/SenTestingKit.h>
-//#import <OCMock/OCMock.h>
+#import <OCMock/OCMock.h>
 
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
@@ -33,9 +33,9 @@
 
 - (void)testSyncInvokeOAuth
 {
-    // id appMock = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
-    // [[[appMock expect] andForwardToRealObject] openURL:[NSURL URLWithString:@"http://example.com"]];
-
+    id appMock = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    [[[appMock expect] andForwardToRealObject] openURL:[NSURL URLWithString:@"http://example.com"]];
+    
     objc_msgSend(m_listsViewController, @selector(sync));
 }
 @end

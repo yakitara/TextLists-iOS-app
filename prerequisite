@@ -64,3 +64,9 @@ if [[ ! -d "${ocmock_dir}" ]]; then
 else
     __log exists: "${ocmock_dir}"
 fi
+ocmock_lib="${ocmock_dir}/Source/build/Debug/Library/libOCMock.a"
+if [[ ! -f "${ocmock_lib}" ]]; then
+    (cd "${ocmock_dir}/Source" && __run xcodebuild -configuration Debug -target OCMockLib)
+else
+    __log exists: "${ocmock_lib}"
+fi
