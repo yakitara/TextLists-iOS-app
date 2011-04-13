@@ -26,7 +26,7 @@ __get_archive()
     fi
 }
 
-__extract_from_archive()
+__extract_from_tarball()
 {
     local archive="${prerequisites_dir}/$1"
     local dir="${prerequisites_dir}/$2"
@@ -40,33 +40,40 @@ __extract_from_archive()
     fi
 }
 
-__fetch()
+__fetch_tarball()
 {
     __get_archive "$1" "$2"
-    __extract_from_archive "$2" "$3"
+    __extract_from_tarball "$2" "$3"
 }
+
+__svn_checkout()
+{
+    if [[ ! -d "${2}" ]]; then
+        __run svn co "${1}" "${2}"
+    else
+        __log exists: "${2}"
+    fi
+}
+
+
+
+
+
 
 if [[ ! -d "${prerequisites_dir}" ]]; then
     __run mkdir "${prerequisites_dir}"
 fi
 
-
-
-
-
-
-__fetch "https://github.com/pokeb/asi-http-request/tarball/v1.8" "ASIHTTPRequest-v1.8.tar.gz" "ASIHTTPRequest"
-__fetch "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
+__fetch_tarball "https://github.com/pokeb/asi-http-request/tarball/v1.8" "ASIHTTPRequest-v1.8.tar.gz" "ASIHTTPRequest"
+__fetch_tarball "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
 
 ocmock_dir="${prerequisites_dir}/OCMock"
-if [[ ! -d "${ocmock_dir}" ]]; then
-    __run svn co -r77 "http://svn.mulle-kybernetik.com/OCMock/trunk" "${ocmock_dir}"
-else
-    __log exists: "${ocmock_dir}"
-fi
+__svn_checkout "http://svn.mulle-kybernetik.com/OCMock/trunk@77" "${ocmock_dir}"
 ocmock_lib="${ocmock_dir}/Source/build/Debug/Library/libOCMock.a"
 if [[ ! -f "${ocmock_lib}" ]]; then
     (cd "${ocmock_dir}/Source" && __run xcodebuild -configuration Debug -target OCMockLib)
 else
     __log exists: "${ocmock_lib}"
 fi
+
+#__svn_checkout "http://google-toolbox-for-mac.googlecode.com/svn/trunk@439" "${prerequisites_dir}/GoogleToolboxForMac"
