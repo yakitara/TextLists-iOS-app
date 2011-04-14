@@ -12,6 +12,7 @@
     }
     @end
 */
-@interface NSObject (AliasMethodCHain)
+@interface NSObject (AliasMethodChain)
 + (void)aliasClassMethod:(SEL)selector chainingPrefix:(NSString *)prefix;
++ (void)aliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix;
 @end

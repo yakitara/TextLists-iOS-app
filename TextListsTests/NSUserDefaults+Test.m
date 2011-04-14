@@ -3,46 +3,55 @@
 
 @interface TestUserDefaults : NSObject {
     NSMutableDictionary *m_dict;
-    NSDictionary *m_registered;
+//    NSDictionary *m_registered;
 }
-+ (TestUserDefaults *)standardUserDefaults;
++ (TestUserDefaults *)standardUserDefaults:(BOOL)reset;
+- (void)mergeVolatileDomains;
 @end
 
 @implementation TestUserDefaults
-+ (TestUserDefaults *)standardUserDefaults {
++ (TestUserDefaults *)standardUserDefaults:(BOOL)reset {
     static id s_mockDefaults = nil;
+    if (reset) {
+        [s_mockDefaults release];
+        s_mockDefaults = nil;
+    }
     if (!s_mockDefaults) {
         s_mockDefaults = [[self alloc] init];
     }
+    [s_mockDefaults mergeVolatileDomains];
     return s_mockDefaults;
 }
 
 - (id)init {
     self = [super init];
     if (self) {
-        NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_mock_standardUserDefaults));
-        //m_dict = [[orig dictionaryRepresentation] mutableCopy];
-        //m_dict = [[orig volatileDomainForName:NSRegistrationDomain] mutableCopy];
         m_dict = [[NSMutableDictionary alloc] init];
-        for (NSString *domain in [orig volatileDomainNames]) {
-            NSDictionary *dict = [orig volatileDomainForName:NSRegistrationDomain];
-            NSLog(@"volatileDomainForName: %@ => %@", domain, dict);
-            [m_dict addEntriesFromDictionary:dict];
-        }
     }
     return self;
 }
 
+- (void)mergeVolatileDomains {
+    NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
+    for (NSString *domain in [orig volatileDomainNames]) {
+        NSDictionary *dict = [orig volatileDomainForName:domain];
+        //NSLog(@"volatileDomainForName: %@ => %@", domain, dict);
+        [m_dict addEntriesFromDictionary:dict];
+    }
+}
+
 - (void)dealloc {
     [m_dict release];
-    [m_registered release];
+//    [m_registered release];
     [super dealloc];
 }
 
 - (void)registerDefaults:(NSDictionary *)dictionary {
-    [m_registered release];
-    m_registered = [dictionary retain];
-    [m_dict addEntriesFromDictionary:m_registered];
+    // [m_registered release];
+    // m_registered = [dictionary retain];
+    // [m_dict addEntriesFromDictionary:m_registered];
+    NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
+    [orig registerDefaults:dictionary];
 }
 
 - (NSDictionary *)dictionaryRepresentation {
@@ -50,9 +59,26 @@
 }
 
 - (id)objectForKey:(NSString *)defaultName {
-    id object = [m_dict objectForKey:defaultName];
-    NSLog(@"objectForKey:%@ => %@", defaultName, object);
-    return object;
+    id value = [m_dict objectForKey:defaultName];
+    //NSLog(@"TestUserDefaults objectForKey:%@ => %@", defaultName, value);
+    return value;
+}
+
+- (void)setObject:(id)value forKey:(NSString *)defaultName {
+    //NSLog(@"TestUserDefaults setObject:%@ forKey:%@", value, defaultName);
+    [m_dict setObject:value forKey:defaultName];
+}
+
+- (BOOL)synchronize {
+    return YES;
+}
+
+- (NSInteger)integerForKey:(NSString *)defaultName {
+    return [[self objectForKey:defaultName] integerValue];
+}
+
+- (BOOL)boolForKey:(NSString *)defaultName {
+    return [[self objectForKey:defaultName] boolValue];
 }
 
 #if 1
@@ -77,16 +103,18 @@
 @end
 
 
-// @interface NSUserDefaults (Test)
-// @end
-
 @implementation NSUserDefaults (Test)
 + (void)load {
-    [self aliasClassMethod:@selector(standardUserDefaults) chainingPrefix:@"mock"];
+    [self aliasClassMethod:@selector(standardUserDefaults) chainingPrefix:@"test"];
+    [self aliasClassMethod:@selector(resetToAppDefaults) chainingPrefix:@"test"];
 }
 
-+ (NSUserDefaults *)mock_standardUserDefaults {
-    NSLog(@"standardUserDefaults swizzled!");
-    return (id)[TestUserDefaults standardUserDefaults];
++ (NSUserDefaults *)test_standardUserDefaults {
+    //NSLog(@"standardUserDefaults swizzled!");
+    return (id)[TestUserDefaults standardUserDefaults:NO];
+}
+
++ (void)test_resetToAppDefaults {
+    [TestUserDefaults standardUserDefaults:YES];
 }
 @end

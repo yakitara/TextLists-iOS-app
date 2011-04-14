@@ -7,5 +7,4 @@
 }
 @property (nonatomic, retain) NSMutableArray *postQueue;
 + (void)sync;
-- (void)sync;
 @end

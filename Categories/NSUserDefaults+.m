@@ -4,7 +4,7 @@
 + (NSDictionary *)settingsDefaults;
 @end
 
-@implementation NSUserDefaults (DjVuFiles)
+@implementation NSUserDefaults (private)
 + (void)registerAppDefaults:(NSString *)fileName {
     NSDictionary *appDefaults = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:fileName ofType:@"plist"]];
     NSMutableDictionary *mergedDefaults = [appDefaults mutableCopy];

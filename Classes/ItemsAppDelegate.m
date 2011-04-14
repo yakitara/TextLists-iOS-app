@@ -1,5 +1,6 @@
 #import "ASIHTTPRequest.h"
 #import "JSON.h"
+#import <objc/runtime.h>
 
 #import "ItemsAppDelegate.h"
 #import "ListsViewController.h"
@@ -46,7 +47,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [NSUserDefaults registerAppDefaults:@"AppDefaults"];
     //[NSUserDefaults resetToAppDefaults];
-    NSLog(@"defaults:%@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
+    //NSLog(@"defaults:%@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     NSLog(@"launchOptions:%@", launchOptions);
     // handle url
     NSURL *url = [launchOptions objectForKey:@"UIApplicationLaunchOptionsURLKey"];

@@ -8,9 +8,8 @@
 #import "NSManagedObjectCategories.h"
 #import "EntityNameProtocol.h"
 
-static Synchronizer *s_singleton = NULL;
-
 @interface Synchronizer ()
+- (void)sync;
 - (void)postChangeLog:(NSManagedObject *)record;
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth;
 - (void)getChangeLog;
@@ -19,19 +18,29 @@ static Synchronizer *s_singleton = NULL;
 
 @implementation Synchronizer
 @synthesize postQueue=m_postQueue;
+
++ (Synchronizer *)singletonSynchronizer {
+    static Synchronizer *s_singleton = NULL;
+    if (!s_singleton) {
+        s_singleton = [[self alloc] init];
+    }
+    return s_singleton;
+}
+
 + (void)sync {
     // Quick and dirty way of preventing multiple sync
     if ([UIAppDelegate.syncActivityIndicator isAnimating]) {
         return;
     }
     
-    if (s_singleton) {
-        [s_singleton stop];
-    } else {
-        s_singleton = [[self alloc] init];
-    }
+    // if (s_singleton) {
+    //     [s_singleton stop];
+    // } else {
+    //     s_singleton = [[self alloc] init];
+    // }
+    [[self singletonSynchronizer] stop];
     [UIAppDelegate.syncActivityIndicator startAnimating];
-    [s_singleton sync];
+    [[self singletonSynchronizer] sync];
 }
 
 - (void)stop {

@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSUserDefaults (DjVuFiles)
+@interface NSUserDefaults (AppDefaults)
 + (void)registerAppDefaults:(NSString *)fileName;
 + (void)resetToAppDefaults;
 @end
