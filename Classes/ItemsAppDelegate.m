@@ -12,11 +12,8 @@
 #import "NSErrorCategories.h"
 #import "NSDateCategories.h"
 #import "NSUserDefaults+.h"
-
-#define SYNCHRONIZER 1
-#if SYNCHRONIZER
 #import "Synchronizer.h"
-#endif
+
 //#define DUMP_SQLITE 1
 #if DUMP_SQLITE
 #include <sqlite3.h>
@@ -58,6 +55,18 @@
     return YES;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [m_listsFetchedResultsController release];
+    [m_managedObjectContext release];
+    [m_managedObjectModel release];
+    [m_persistentStoreCoordinator release];
+    self.navigationController = nil;
+    self.window = nil;
+    self.syncActivityIndicator = nil;
+    [super dealloc];
+}
+
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
     if (url) {
         NSString *action = [url host];
@@ -81,7 +90,6 @@
     }
     return YES;
 }
-
 
 /**
  applicationWillTerminate: saves changes in the application's managed object context before the application terminates.
@@ -284,242 +292,8 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
-#pragma mark -
-#pragma mark Sync
-
-//TODO: A path may contain paramaters. consider to sepalate it from the path.
-- (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
-    // FIXME: use preferences or...
-#if __arm__
-    NSString *baseURLString = [NSString stringWithFormat:@"http://items.yakitara.com:8000%@", path];
-#else
-    NSString *baseURLString = [NSString stringWithFormat:@"http://localhost:3000%@", path];
-#endif
-    if (auth) {
-        NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-        NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
-        if (key) {
-            return [NSURL URLWithString:[NSString stringWithFormat:@"%@?user_id=%@&key=%@", baseURLString, user_id, key]];
-        } else {
-            return nil;
-        }
-    } else {
-        return [NSURL URLWithString:baseURLString];
-    }
-}
-
 - (void)sync {
-#if SYNCHRONIZER
     [Synchronizer sync];
-//     UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
-//     activityIndicator.frame = CGRectMake(0,0,30,30);
-//     [activityIndicator startAnimating];
-//     UIAppDelegate.syncButton.customView = activityIndicator;
-#if 1
-    
-#endif
-#else
-//     NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-//     NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
-    NSURL *url = [self requestURLForPath:@"/api/changes" auth:YES];
-    if (url) {
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setDelegate:self];
-        [request startAsynchronous];
-    } else {
-        // get api key through web
-        //[UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
-        [UIApp openURL:[self requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
-    }
-#endif
 }
-
-- (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
-    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-    id <NSObject, NSManagedObjectClassFetch, ResourceSupport> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
-    
-    for (NSDictionary *dict in changes) {
-        NSNumber *record_id = [dict objectForKey:@"id"];
-        NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObject:record_id]];
-        NSManagedObject *record = [records lastObject];
-        if (record) {
-            NSDate *localDate = [record valueForKey:@"updated_at"];
-            //NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-            //[dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss zzz"];
-            //NSDate *remoteDate = [dateFormatter dateFromString:[dict objectForKey:@"updated_at"]];
-            NSDate *remoteDate = [NSDate dateFromJSONDateString:[dict objectForKey:@"updated_at"]];
-            //NSComparisonResult compResult = [remoteDate compare:localDate];
-            // NOTE: ignoring differences less than a second
-            NSTimeInterval diffInSeconds = [remoteDate timeIntervalSinceDate:localDate];
-            if (diffInSeconds >= 1.0) {
-                //  web -> app: UPDATE
-#if 1
-                // changes only have id and updated_at, so get whole of the resource
-                NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
-                NSURL *url = [self requestURLForPath:path auth:YES];
-                //NSDictionary *values = [WebResource getJSONValueFrom:url];
-                NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
-                for (id key in values) {
-                    [record setValue:[values objectForKey:key] forKey:key];
-                }
-#else
-                for (id key in dict) {
-                    [record setValue:[dict objectForKey:key] forKey:key];
-                }
-#endif
-            } else if (diffInSeconds <= -1.0) {
-                // web <- app: keep record to be uploaded
-                NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
-                NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
-                NSURL *url = [self requestURLForPath:path auth:YES];
-                [HTTPResource putJSONValue:value onURL:url];
-                //TODO: error check
-                //id *record_id = [[responseDict valueForKey:@"id"] forKey:@"id"];
-                //TODO: should use response code of the request
-//                 if (record_id != [NSNull null]) {
-//                     [record setValue:record_id];
-//                     [context save]; // one request, one transaction
-//                 }
-            }
-        } else {
-            // If there is an object with identical properties, use the object instead of new one.
-            NSString *path = [NSString stringWithFormat:@"%@/%@", [managedObjectClass resourcePath], record_id];
-            NSURL *url = [self requestURLForPath:path auth:YES];
-            NSDictionary *values = [HTTPResource getJSONValueFromURL:url];
-
-            if ([managedObjectClass respondsToSelector:@selector(fetchObjectIdenticalToValues:inManagedObjectContext:)]) {
-                record = [managedObjectClass fetchObjectIdenticalToValues:values inManagedObjectContext:context];
-            }
-            if (!record) {
-                // web -> app: INSERT
-                record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
-            }
-            //NSLog(@"merged record:%@", record);
-            for (id key in values) {
-                [record setValue:[values objectForKey:key] forKey:key];
-            }
-        }
-        [context save];
-    }
-}
-
-- (void)uploadChangesOfEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
-    NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
-    id <NSObject, NSManagedObjectClassFetch, ResourceSupport> managedObjectClass = objc_getClass([[entity managedObjectClassName] UTF8String]);
-    
-#if 0
-    // TODO: implement convenient fetch method including sort
-    NSArray *records = [context fetchFromEntityName:entityName withPredicateFormat:@"id == nil" argumentArray:[NSArray array] sortKeysAndAscendings];
-    for (NSManagedObject <ResourceSupport> *record in records) {
-#else
-    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-    [fetchRequest setEntity:entity];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == nil"];
-    [fetchRequest setPredicate:predicate];
-    NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"updated_at" ascending:YES] autorelease];
-    NSArray *sortDescriptors = [[[NSArray alloc] initWithObjects:sortDescriptor, nil] autorelease];
-    [fetchRequest setSortDescriptors:sortDescriptors];
-    for (NSManagedObject <ResourceSupport> *record in [context executeFetchRequest:fetchRequest]) {
-#endif
-
-#if 1
-        NSDictionary *value = [NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil];
-        NSURL *url = [self requestURLForPath:[managedObjectClass resourcePath] auth:YES];
-        NSDictionary *responseDict = [HTTPResource postJSONValue:value toURL:url];
-        id record_id = [responseDict valueForKey:@"id"];
-        //TODO: should use response code of the request
-        if (record_id != [NSNull null]) {
-            [record setValue:record_id forKey:@"id"];
-            [context save]; // one request, one transaction
-        }
-#else
-        NSString *json = [[NSDictionary dictionaryWithObjectsAndKeys:record, [entityName lowercaseString], nil] JSONRepresentation];
-        NSLog(@"uploading JSON:%@", json);
-//        NSURL *url = [self requestURLForPath:@"/api/items" auth:YES];
-        NSURL *url = [self requestURLForPath:[managedObjectClass resourcePath] auth:YES];
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request appendPostData:[json dataUsingEncoding:NSUTF8StringEncoding]];
-        // Default becomes POST when you use appendPostData: / appendPostDataFromFile: / setPostBody:
-        request.requestMethod = @"POST";
-        [request addRequestHeader:@"Content-Type" value:@"application/json"];
-        [request addRequestHeader:@"Accept" value:@"application/json"];
-        //request.didFinishSelector = @selector(postFinished:);
-        // TODO: do it async? or 
-        [request startSynchronous];
-        NSError *error = [request error];
-        if (!error) {
-            NSString *responseJSON = [request responseString];
-            NSLog(@"responseJSON: %@", responseJSON);
-            if (request.responseStatusCode == 200) {
-                NSDictionary *responseDict = [responseJSON JSONValue];
-                [record setValue:[responseDict valueForKey:@"id"] forKey:@"id"];
-                // one request, one transaction
-                [context save];
-            }
-        } else {
-            [error prettyPrint];
-            abort(); // TODO: store error info and skip
-        }
-#endif
-    }
-}
-
-- (void)requestFinished:(ASIHTTPRequest *)request {
-    // Use when fetching text data
-    NSString *responseString = [request responseString];
-    int status = request.responseStatusCode;
-    if (status == 200) {
-        //NSLog(@"sync response: %@", responseString);
-        NSDictionary *changes = [responseString JSONValue];
-        //NSLog(@"  changes:%@", changes);
-        NSManagedObjectContext *context = self.managedObjectContext;
-        //NSMutableArray *uploadingItems = [NSMutableArray array];
-        // disable auto timestamp
-        // TODO: it is needed to use another context than default one when sync is executed on a worker thread
-        //[m_managedObjectContext setRecordTimestamps:NO];
-        // Download from web
-        [self mergeChanges:[changes objectForKey:@"items"] forEntityName:@"Item" inContext:context];
-        [self mergeChanges:[changes objectForKey:@"lists"] forEntityName:@"List" inContext:context];
-        [self mergeChanges:[changes objectForKey:@"listings"] forEntityName:@"Listing" inContext:context];
-        // Upload to web
-        //NSString *itemsJson = [[NSDictionary dictionaryWithObjectsAndKeys:uploadingItems, @"items", nil] JSONRepresentation];
-        [self uploadChangesOfEntityName:@"List" inContext:context];
-        [self uploadChangesOfEntityName:@"Item" inContext:context];
-        [self uploadChangesOfEntityName:@"Listing" inContext:context];
-        //[m_managedObjectContext setRecordTimestamps:NO];
-    } else if (status == 403) {
-        // key is not correct. Retry from login
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];
-        [self sync];
-    } else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Sync failed" message:request.responseStatusMessage
-                                                  delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert show];
-        [alert release];    
-    }
-}
- 
-- (void)requestFailed:(ASIHTTPRequest *)request {
-    NSError *error = [request error];
-    NSLog(@"sync error: %@", error);
-}
-
-#pragma mark -
-#pragma mark Memory management
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [m_listsFetchedResultsController release];
-    [m_managedObjectContext release];
-    [m_managedObjectModel release];
-    [m_persistentStoreCoordinator release];
-    self.navigationController = nil;
-    self.window = nil;
-    self.syncActivityIndicator = nil;
-    [super dealloc];
-}
-
-
-
 @end
 
