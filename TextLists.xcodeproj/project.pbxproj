@@ -30,7 +30,6 @@
 		68924699134BE85100DD4AE3 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 68924698134BE85100DD4AE3 /* Settings.bundle */; };
 		6892469B134BEC3300DD4AE3 /* AppDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6892469A134BEC3300DD4AE3 /* AppDefaults.plist */; };
 		689246A6134BF11D00DD4AE3 /* NSUserDefaults+.m in Sources */ = {isa = PBXBuildFile; fileRef = 689246A5134BF11D00DD4AE3 /* NSUserDefaults+.m */; };
-		68935B8F13541A0100FBD3FA /* NSObject+AliasMethodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 68935B8D13541A0100FBD3FA /* NSObject+AliasMethodChain.m */; };
 		6896D0EA11AE01240014F3EA /* ItemList.m in Sources */ = {isa = PBXBuildFile; fileRef = 6896D0E911AE01240014F3EA /* ItemList.m */; };
 		68A0FF9E11D98734007AC834 /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FF9D11D98734007AC834 /* Synchronizer.m */; };
 		68A0FFB411D99898007AC834 /* ChangeLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A0FFB311D99898007AC834 /* ChangeLog.m */; };
@@ -40,7 +39,8 @@
 		68A2B428134EF65800C46D6C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 68A2B426134EF65800C46D6C /* InfoPlist.strings */; };
 		68B5A00C1207DD4200303B30 /* app_57.png in Resources */ = {isa = PBXBuildFile; fileRef = 68B5A00B1207DD4200303B30 /* app_57.png */; };
 		68B677A21357247E005DB039 /* TextListsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68A2B42C134EF65800C46D6C /* TextListsTests.m */; };
-		68B677A3135727C1005DB039 /* NSUserDefaults+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 68935B8E13541A0100FBD3FA /* NSUserDefaults+Test.m */; };
+		68B677A41357EC67005DB039 /* NSUserDefaults+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 68935B8E13541A0100FBD3FA /* NSUserDefaults+Test.m */; };
+		68B677A51357EC6B005DB039 /* NSObject+AliasMethodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 68935B8D13541A0100FBD3FA /* NSObject+AliasMethodChain.m */; };
 		68BDB4B911A196BC00B65297 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4B811A196BC00B65297 /* CFNetwork.framework */; };
 		68BDB4D811A1978500B65297 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4D711A1978500B65297 /* SystemConfiguration.framework */; };
 		68BDB4DE11A197A200B65297 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BDB4DD11A197A200B65297 /* MobileCoreServices.framework */; };
@@ -674,9 +674,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68935B8F13541A0100FBD3FA /* NSObject+AliasMethodChain.m in Sources */,
 				68B677A21357247E005DB039 /* TextListsTests.m in Sources */,
-				68B677A3135727C1005DB039 /* NSUserDefaults+Test.m in Sources */,
+				68B677A41357EC67005DB039 /* NSUserDefaults+Test.m in Sources */,
+				68B677A51357EC6B005DB039 /* NSObject+AliasMethodChain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

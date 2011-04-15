@@ -9,29 +9,29 @@
 #import "ASIHTTPRequest.h"
 #import "Synchronizer.h"
 
-@implementation Synchronizer (Mock)
-+ (id)mock_singletonSynchronizer {
-    id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_singletonSynchronizer))];
-    [[[mock stub] andReturn:[NSArray array]] postQueue];
-    return mock;
-}
-@end
+// @implementation Synchronizer (Mock)
+// + (id)mock_singletonSynchronizer {
+//     id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_singletonSynchronizer))];
+//     [[[mock stub] andReturn:[NSArray array]] postQueue];
+//     return mock;
+// }
+// @end
 
-@implementation ASIHTTPRequest (Mock)
-+ (id)mock_requestWithURL:(NSURL *)url {
-    id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_requestWithURL:), url)];
+// @implementation ASIHTTPRequest (Mock)
+// + (id)mock_requestWithURL:(NSURL *)url {
+//     id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_requestWithURL:), url)];
     
-    void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-        id requestMock = [invocation target];
-        [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
-        //[[[requestMock stub] andReturnValue:@""] responseString];
-        //[requestMock setUserInfo:[NSDictionary dictionaryWithObject:]]
-        [requestMock requestFinished];
-    };
-    [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
-    return mock;
-}
-@end
+//     void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+//         id requestMock = [invocation target];
+//         [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+//         //[[[requestMock stub] andReturnValue:@""] responseString];
+//         //[requestMock setUserInfo:[NSDictionary dictionaryWithObject:]]
+//         [requestMock requestFinished];
+//     };
+//     [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
+//     return mock;
+// }
+// @end
 
 @interface TextListsTests : SenTestCase {
 @private
@@ -74,15 +74,7 @@
     [super tearDown];
 }
 
-#if 0
-- (void)testFail
-{
-    // NSLog(@"defaults: %@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
-    // NSLog(@"arguments: %@", [[NSUserDefaults standardUserDefaults] volatileDomainForName:@"NSArgumentDomain"]);
-    // NSLog(@"volitile domains: %@", [[NSUserDefaults standardUserDefaults] volatileDomainNames]);
-    STFail(@"fail");
-}
-#else
+#if 1
 - (void)testSyncWithoutApiKey
 {
     id appMock = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
@@ -95,14 +87,24 @@
 
 - (void)testSettingApiKey
 {
-    // id requestClassMock = (Class)[OCMockObject partialMockForObject:(id)[ASIHTTPRequest class]];
-    // void (^theBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-    //     NSLog(@"requestWithURL:%@", invocation);
-    // };
-    // [[[requestClassMock stub] andDo:theBlock] requestWithURL:[OCMArg any]];
-
-    [Synchronizer aliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock"];
-    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
+    [Synchronizer aliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock" withBlock:^(id _class) {
+        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_singletonSynchronizer))];
+        [[[mock stub] andReturn:[NSArray array]] postQueue];
+        return mock;
+    }];
+    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL url) {
+        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
+        
+        void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+            id requestMock = [invocation target];
+            [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+            //[[[requestMock stub] andReturnValue:@""] responseString];
+            //[requestMock setUserInfo:[NSDictionary dictionaryWithObject:]]
+            [requestMock requestFinished];
+        };
+        [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
+        return mock;
+    }];
     
     NSString *apiKey = @"ABCDEFG";
     NSString *userId = @"12345";
@@ -112,6 +114,32 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     STAssertEqualObjects(apiKey, [defaults objectForKey:@"ApiKey"], @"");
     STAssertEqualObjects(userId, [defaults objectForKey:@"UserId"], @"");
+    
+    [ASIHTTPRequest revertAliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
+    [Synchronizer revertAliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock"];
+}
+
+// - (void)testPostChangeLog
+// {
+//     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//     [defaults setObject:@"ABCDEFG" forKey:@"ApiKey"];
+//     [defaults setObject:@"12345" forKey:@"UserId"];
+    
+//     [Synchronizer aliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock" withBlock:^(id _class) {
+//         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_singletonSynchronizer))];
+//         [[[mock stub] andReturn:[NSArray arrayWithObject:@"record"]] postQueue];
+//         return mock;
+//     }];
+    
+//     STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
+// }
+#else
+- (void)testFail
+{
+    NSLog(@"defaults: %@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
+//    NSLog(@"arguments: %@", [[NSUserDefaults standardUserDefaults] volatileDomainForName:@"NSArgumentDomain"]);
+//    NSLog(@"volitile domains: %@", [[NSUserDefaults standardUserDefaults] volatileDomainNames]);
+    STFail(@"fail");
 }
 #endif
 @end

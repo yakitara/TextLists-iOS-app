@@ -3,10 +3,8 @@
 
 @interface TestUserDefaults : NSObject {
     NSMutableDictionary *m_dict;
-//    NSDictionary *m_registered;
 }
 + (TestUserDefaults *)standardUserDefaults:(BOOL)reset;
-- (void)mergeVolatileDomains;
 @end
 
 @implementation TestUserDefaults
@@ -19,7 +17,6 @@
     if (!s_mockDefaults) {
         s_mockDefaults = [[self alloc] init];
     }
-    [s_mockDefaults mergeVolatileDomains];
     return s_mockDefaults;
 }
 
@@ -31,35 +28,30 @@
     return self;
 }
 
-- (void)mergeVolatileDomains {
-    NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
-    for (NSString *domain in [orig volatileDomainNames]) {
-        NSDictionary *dict = [orig volatileDomainForName:domain];
-        //NSLog(@"volatileDomainForName: %@ => %@", domain, dict);
-        [m_dict addEntriesFromDictionary:dict];
-    }
-}
-
 - (void)dealloc {
     [m_dict release];
-//    [m_registered release];
     [super dealloc];
 }
 
 - (void)registerDefaults:(NSDictionary *)dictionary {
-    // [m_registered release];
-    // m_registered = [dictionary retain];
-    // [m_dict addEntriesFromDictionary:m_registered];
     NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
     [orig registerDefaults:dictionary];
 }
 
 - (NSDictionary *)dictionaryRepresentation {
-    return [NSDictionary dictionaryWithDictionary:m_dict];
+    // NOTE: It is needed merge volatileDomains on demand
+    NSMutableDictionary *tmp = [m_dict mutableCopy];
+    NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
+    for (NSString *domain in [orig volatileDomainNames]) {
+        NSDictionary *dict = [orig volatileDomainForName:domain];
+        //NSLog(@"volatileDomainForName: %@ => %@", domain, dict);
+        [tmp addEntriesFromDictionary:dict];
+    }
+    return tmp;
 }
 
 - (id)objectForKey:(NSString *)defaultName {
-    id value = [m_dict objectForKey:defaultName];
+    id value = [[self dictionaryRepresentation] objectForKey:defaultName];
     //NSLog(@"TestUserDefaults objectForKey:%@ => %@", defaultName, value);
     return value;
 }
@@ -105,8 +97,10 @@
 
 @implementation NSUserDefaults (Test)
 + (void)load {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [self aliasClassMethod:@selector(standardUserDefaults) chainingPrefix:@"test"];
     [self aliasClassMethod:@selector(resetToAppDefaults) chainingPrefix:@"test"];
+    [pool release];
 }
 
 + (NSUserDefaults *)test_standardUserDefaults {
