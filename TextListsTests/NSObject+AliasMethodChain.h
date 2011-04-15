@@ -40,6 +40,24 @@
 + (void)revertAliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix;
 @end
 
+/*
+    Example: Revert all aliases after setUp on tearDown
+    @implementation ExampleTests
+    - (void)setUp {
+        [super setUp];
+        [AliasMethodChainTracer startTracingAliasesAll];
+    }
+    - (void)tearDown {
+        // revert method swizzling of +[ASIHTTPRequest requestWithURL] for another test case...
+        [AliasMethodChainTracer revertTracedAliasesAll];
+        [super tearDown];
+    }
+    - (void)testSync {
+        [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
+        [[[NSApplication sharedApplication] delegate] sync];
+    }
+    @end
+*/
 #define _ALIAS_METHOD_CHAIN_TRACER 1
 #if _ALIAS_METHOD_CHAIN_TRACER
 @interface AliasMethodChainTracer : NSObject
