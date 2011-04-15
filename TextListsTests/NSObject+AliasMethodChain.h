@@ -37,4 +37,17 @@
 
 + (void)aliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix;
 + (void)aliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix withBlock:(void *)block;
++ (void)revertAliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix;
 @end
+
+#define _ALIAS_METHOD_CHAIN_TRACER 1
+#if _ALIAS_METHOD_CHAIN_TRACER
+@interface AliasMethodChainTracer : NSObject
+{
+    NSMutableArray *aliaces;
+}
+@property (nonatomic, retain, readonly) NSMutableArray *aliaces;
++ (void)startTracingAliasesAll;
++ (void)revertTracedAliasesAll;
+@end
+#endif //_ALIAS_METHOD_CHAIN_TRACER

@@ -61,6 +61,7 @@
     [super setUp];
     // Set-up code here.
     NSLog(@"setup");
+    [AliasMethodChainTracer startTracingAliasesAll];
     [NSUserDefaults resetToAppDefaults];
     m_appDelegate = [[UIApplication sharedApplication] delegate];
     STAssertNotNil(m_appDelegate, @"Cannot find the application delegate");
@@ -71,6 +72,7 @@
 {
     // Tear-down code here.
     NSLog(@"tearDown");
+    [AliasMethodChainTracer revertTracedAliasesAll];
     [super tearDown];
 }
 
@@ -115,8 +117,8 @@
     STAssertEqualObjects(apiKey, [defaults objectForKey:@"ApiKey"], @"");
     STAssertEqualObjects(userId, [defaults objectForKey:@"UserId"], @"");
     
-    [ASIHTTPRequest revertAliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
-    [Synchronizer revertAliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock"];
+//    [ASIHTTPRequest revertAliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
+//    [Synchronizer revertAliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock"];
 }
 
 // - (void)testPostChangeLog
