@@ -12,11 +12,8 @@
 #import "NSErrorCategories.h"
 #import "NSDateCategories.h"
 #import "NSUserDefaults+.h"
-
-#define SYNCHRONIZER 1
-#if SYNCHRONIZER
 #import "Synchronizer.h"
-#endif
+
 //#define DUMP_SQLITE 1
 #if DUMP_SQLITE
 #include <sqlite3.h>
@@ -309,29 +306,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
 }
 
 - (void)sync {
-#if SYNCHRONIZER
     [Synchronizer sync];
-//     UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite] autorelease];
-//     activityIndicator.frame = CGRectMake(0,0,30,30);
-//     [activityIndicator startAnimating];
-//     UIAppDelegate.syncButton.customView = activityIndicator;
-#if 1
-    
-#endif
-#else
-//     NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-//     NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
-    NSURL *url = [self requestURLForPath:@"/api/changes" auth:YES];
-    if (url) {
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setDelegate:self];
-        [request startAsynchronous];
-    } else {
-        // get api key through web
-        //[UIApp openURL:[NSURL URLWithString:@"http://localhost:3000/api/key?r=items://sync/"]];
-        [UIApp openURL:[self requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
-    }
-#endif
 }
 
 - (void)mergeChanges:(NSArray *)changes forEntityName:(NSString *)entityName inContext:(NSManagedObjectContext *)context {
