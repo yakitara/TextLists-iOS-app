@@ -64,9 +64,16 @@ if [[ ! -d "${prerequisites_dir}" ]]; then
     __run mkdir "${prerequisites_dir}"
 fi
 
+# ASIHTTPRequest
 __fetch_tarball "https://github.com/pokeb/asi-http-request/tarball/v1.8" "ASIHTTPRequest-v1.8.tar.gz" "ASIHTTPRequest"
-__fetch_tarball "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
 
+# JSON Framework
+#__fetch_tarball "https://github.com/stig/json-framework/tarball/v3.0beta1" "JSON-v3.0beta1.tar.gz" "JSON"
+if [[ ! -d "JSON" ]]; then
+    __run git clone git@github.com:hiroshi/json-framework.git "${prerequisites_dir}/JSON"
+fi
+
+# OCMock
 ocmock_dir="${prerequisites_dir}/OCMock"
 __svn_checkout "http://svn.mulle-kybernetik.com/OCMock/trunk@77" "${ocmock_dir}"
 ocmock_lib="${ocmock_dir}/Source/build/Debug/Library/libOCMock.a"

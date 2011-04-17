@@ -82,7 +82,7 @@
             [dict setValue:value forKey:key];
         }
     }
-    NSLog(@"proxyForJson:%@", dict);
+    //NSLog(@"proxyForJson:%@", dict);
     return dict;
 }
 @end

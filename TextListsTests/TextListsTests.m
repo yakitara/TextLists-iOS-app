@@ -10,6 +10,7 @@
 #import "Synchronizer.h"
 #import "ItemList.h"
 #import "NSErrorCategories.h"
+#import "NSManagedObjectContextCategories.h"
 
 @interface TextListsTests : SenTestCase {
 @private
@@ -128,6 +129,6 @@
     
     NSManagedObjectContext *context = m_appDelegate.managedObjectContext;
     id list = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
-    STAssertEqualObjects(10001, [[list valueForKey:@"id"] intValue], @"");
+    STAssertEquals(10001, [[list valueForKey:@"id"] intValue], @"");
 }
 @end
