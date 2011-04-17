@@ -81,18 +81,11 @@
         [[[mock stub] andReturn:[NSArray array]] postQueue];
         return mock;
     }];
-    //   GET /api/chageLog will be "204 No Content"
-    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
-        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
-        
-        void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-            id requestMock = [invocation target];
-            [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
-            [requestMock requestFinished];
-        };
-        [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
-        return mock;
+    // Skip actual GET /api/changes
+    [Synchronizer aliasInstanceMethod:@selector(getChangeLog) chainingPrefix:@"mock" withBlock:^(id _self) {
+        [_self stop];
     }];
+    
     // Simulate redirection from AuthPage of the web site
     NSString *apiKey = @"ABCDEFG";
     NSString *userId = @"12345";
@@ -131,4 +124,18 @@
     id list = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
     STAssertEquals(10001, [[list valueForKey:@"id"] intValue], @"");
 }
+
+// - (void)testGetNoContent
+// {
+//     //   GET /api/chageLog will be "204 No Content"
+//     [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
+//         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
+//         [[[mock stub] andDo:^(NSInvocation *invocation) {
+//             id requestMock = [invocation target];
+//             [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+//             [requestMock requestFinished];
+//         }] startAsynchronous];
+//         return mock;
+//     }];
+// }
 @end
