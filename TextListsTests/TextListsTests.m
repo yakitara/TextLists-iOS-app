@@ -8,59 +8,44 @@
 #import "NSUserDefaults+.h"
 #import "ASIHTTPRequest.h"
 #import "Synchronizer.h"
-
-// @implementation Synchronizer (Mock)
-// + (id)mock_singletonSynchronizer {
-//     id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_singletonSynchronizer))];
-//     [[[mock stub] andReturn:[NSArray array]] postQueue];
-//     return mock;
-// }
-// @end
-
-// @implementation ASIHTTPRequest (Mock)
-// + (id)mock_requestWithURL:(NSURL *)url {
-//     id mock = [OCMockObject partialMockForObject:objc_msgSend(self, @selector(without_mock_requestWithURL:), url)];
-    
-//     void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
-//         id requestMock = [invocation target];
-//         [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
-//         //[[[requestMock stub] andReturnValue:@""] responseString];
-//         //[requestMock setUserInfo:[NSDictionary dictionaryWithObject:]]
-//         [requestMock requestFinished];
-//     };
-//     [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
-//     return mock;
-// }
-// @end
+#import "ItemList.h"
+#import "NSErrorCategories.h"
 
 @interface TextListsTests : SenTestCase {
 @private
     ItemsAppDelegate *m_appDelegate;
     ListsViewController *m_listsViewController;
 }
-
 @end
 
 @implementation TextListsTests
-// - (void)invokeTest {
-//     @throw @"invokeTest";
-//     //STAssertNoThrow([super invokeTest], @"");
-//     @try {
-//          [super invokeTest];
-//      } @catch (id e) {
-//         STFail(@"exception: %@", e);
-//     //     //[self failWithException:e];
-//     //     // [self failWithException:[NSException failureInFile:[NSString stringWithUTF8String:__FILE__]
-//     //     //                                             atLine:__LINE__
-//     //     //                                    withDescription:@"%@", e]];
-//     }
-// }
++ (void)load {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    // use in memory store coordinator for CoreData records
+    [ItemsAppDelegate aliasInstanceMethod:@selector(persistentStoreCoordinator) chainingPrefix:@"memory" withBlock:^(id _self) {
+        Ivar ivar = class_getInstanceVariable([_self class], "m_persistentStoreCoordinator");
+        id coordinator = object_getIvar(_self, ivar);
+        
+        if (coordinator != nil) {
+            return coordinator;
+        }
+        NSError *error = nil;
+        coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[_self managedObjectModel]];
+        if (![coordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:&error]) {
+            [error prettyPrint];
+            abort();
+        }
+        object_setIvar(_self, ivar, coordinator);
+        return coordinator;
+    }];
+    [pool release];
+}
 
 - (void)setUp
 {
     [super setUp];
     // Set-up code here.
-    NSLog(@"setup");
+    //NSLog(@"setup");
     [AliasMethodChainTracer startTracingAliasesAll];
     [NSUserDefaults resetToAppDefaults];
     m_appDelegate = [[UIApplication sharedApplication] delegate];
@@ -71,13 +56,12 @@
 - (void)tearDown
 {
     // Tear-down code here.
-    NSLog(@"tearDown");
+    //NSLog(@"tearDown");
     [AliasMethodChainTracer revertTracedAliasesAll];
     [super tearDown];
 }
 
-#if 1
-- (void)testSyncWithoutApiKey
+- (void)testOpenAuthPage
 {
     id appMock = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     [[appMock expect] openURL:[NSURL URLWithString:@"http://textlists.yakitara.com:8080/api/key?r=items://sync/"]];
@@ -89,25 +73,26 @@
 
 - (void)testSettingApiKey
 {
+    // Ensure no additional process save for setting ApiKey and UserId
+    //   Empty postQueue will not be processed
     [Synchronizer aliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock" withBlock:^(id _class) {
         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_singletonSynchronizer))];
         [[[mock stub] andReturn:[NSArray array]] postQueue];
         return mock;
     }];
-    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL url) {
+    //   GET /api/chageLog will be "204 No Content"
+    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
         
         void (^startAsynchronousBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
             id requestMock = [invocation target];
             [[[requestMock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
-            //[[[requestMock stub] andReturnValue:@""] responseString];
-            //[requestMock setUserInfo:[NSDictionary dictionaryWithObject:]]
             [requestMock requestFinished];
         };
         [[[mock stub] andDo:startAsynchronousBlock] startAsynchronous];
         return mock;
     }];
-    
+    // Simulate redirection from AuthPage of the web site
     NSString *apiKey = @"ABCDEFG";
     NSString *userId = @"12345";
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"items://sync/?key=%@&user_id=%@", apiKey, userId]];
@@ -116,32 +101,33 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     STAssertEqualObjects(apiKey, [defaults objectForKey:@"ApiKey"], @"");
     STAssertEqualObjects(userId, [defaults objectForKey:@"UserId"], @"");
-    
-//    [ASIHTTPRequest revertAliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock"];
-//    [Synchronizer revertAliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock"];
 }
 
-// - (void)testPostChangeLog
-// {
-//     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//     [defaults setObject:@"ABCDEFG" forKey:@"ApiKey"];
-//     [defaults setObject:@"12345" forKey:@"UserId"];
-    
-//     [Synchronizer aliasClassMethod:@selector(singletonSynchronizer) chainingPrefix:@"mock" withBlock:^(id _class) {
-//         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_singletonSynchronizer))];
-//         [[[mock stub] andReturn:[NSArray arrayWithObject:@"record"]] postQueue];
-//         return mock;
-//     }];
-    
-//     STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
-// }
-#else
-- (void)testFail
+- (void)testPostInBox
 {
-    NSLog(@"defaults: %@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
-//    NSLog(@"arguments: %@", [[NSUserDefaults standardUserDefaults] volatileDomainForName:@"NSArgumentDomain"]);
-//    NSLog(@"volitile domains: %@", [[NSUserDefaults standardUserDefaults] volatileDomainNames]);
-    STFail(@"fail");
+    // Set dummy ApiKey to avoid to get the key
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"ABCDEFG" forKey:@"ApiKey"];
+    [defaults setObject:@"12345" forKey:@"UserId"];
+    // Post /api/changes will response id:10001
+    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
+        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
+        [[[mock stub] andDo:^(NSInvocation *invocation) {
+            [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
+            [[[mock stub] andReturn:@"{\"id\": 10001}"] responseString];
+            [[mock delegate] performSelector:[mock didFinishSelector] withObject:mock];
+        }] startAsynchronous];
+        return mock;
+    }];
+    // Skip actual GET /api/changes
+    [Synchronizer aliasInstanceMethod:@selector(getChangeLog) chainingPrefix:@"mock" withBlock:^(id _self) {
+        [_self stop];
+    }];
+    
+    STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
+    
+    NSManagedObjectContext *context = m_appDelegate.managedObjectContext;
+    id list = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
+    STAssertEqualObjects(10001, [[list valueForKey:@"id"] intValue], @"");
 }
-#endif
 @end

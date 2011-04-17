@@ -21,6 +21,7 @@
 		6849C4DE1191532900DA0D9B /* ItemContentEditingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6849C4DD1191532900DA0D9B /* ItemContentEditingViewController.m */; };
 		6853E4DA1222B98F00E392EA /* ItemContentEditingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6853E4D91222B98F00E392EA /* ItemContentEditingViewController.xib */; };
 		68553F361354326500B81E11 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68553F351354326500B81E11 /* libOCMock.a */; };
+		6880B8641359DAD90027B8C4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28860BE40F44EE6400985440 /* CoreData.framework */; };
 		6885DC351187F2F700B056CB /* ItemsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DC341187F2F700B056CB /* ItemsViewController.m */; };
 		6885DE6E11886AB600B056CB /* ListDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6885DE6C11886AB600B056CB /* ListDetailViewController.m */; };
 		6885DE6F11886AB600B056CB /* ListDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6885DE6D11886AB600B056CB /* ListDetailViewController.xib */; };
@@ -224,6 +225,7 @@
 				68A2B421134EF65800C46D6C /* Foundation.framework in Frameworks */,
 				68A2B422134EF65800C46D6C /* CoreGraphics.framework in Frameworks */,
 				68553F361354326500B81E11 /* libOCMock.a in Frameworks */,
+				6880B8641359DAD90027B8C4 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
