@@ -45,12 +45,35 @@ void revertAliasMethodChain(Class class, SEL selector, NSString *prefix) {
     class_replaceMethod(class, selector, origImp, types);
 }
 
+#define _WORKAROUND_FOR_IMP_IMPLEMENTATION_WITH_BLOCK 1
+#if _WORKAROUND_FOR_IMP_IMPLEMENTATION_WITH_BLOCK
+static
+void doWorkaroundFor_imp_implementationWithBlock(void *block) {
+    // NOTE: I don't know why, but in a certain condition, imp_implementationWithBlock() can cause a deadlock.
+    // NOTE: Copying the block will be a workaround for the issue.
+    // NOTE: Following lines are sample backtrace on a deadlock.
+    // #00x999430d6 in semaphore_wait_trap ()
+    // #10x012749e7 in _rwlock_read_nodebug ()
+    // #20x0126f07c in lookUpMethod ()
+    // #30x0126f1d6 in _class_lookupMethodAndLoadCache ()
+    // #40x012820e3 in objc_msgSend ()
+    // #50x0199cbf7 in _Block_object_assign ()
+    // #60x04d7d3a2 in __copy_helper_block_7 ()
+    // #70x0199c992 in _Block_copy_internal ()
+    // #80x0126d221 in imp_implementationWithBlock ()
+    [[(id)block copy] autorelease];
+}
+#else
+#define doWorkaroundFor_imp_implementationWithBlock(block)
+#endif
+
 @implementation NSObject (AliasMethodChain)
 + (void)aliasClassMethod:(SEL)selector chainingPrefix:(NSString *)prefix {
     aliasMethodChain(object_getClass(self), selector, prefix, nil);
 }
 
 + (void)aliasClassMethod:(SEL)selector chainingPrefix:(NSString *)prefix withBlock:(void *)block {
+    doWorkaroundFor_imp_implementationWithBlock(block);
     // CREDIT: http://www.friday.com/bbum/2011/03/17/ios-4-3-imp_implementationwithblock/
     aliasMethodChain(object_getClass(self), selector, prefix, imp_implementationWithBlock(block));
 }
@@ -64,6 +87,7 @@ void revertAliasMethodChain(Class class, SEL selector, NSString *prefix) {
 }
 
 + (void)aliasInstanceMethod:(SEL)selector chainingPrefix:(NSString *)prefix withBlock:(void *)block {
+    doWorkaroundFor_imp_implementationWithBlock(block);
     // CREDIT: http://www.friday.com/bbum/2011/03/17/ios-4-3-imp_implementationwithblock/
     aliasMethodChain([self class], selector, prefix, imp_implementationWithBlock(block));
 }
