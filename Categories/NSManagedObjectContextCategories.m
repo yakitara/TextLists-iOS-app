@@ -82,6 +82,7 @@
     }
     for (NSManagedObject *managedObject in [self insertedObjects]) {
         if ([managedObject needUpdate]) {
+            [managedObject setUUID];
             [managedObject setTimestamps:now];
             [managedObject insertChangeLog];
         }

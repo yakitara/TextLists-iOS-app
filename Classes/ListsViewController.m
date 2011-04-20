@@ -15,7 +15,7 @@
 
 
 @implementation ListsViewController
-@synthesize fetchedResultsController = m_fetchedResultsController;
+//@synthesize fetchedResultsController = m_fetchedResultsController;
 @synthesize inbox = m_inbox;
 @synthesize checkedList = m_checkedList;
 @synthesize delegate = m_delegate;
@@ -52,7 +52,7 @@
     }
 #if 1
     [UIAppDelegate.listsFetchedResultsController addTableView:self.tableView];
-    self.fetchedResultsController = UIAppDelegate.listsFetchedResultsController;
+//    self.fetchedResultsController = UIAppDelegate.listsFetchedResultsController;
 #else
     // fetch lists
     NSError *error = nil;
@@ -252,45 +252,10 @@
 
 #pragma mark -
 #pragma mark Fetched results controller
-/*
 - (NSFetchedResultsController *)fetchedResultsController {
-    
-    if (_fetchedResultsController != nil) {
-        return _fetchedResultsController;
-    }
-    NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
-    // Set up the fetched results controller.
-    // Create the fetch request for the entity.
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"List" inManagedObjectContext:context];
-    [fetchRequest setEntity:entity];
-    
-    // Set the batch size to a suitable number.
-    //[fetchRequest setFetchBatchSize:20];
-    
-    // Edit the sort key as appropriate.
-    //NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES];
-    NSSortDescriptor *positionSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"position" ascending:YES] autorelease];
-    NSSortDescriptor *createdSortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"created_at" ascending:YES] autorelease];
-    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:positionSortDescriptor, createdSortDescriptor, nil];
-    
-    [fetchRequest setSortDescriptors:sortDescriptors];
-    
-    // Edit the section name key path and cache name if appropriate.
-    // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:context sectionNameKeyPath:nil cacheName:@"List"];
-    aFetchedResultsController.delegate = self;
-    self.fetchedResultsController = aFetchedResultsController;
-    
-    [aFetchedResultsController release];
-    [fetchRequest release];
-    //[sortDescriptor release];
-    [sortDescriptors release];
-    
-    return _fetchedResultsController;
-}    
-*/
+    return UIAppDelegate.listsFetchedResultsController;
+}
+
 - (NSManagedObject*)inbox {
     if (!m_inbox) {
         NSManagedObjectContext *context = UIAppDelegate.managedObjectContext;
@@ -401,7 +366,7 @@
 
 - (void)dealloc {
     [UIAppDelegate.listsFetchedResultsController removeTableView:self.tableView];
-    self.fetchedResultsController = nil;
+    //self.fetchedResultsController = nil;
     self.inbox = nil;
     self.checkedList = nil;
     //self.fetchedResultsController = nil;

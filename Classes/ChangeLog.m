@@ -1,6 +1,8 @@
 #import "ChangeLog.h"
 #import "ItemsAppDelegate.h"
 #import "NSManagedObjectContextCategories.h"
+#import "EntityNameProtocol.h"
+#import "JSON.h"
 
 @implementation ChangeLog 
 
@@ -19,6 +21,19 @@
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
     return [[context executeFetchRequest:fetchRequest] lastObject];
 }
+
++ (id)changeForManagedObject:(NSManagedObject <EntityName> *)record {
+    if ([record isKindOfClass:[ChangeLog class]]) {
+        return record;
+    } else {
+        id change = [NSMutableDictionary dictionary];
+        [change setObject:[[record class] entityName] forKey:@"record_type"];
+        [change setObject:[record JSONRepresentation] forKey:@"json"];
+        [change setObject:[NSDate date] forKey:@"created_at"];
+        return change;
+    }
+}
+
 #pragma mark -
 #pragma mark ChangeLog protocol
 - (BOOL)needChangeLog {

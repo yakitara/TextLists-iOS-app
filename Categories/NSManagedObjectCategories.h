@@ -31,3 +31,7 @@
 @interface NSManagedObject ( Convenience )
 - (void)setValues:(NSDictionary *)values;
 @end
+
+@interface NSManagedObject ( UUID )
+- (void)setUUID;
+@end

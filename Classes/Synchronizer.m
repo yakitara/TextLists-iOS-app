@@ -11,6 +11,8 @@
 @interface Synchronizer ()
 - (void)sync;
 - (void)postChangeLog:(NSManagedObject *)record;
+- (void)postChangeLogs:(NSArray *)records;
+- (void)postJSONRepresentationOf:(id)value toPath:(NSString *)path auth:(BOOL)auth userInfo:(id)userInfo;
 + (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth;
 - (void)getChangeLog;
 - (void)stop;
@@ -55,39 +57,54 @@
 }
 
 - (void)sync {
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"ApiKey"]) {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults objectForKey:@"ApiKey"]) {
         [UIApp openURL:[[self class] requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
         [self stop];
         return;
     }
     
     if ([self.postQueue count] > 0) {
-        [self postChangeLog:[self.postQueue objectAtIndex:0]];
+        if ([defaults boolForKey:@"PostBulkChanges"]) {
+            NSRange range = NSMakeRange(0, MIN([self.postQueue count], [defaults integerForKey:@"PostBulkChangesLimit"]));
+            [self postChangeLogs:[self.postQueue subarrayWithRange:range]];
+        } else {
+            [self postChangeLog:[self.postQueue objectAtIndex:0]];
+        }
     } else {
         [self getChangeLog];
         //[self stop];
     }
 }
 
-- (void)postChangeLog:(NSManagedObject <EntityName> *)record {
-    id log = nil;
-    if ([record isKindOfClass:[ChangeLog class]]) {
-        log = record;
-    } else {
-        log = [NSMutableDictionary dictionary];
-        [log setObject:[[record class] entityName] forKey:@"record_type"];
-        [log setObject:[record JSONRepresentation] forKey:@"json"];
-        [log setObject:[NSDate date] forKey:@"created_at"];
+// POST many changes at a request
+- (void)postChangeLogs:(NSArray *)records {
+    NSMutableArray *logs = [NSMutableArray arrayWithCapacity:[records count]];
+    for (NSManagedObject <EntityName> *record in records) {
+        [logs addObject:[ChangeLog changeForManagedObject:record]];
     }
-    NSURL *url = [[self class] requestURLForPath:@"/api/changes" auth:YES];
+    NSDictionary *value = [NSDictionary dictionaryWithObject:logs forKey:@"changes"];
+    NSDictionary *info = [NSDictionary dictionaryWithObject:records forKey:@"records"];
+    [self postJSONRepresentationOf:value toPath:@"/api/changes" auth:YES userInfo:info];
+}
+
+// POST a change at a request
+- (void)postChangeLog:(NSManagedObject <EntityName> *)record {
+    id log = [ChangeLog changeForManagedObject:record];
+    NSDictionary *info = [NSDictionary dictionaryWithObject:record forKey:@"record"];
+    [self postJSONRepresentationOf:log toPath:@"/api/changes" auth:YES userInfo:info];
+}
+
+- (void)postJSONRepresentationOf:(id)value toPath:(NSString *)path auth:(BOOL)auth userInfo:(id)userInfo {
+    NSURL *url = [[self class] requestURLForPath:path auth:auth];
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request appendPostData:[[log JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding]];
+    [request appendPostData:[[value JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding]];
     request.requestMethod = @"POST";
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/json"];
     request.delegate = self;
     request.didFinishSelector = @selector(postChangeLogRequestFinished:);
-    request.userInfo = [NSDictionary dictionaryWithObject:record forKey:@"record"];
+    request.userInfo = userInfo;
     [request startAsynchronous];
 }
 
@@ -100,20 +117,31 @@
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"ApiKey"];
         [self sync];
     } else if(request.responseStatusCode / 100 == 2) {
-        NSManagedObject *record = [request.userInfo objectForKey:@"record"];
-        NSDictionary *responseValue = [request.responseString JSONValue];
-        if ([record isKindOfClass:[ChangeLog class]]) {
-            // delete the change log
-            [[record managedObjectContext] deleteObject:record];
-            [[record managedObjectContext] save];
-        } else {
-            // set id for new record
-            [record setValue:[responseValue valueForKey:@"id"] forKey:@"id"]; // the name of key should be record_id instead
-            [record setValue:[NSDate date] forKey:@"synched_at"];
-            [[record managedObjectContext] save];
+        NSArray *records = [request.userInfo objectForKey:@"records"];
+        if (!records) {
+            records = [NSArray arrayWithObject:[request.userInfo objectForKey:@"record"]];
         }
-        // remove the object from the queue
-        [self.postQueue removeObject:record];
+        id responseValue = [request.responseString JSONValue];
+        if (![responseValue respondsToSelector:@selector(objectAtIndex:)]) {
+            responseValue = [NSArray arrayWithObject:responseValue];
+        }
+        //for (NSManagedObject *record in records) {
+        for (int i = 0; i < [records count]; i++) {
+            NSManagedObject *record = [records objectAtIndex:i];
+            NSDictionary *dict = [responseValue objectAtIndex:i];
+            if ([record isKindOfClass:[ChangeLog class]]) {
+                // delete the change log
+                [[record managedObjectContext] deleteObject:record];
+                [[record managedObjectContext] save];
+            } else {
+                // set id for new record
+                [record setValue:[dict valueForKey:@"id"] forKey:@"id"]; // the name of key should be record_id instead
+                [record setValue:[NSDate date] forKey:@"synched_at"];
+                [[record managedObjectContext] save];
+            }
+            // remove the object from the queue
+            [self.postQueue removeObject:record];
+        }
         // what's next?
         [self sync];
     }
@@ -134,6 +162,14 @@
             [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
             [m_postQueue addObjectsFromArray:[context executeFetchRequest:fetchRequest]];
         }
+#if 1
+        // It is possible that a new record has not uuid if created before update of the app
+        // NOTE: This code will be perged in some future
+        for (NSManagedObject *newRecord in m_postQueue) {
+            [newRecord setUUID];
+        }
+        [context save];
+#endif
         // changelogs
         NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"ChangeLog" inManagedObjectContext:context];

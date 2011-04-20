@@ -55,7 +55,7 @@
     NSError *error;
     NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
     if (!records) {
-        NSLog(@"Fetching %@ failed:%@, $@", entityName, error, [error userInfo]);
+        NSLog(@"Fetching %@ failed:%@, %@", entityName, error, [error userInfo]);
         abort();
     }
     if ([records count] == 0) {
@@ -79,7 +79,11 @@
             NSString *name = [relationship name];
             NSString *key = [name stringByAppendingString:@"_id"];
             NSString *value = [[self valueForKey:name] valueForKey:@"id"];
-            [dict setValue:value forKey:key];
+            if (value) {
+                [dict setValue:value forKey:key];
+            } else {
+                [dict setValue:[[self valueForKey:name] valueForKey:@"uuid"] forKey:[name stringByAppendingString:@"_uuid"]];
+            }
         }
     }
     //NSLog(@"proxyForJson:%@", dict);
@@ -190,6 +194,18 @@
 - (void)setValues:(NSDictionary *)values {
     for (NSString *key in [values allKeys]) {
         [self setValue:[values objectForKey:key] forKey:key];
+    }
+}
+@end
+
+@implementation NSManagedObject ( UUID )
+- (void)setUUID {
+    if ([[[self entity] attributesByName] objectForKey:@"uuid"]) {
+        if (![self valueForKey:@"uuid"]) {
+            CFUUIDRef uuid = CFUUIDCreate(NULL);
+            [self setValue:[(NSString *)CFUUIDCreateString(NULL, uuid) autorelease] forKey:@"uuid"];
+            CFRelease(uuid);
+        }
     }
 }
 @end

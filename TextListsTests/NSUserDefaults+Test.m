@@ -40,13 +40,15 @@
 
 - (NSDictionary *)dictionaryRepresentation {
     // NOTE: It is needed merge volatileDomains on demand
-    NSMutableDictionary *tmp = [m_dict mutableCopy];
+    // NSMutableDictionary *tmp = [m_dict mutableCopy];
+    NSMutableDictionary *tmp = [NSMutableDictionary dictionary];
     NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
     for (NSString *domain in [orig volatileDomainNames]) {
         NSDictionary *dict = [orig volatileDomainForName:domain];
         //NSLog(@"volatileDomainForName: %@ => %@", domain, dict);
         [tmp addEntriesFromDictionary:dict];
     }
+    [tmp addEntriesFromDictionary:m_dict];
     return tmp;
 }
 
@@ -69,8 +71,16 @@
     return [[self objectForKey:defaultName] integerValue];
 }
 
+- (void)setInteger:(NSInteger)value forKey:(NSString *)defaultName {
+    [self setObject:[NSNumber numberWithInteger:value] forKey:defaultName];
+}
+
 - (BOOL)boolForKey:(NSString *)defaultName {
     return [[self objectForKey:defaultName] boolValue];
+}
+
+- (void)setBool:(BOOL)value forKey:(NSString *)defaultName  {
+    [self setObject:[NSNumber numberWithBool:value] forKey:defaultName];
 }
 
 #if 1

@@ -141,6 +141,7 @@
 		68BDB4DD11A197A200B65297 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		68BDB4E311A197ED00B65297 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
 		68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 2.xcdatamodel"; sourceTree = "<group>"; };
+		68BFF238135E602600E64985 /* ItemsCoreData 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ItemsCoreData 6.xcdatamodel"; sourceTree = "<group>"; };
 		68C5A2FD11AB65DD00753370 /* NSManagedObjectContextCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSManagedObjectContextCategories.h; path = Categories/NSManagedObjectContextCategories.h; sourceTree = SOURCE_ROOT; };
 		68C5A2FE11AB65DD00753370 /* NSManagedObjectContextCategories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSManagedObjectContextCategories.m; path = Categories/NSManagedObjectContextCategories.m; sourceTree = SOURCE_ROOT; };
 		68C5A31C11AB94B900753370 /* NSErrorCategories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSErrorCategories.h; path = ../Categories/NSErrorCategories.h; sourceTree = "<group>"; };
@@ -934,13 +935,14 @@
 		28D3F201112F7DC200FD0661 /* ItemsCoreData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				68BFF238135E602600E64985 /* ItemsCoreData 6.xcdatamodel */,
 				28860B760F44E54D00985440 /* ItemsCoreData.xcdatamodel */,
 				68BDB50511A26E4B00B65297 /* ItemsCoreData 2.xcdatamodel */,
 				6819BA7811BDE18000A37FF5 /* ItemsCoreData 3.xcdatamodel */,
 				68A0FFA311D995AB007AC834 /* ItemsCoreData 4.xcdatamodel */,
 				686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */,
 			);
-			currentVersion = 686F670811E5FF0F009A2336 /* ItemsCoreData 5.xcdatamodel */;
+			currentVersion = 68BFF238135E602600E64985 /* ItemsCoreData 6.xcdatamodel */;
 			path = ItemsCoreData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
