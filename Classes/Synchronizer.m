@@ -13,7 +13,7 @@
 - (void)postChangeLog:(NSManagedObject *)record;
 - (void)postChangeLogs:(NSArray *)records;
 - (void)postJSONRepresentationOf:(id)value toPath:(NSString *)path auth:(BOOL)auth userInfo:(id)userInfo;
-+ (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth;
++ (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth query:(NSDictionary *)queryDict;
 - (void)getChangeLog;
 - (void)stop;
 @end
@@ -59,18 +59,15 @@
 - (void)sync {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (![defaults objectForKey:@"ApiKey"]) {
-        [UIApp openURL:[[self class] requestURLForPath:@"/api/key?r=items://sync/" auth:NO]];
+        [UIApp openURL:[[self class] requestURLForPath:@"/api/key?r=items://sync/" auth:NO query:nil]];
         [self stop];
         return;
     }
     
     if ([self.postQueue count] > 0) {
-        if ([defaults boolForKey:@"PostBulkChanges"]) {
-            NSRange range = NSMakeRange(0, MIN([self.postQueue count], [defaults integerForKey:@"PostBulkChangesLimit"]));
-            [self postChangeLogs:[self.postQueue subarrayWithRange:range]];
-        } else {
-            [self postChangeLog:[self.postQueue objectAtIndex:0]];
-        }
+        NSRange range = NSMakeRange(0, MAX(1, MIN([self.postQueue count], [defaults integerForKey:@"PostChangesBulkLimit"])));
+        [self postChangeLogs:[self.postQueue subarrayWithRange:range]];
+        //[self postChangeLog:[self.postQueue objectAtIndex:0]]; 
     } else {
         [self getChangeLog];
         //[self stop];
@@ -96,7 +93,7 @@
 }
 
 - (void)postJSONRepresentationOf:(id)value toPath:(NSString *)path auth:(BOOL)auth userInfo:(id)userInfo {
-    NSURL *url = [[self class] requestURLForPath:path auth:auth];
+    NSURL *url = [[self class] requestURLForPath:path auth:auth query:nil];
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request appendPostData:[[value JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding]];
     request.requestMethod = @"POST";
@@ -183,9 +180,9 @@
 
 - (void)getChangeLog {
     NSInteger lastLogId = [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"];
-    
+    NSNumber *limit = [[NSUserDefaults standardUserDefaults] objectForKey:@"GetChangesBulkLimit"];
     NSString *path = [NSString stringWithFormat:@"/api/changes/next/%d", lastLogId];
-    NSURL *url = [[self class] requestURLForPath:path auth:YES];
+    NSURL *url = [[self class] requestURLForPath:path auth:YES query:[NSDictionary dictionaryWithObject:limit forKey:@"limit"]];
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/json"];
@@ -205,58 +202,63 @@
     } else if (request.responseStatusCode == 204) { // '204 No Content' means no more log newer than given log id
         [self stop];
     } else if(request.responseStatusCode == 200) {
-        NSDictionary *log = [request.responseString JSONValue];
-        //
+        id responseValue = [request.responseString JSONValue];
+        if (![responseValue respondsToSelector:@selector(objectAtIndex:)]) {
+            responseValue = [NSArray arrayWithObject:responseValue];
+        }
         NSManagedObjectContext *context = [UIAppDelegate managedObjectContext];
-        NSString *entityName = [log objectForKey:@"record_type"];
-        NSNumber *record_id = [log objectForKey:@"record_id"];
-        NSManagedObject *record = [context fetchFirstFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObjects:record_id, nil]];
-        if (!record) {
-            record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+        for (NSDictionary *log in responseValue) {
+            NSString *entityName = [log objectForKey:@"record_type"];
+            NSNumber *record_id = [log objectForKey:@"record_id"];
+            NSManagedObject *record = [context fetchFirstFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObjects:record_id, nil]];
+            if (!record) {
+                record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+            }
+            [record setValues:[[log objectForKey:@"json"] JSONValue]];
+
+            // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
+            [context save];
+            
+            //[context processPendingChanges];
+            
+            // update LastLogId
+            NSNumber *lastLogId = [log objectForKey:@"id"];
+            [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            // FIXME: Don't do such a entity specific thing here.
+            // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
+            if ([entityName isEqual:@"Listing"]) {
+                [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
+            }
         }
-        [record setValues:[[log objectForKey:@"json"] JSONValue]];
-        // TODO: consider atomicity of save and updating lastLogId, storing lastLogId in ManagedObject will be safe
-        [context save];
-        
-        //[context processPendingChanges];
-        
-        // update LastLogId
-        NSNumber *lastLogId = [log objectForKey:@"id"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        // FIXME: Don't do such a entity specific thing here.
-        // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
-        if ([entityName isEqual:@"Listing"]) {
-            [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
-        }
-//        [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
-        
-//        [UIAppDelegate resetManagedObjectContext];
-        
         // what's next?
         [self sync];
     }
 }
 
-+ (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth {
++ (NSURL *)requestURLForPath:(NSString *)path auth:(BOOL)auth query:(NSDictionary *)queryDict {
     // FIXME: use preferences or...
 // #if TARGET_IPHONE_SIMULATOR
 //     NSString *baseURLString = [NSString stringWithFormat:@"http://local.items.yakitara.com:3000%@", path];
 // #else
 //     NSString *baseURLString = [NSString stringWithFormat:@"http://textlists.yakitara.com%@", path];
 // #endif
-    NSURL *rootURL = [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"WebServiceURL"]];
-    NSURL *url = [NSURL URLWithString:path relativeToURL:rootURL];
+    NSMutableDictionary *dict = queryDict ? [queryDict mutableCopy] : [NSMutableDictionary dictionary];
     if (auth) {
-        NSString *key = [[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"];
-        NSString *user_id = [[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"];
-        if (key) {
-            //return [NSURL URLWithString:[NSString stringWithFormat:@"%@?user_id=%@&key=%@", baseURLString, user_id, key]];
-            url = [NSURL URLWithString:[NSString stringWithFormat:@"?user_id=%@&key=%@", user_id, key] relativeToURL:url];
-        } else {
-            url = nil;
-        }
+        [dict setObject:[[NSUserDefaults standardUserDefaults] stringForKey:@"ApiKey"] forKey:@"key"];
+        [dict setObject:[[NSUserDefaults standardUserDefaults] stringForKey:@"UserId"] forKey:@"user_id"];
     }
+    NSString *query = @"";
+    if ([dict count] > 0) {
+        NSMutableArray *queryArray = [NSMutableArray array];
+        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+            [queryArray addObject:[NSString stringWithFormat:@"%@=%@", key, obj]];
+        }];
+        query = [@"?" stringByAppendingString:[queryArray componentsJoinedByString:@"&"]];
+    }
+    NSURL *rootURL = [NSURL URLWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"WebServiceURL"]];
+    NSURL *url = [NSURL URLWithString:[path stringByAppendingString:query] relativeToURL:rootURL];
+
     // NOTE: I don' know why, but an URL created by URLWithString:relativeToURL: cannot be opend with -[UIApplication openURL]
     return [NSURL URLWithString:[url absoluteString]];
 }

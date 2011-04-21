@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>PostBulkChangesLimit</key>
-	<integer>30</integer>
-	<key>PostBulkChanges</key>
-	<true/>
+	<key>PostChangesBulkLimit</key>
+	<integer>50</integer>
+	<key>GetChangesBulkLimit</key>
+	<integer>50</integer>
 </dict>
 </plist>

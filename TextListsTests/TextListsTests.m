@@ -14,6 +14,7 @@
 #import "NSErrorCategories.h"
 #import "NSManagedObjectContextCategories.h"
 #import "JSON.h"
+#import "NSURL+QueryDictionary.h"
 
 @interface ItemsAppDelegate (Test)
 - (void)resetPersistentStoreCoordinator;
@@ -49,6 +50,7 @@
     ItemsAppDelegate *m_appDelegate;
     ListsViewController *m_listsViewController;
     BOOL m_postBulkChanges;
+    NSManagedObjectContext *m_context;
 }
 - (void)setupApiKey;
 - (void)mockEmptyPostQueue;
@@ -74,28 +76,15 @@
     STAssertNotNil(m_appDelegate, @"Cannot find the application delegate");
     m_listsViewController = (ListsViewController *)m_appDelegate.navigationController.topViewController;
     (void)m_listsViewController.inbox;  // re-create in-box if not exists
+    m_context = m_appDelegate.managedObjectContext;
 }
 
 - (void)tearDown
 {
     // Tear-down code here.
     //NSLog(@"tearDown");
-#if 1
     [m_appDelegate resetPersistentStoreCoordinator];
     m_listsViewController.inbox = nil;
-#else
-    NSPersistentStoreCoordinator *coordinator = m_appDelegate.managedObjectContext.persistentStoreCoordinator;
-    NSError *error = nil;
-    if (![coordinator removePersistentStore:[[coordinator persistentStores] lastObject] error:&error]) {
-        [error prettyPrint];
-        STFail(@"");
-    }
-    
-    if (![coordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:&error]) {
-        [error prettyPrint];
-        STFail(@"");
-    }
-#endif
     [NSUserDefaults resetToAppDefaults];
     [AliasMethodChainTracer revertTracedAliasesAll];
     [super tearDown];
@@ -129,45 +118,42 @@
     STAssertEqualObjects([defaults objectForKey:@"UserId"], userId, @"");
 }
 
-- (void)testPostInBox
-{
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PostBulkChanges"];
-    [self setupApiKey];
-    // Post /api/changes will response id:10001
-    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
-        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
-        [[[mock stub] andDo:^(NSInvocation *invocation) {
-            [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
-            [[[mock stub] andReturn:@"{\"id\": 10001}"] responseString];
-            [mock requestFinished];
-        }] startAsynchronous];
-        return mock;
-    }];
-    [self mockGetChangeLogDoesNothing];
+// - (void)testPostInBox
+// {
+//     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"PostBulkChanges"];
+//     [self setupApiKey];
+//     // Post /api/changes will response id:10001
+//     [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
+//         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
+//         [[[mock stub] andDo:^(NSInvocation *invocation) {
+//             [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
+//             [[[mock stub] andReturn:@"{\"id\": 10001}"] responseString];
+//             [mock requestFinished];
+//         }] startAsynchronous];
+//         return mock;
+//     }];
+//     [self mockGetChangeLogDoesNothing];
     
-    STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
+//     STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
     
-    NSManagedObjectContext *context = m_appDelegate.managedObjectContext;
-    id list = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
-    STAssertEquals([[list valueForKey:@"id"] intValue], 10001, @"");
-}
+//     id list = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
+//     STAssertEquals([[list valueForKey:@"id"] intValue], 10001, @"");
+// }
 
 - (void)testPostChangesBulk
 {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"PostBulkChanges"];
-    [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"PostBulkChangesLimit"];
+    [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"PostChangesBulkLimit"];
     [self setupApiKey];
     // Make 3 changes (-> total 4 new objects, including in-box)
-    NSManagedObjectContext *context = m_appDelegate.managedObjectContext;
     //ItemList *inbox = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
-    ItemList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:context];
+    ItemList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:m_context];
     [newList setValue:@"new list" forKey:@"name"];
-    Item *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:context];
+    Item *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:m_context];
     [newItem setValue:@"new item" forKey:@"content"];
-    Listing *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:context];
+    Listing *listing = [NSEntityDescription insertNewObjectForEntityForName:@"Listing" inManagedObjectContext:m_context];
     [listing setValue:newList forKey:@"list"];
     [listing setValue:newItem forKey:@"item"];
-    [context save];
+    [m_context save];
     __block int countRequests = 0;
     [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
@@ -200,13 +186,13 @@
     STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
     
     id record = nil;
-    record = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
+    record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
     STAssertEquals([[record valueForKey:@"id"] intValue], 100, @"");
-    record = [context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'new list'" argumentArray:[NSArray array]];
+    record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'new list'" argumentArray:[NSArray array]];
     STAssertEquals([[record valueForKey:@"id"] intValue], 101, @"");
-    record = [context fetchFirstFromEntityName:@"Item" withPredicateFormat:@"content == 'new item'" argumentArray:[NSArray array]];
+    record = [m_context fetchFirstFromEntityName:@"Item" withPredicateFormat:@"content == 'new item'" argumentArray:[NSArray array]];
     STAssertEquals([[record valueForKey:@"id"] intValue], 102, @"");
-    record = [context fetchFirstFromEntityName:@"Listing" withPredicateFormat:@"id == 103" argumentArray:[NSArray array]];
+    record = [m_context fetchFirstFromEntityName:@"Listing" withPredicateFormat:@"id == 103" argumentArray:[NSArray array]];
     STAssertNotNil(record, @"");
 }
 
@@ -219,11 +205,16 @@
     [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
         [[[mock stub] andDo:^(NSInvocation *invocation) {
-            if (countRequests++ == 0) {
+            switch (countRequests++) {
+            case 0:
                 [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
                 [[[mock stub] andReturn:@"{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1324,\"json\":\"{\\\"user_id\\\":6,\\\"name\\\":\\\"foo\\\",\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\",\\\"created_at\\\":\\\"2011-04-18T00:14:05+0000\\\",\\\"id\\\":19}\",\"record_id\":19,\"record_type\":\"List\",\"user_id\":6}"] responseString];
-            } else {
+                break;
+            case 1:
                 [[[mock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+                break;
+            default:
+                STFail(@"");
             }
             [mock requestFinished];
         }] startAsynchronous];
@@ -234,8 +225,52 @@
     
     STAssertEquals(1324, [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"], @"");
     // verify new record
-    id list = [m_appDelegate.managedObjectContext fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'foo'" argumentArray:[NSArray array]];
+    id list = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'foo'" argumentArray:[NSArray array]];
     STAssertEquals(19, [[list valueForKey:@"id"] intValue], @"");
+}
+
+- (void)testGetChangeLogBulk
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"GetChangesBulkLimit"];
+    [self setupApiKey];
+    [self mockEmptyPostQueue];
+    // prepare lists for getting updated positions
+    ItemList *inbox = (ItemList *)[m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"name == 'in-box'" argumentArray:[NSArray array]];
+    [inbox setValue:[NSNumber numberWithInt:100] forKey:@"id"];
+    ItemList *newList = [NSEntityDescription insertNewObjectForEntityForName:@"List" inManagedObjectContext:m_context];
+    [newList setValue:[NSNumber numberWithInt:101] forKey:@"id"];
+    [m_context save];
+    
+    // GET /api/chages/next/:id
+    __block int countRequests = 0;
+    [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
+        STAssertEquals([[[url queryDictionary] objectForKey:@"limit"] intValue], 2, @"");
+        id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
+        [[[mock stub] andDo:^(NSInvocation *invocation) {
+            switch (countRequests++) {
+            case 0:
+                [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
+                [[[mock stub] andReturn:@"[{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1324,\"json\":\"{\\\"position\\\":1,\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\"}\",\"record_id\":100,\"record_type\":\"List\",\"user_id\":6},{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1326,\"json\":\"{\\\"position\\\":2,\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\"}\",\"record_id\":101,\"record_type\":\"List\",\"user_id\":6}]"] responseString];
+                break;
+            case 1:
+                [[[mock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+                break;
+            default:
+                STFail(@"");
+            }
+            [mock requestFinished];
+        }] startAsynchronous];
+        return mock;
+    }];
+    
+    STAssertNoThrow(objc_msgSend(m_listsViewController, @selector(sync)), @"");
+    
+    STAssertEquals(1326, [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"], @"");
+    id record = nil;
+    record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"id == 100" argumentArray:[NSArray array]];
+    STAssertEquals([[record valueForKey:@"position"] intValue], 1, @"");
+    record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"id == 101" argumentArray:[NSArray array]];
+    STAssertEquals([[record valueForKey:@"position"] intValue], 2, @"");
 }
 
 #pragma mark helper methods
@@ -257,7 +292,7 @@
     }];
 }
 
-// Skip actual GET /api/changes
+// Skip actual GET /api/changes/next/:id
 - (void)mockGetChangeLogDoesNothing {
     [Synchronizer aliasInstanceMethod:@selector(getChangeLog) chainingPrefix:@"mock" withBlock:^(id _self) {
         [_self stop];
