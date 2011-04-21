@@ -14,7 +14,7 @@ Histories
 = 0.3 (2011-XX-XX)
 * App icons refreshed (retina icon has been added!)
 * Synchronizing speed improved
-* Version number in Settings
+* Reveal version number in Settings
 
 = 0.2 (2010-08-05)
 * Fix inconsistency about list order when a new list is added.
