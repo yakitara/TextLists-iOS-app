@@ -6,5 +6,7 @@
 	<integer>50</integer>
 	<key>GetChangesBulkLimit</key>
 	<integer>50</integer>
+	<key>WebServiceURL</key>
+	<string>http://textlists.yakitara.com/</string>
 </dict>
 </plist>

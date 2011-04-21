@@ -32,9 +32,10 @@
         for (NSDictionary *prefSpecification in [settings objectForKey:@"PreferenceSpecifiers"])
         {
             NSString *key = [prefSpecification objectForKey:@"Key"];
-            if (key)
+            id value = [prefSpecification objectForKey:@"DefaultValue"];
+            if (key && value)
             {
-                [settingsDefaults setObject:[prefSpecification objectForKey:@"DefaultValue"] forKey:key];
+                [settingsDefaults setObject:value forKey:key];
             }
         }
         return settingsDefaults;

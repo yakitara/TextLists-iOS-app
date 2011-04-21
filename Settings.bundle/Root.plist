@@ -9,24 +9,16 @@
 			<string>TextLists iOS App 1.0</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
+			<key>FooterText</key>
+			<string>Copyright © Hiroshi Saito (Yakitara.com)</string>
 		</dict>
 		<dict>
-			<key>DefaultValue</key>
-			<string>http://textlists.yakitara.com:8080/</string>
-			<key>AutocapitalizationType</key>
-			<string>None</string>
-			<key>AutocorrectionType</key>
-			<string>No</string>
-			<key>IsSecure</key>
-			<false/>
-			<key>Key</key>
-			<string>WebServiceURL</string>
-			<key>KeyboardType</key>
-			<string>URL</string>
 			<key>Title</key>
-			<string>Web Service URL</string>
+			<string>Acknowledgements</string>
 			<key>Type</key>
-			<string>PSTextFieldSpecifier</string>
+			<string>PSGroupSpecifier</string>
+			<key>FooterText</key>
+			<string>http://allseeing-i.com/ASIHTTPRequest/ http://stig.github.com/json-framework/ http://www.mulle-kybernetik.com/software/OCMock/</string>
 		</dict>
 	</array>
 	<key>StringsTable</key>
