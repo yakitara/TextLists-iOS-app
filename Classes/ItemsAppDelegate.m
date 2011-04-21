@@ -43,6 +43,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [NSUserDefaults registerAppDefaults:@"AppDefaults"];
+    [NSUserDefaults persistArgumentForKey:@"WebServiceURL"]; // for debug
     //[NSUserDefaults resetToAppDefaults];
     //NSLog(@"defaults:%@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     NSLog(@"launchOptions:%@", launchOptions);

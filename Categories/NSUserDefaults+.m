@@ -21,6 +21,14 @@
     [self resetStandardUserDefaults];
 }
 
++ (void)persistArgumentForKey:(NSString *)defaultName {
+    NSUserDefaults *defaults = [self standardUserDefaults];
+    id value = [[defaults volatileDomainForName:NSArgumentDomain] objectForKey:defaultName];
+    if (value) {
+        [defaults setObject:value forKey:defaultName];
+    }
+}
+
 #pragma mark private
 // CREDIT: http://stackoverflow.com/questions/510216
 + (NSDictionary *)settingsDefaults {

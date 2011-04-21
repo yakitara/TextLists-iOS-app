@@ -61,6 +61,10 @@
             argument = "-WebServiceURL http://localhost:3000/"
             isEnabled = "YES">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-WebServiceURL http://textlists.yakitara.com:8080/"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
