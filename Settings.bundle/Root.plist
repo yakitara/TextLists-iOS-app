@@ -5,20 +5,20 @@
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
-			<key>Title</key>
-			<string>TextLists iOS App 1.0</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
 			<key>FooterText</key>
 			<string>Copyright © Hiroshi Saito (Yakitara.com)</string>
+			<key>Title</key>
+			<string>TextLists iOS App ${ver}</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
 		</dict>
 		<dict>
+			<key>FooterText</key>
+			<string>http://allseeing-i.com/ASIHTTPRequest/ http://stig.github.com/json-framework/ http://www.mulle-kybernetik.com/software/OCMock/</string>
 			<key>Title</key>
 			<string>Acknowledgements</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
-			<key>FooterText</key>
-			<string>http://allseeing-i.com/ASIHTTPRequest/ http://stig.github.com/json-framework/ http://www.mulle-kybernetik.com/software/OCMock/</string>
 		</dict>
 	</array>
 	<key>StringsTable</key>

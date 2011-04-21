@@ -1,0 +1,7 @@
+#!/bin/sh
+ver=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" ${PROJECT_DIR}/${INFOPLIST_FILE})
+title=$(/usr/libexec/PlistBuddy -c "Print :PreferenceSpecifiers:0:Title" ${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/Root.plist)
+# title may contains ${ver} and substitute it
+title=$(eval echo ${title})
+echo ${title}
+/usr/libexec/PlistBuddy -c "Set :PreferenceSpecifiers:0:Title ${title}" ${TARGET_BUILD_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/Root.plist
