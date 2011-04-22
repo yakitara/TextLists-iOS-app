@@ -93,8 +93,9 @@
 #pragma mark tests
 - (void)testOpenAuthPage
 {
+    [[NSUserDefaults standardUserDefaults] setObject:@"http://example.com/" forKey:@"WebServiceURL"];
     id appMock = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
-    [[appMock expect] openURL:[NSURL URLWithString:@"http://textlists.yakitara.com:8080/api/key?r=items://sync/"]];
+    [[appMock expect] openURL:[NSURL URLWithString:@"http://example.com/api/key?r=items://sync/"]];
     
     objc_msgSend(m_listsViewController, @selector(sync));
     

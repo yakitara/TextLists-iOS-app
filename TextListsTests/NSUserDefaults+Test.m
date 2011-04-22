@@ -38,6 +38,11 @@
     [orig registerDefaults:dictionary];
 }
 
+- (NSDictionary *)volatileDomainForName:(NSString *)domainName {
+    NSUserDefaults *orig = objc_msgSend([NSUserDefaults class], @selector(without_test_standardUserDefaults));
+    return [orig volatileDomainForName:domainName];
+}
+
 - (NSDictionary *)dictionaryRepresentation {
     // NOTE: It is needed merge volatileDomains on demand
     // NSMutableDictionary *tmp = [m_dict mutableCopy];
