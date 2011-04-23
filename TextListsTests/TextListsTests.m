@@ -233,6 +233,7 @@
 - (void)testGetChangeLogBulk
 {
     [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"GetChangesBulkLimit"];
+    [[NSUserDefaults standardUserDefaults] setInteger:1000 forKey:@"LastLogId"];
     [self setupApiKey];
     [self mockEmptyPostQueue];
     // prepare lists for getting updated positions
@@ -245,7 +246,15 @@
     // GET /api/chages/next/:id
     __block int countRequests = 0;
     [ASIHTTPRequest aliasClassMethod:@selector(requestWithURL:) chainingPrefix:@"mock" withBlock:^(id _class, NSURL *url) {
-        STAssertEquals([[[url queryDictionary] objectForKey:@"limit"] intValue], 2, @"");
+        switch (countRequests) {
+        case 0:
+            STAssertEqualObjects([url path], @"/api/0.3/changes/1000/next/2", @"");
+            break;
+        case 1:
+            STAssertEqualObjects([url path], @"/api/0.3/changes/1326/next/2", @"");
+            break;
+        }
+        //STAssertEquals([[[url queryDictionary] objectForKey:@"limit"] intValue], 2, @"");
         id mock = [OCMockObject partialMockForObject:objc_msgSend(_class, @selector(without_mock_requestWithURL:), url)];
         [[[mock stub] andDo:^(NSInvocation *invocation) {
             switch (countRequests++) {
@@ -254,10 +263,15 @@
                 [[[mock stub] andReturn:@"[{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1324,\"json\":\"{\\\"position\\\":1,\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\"}\",\"record_id\":100,\"record_type\":\"List\",\"user_id\":6},{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1326,\"json\":\"{\\\"position\\\":2,\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\"}\",\"record_id\":101,\"record_type\":\"List\",\"user_id\":6}]"] responseString];
                 break;
             case 1:
-                [[[mock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode];
+                // With version 0.3 of API, a server may response change_logs having same (log_)id twice. Because
+                // the very last change_log for a user may be updated by autosaving content on web.
+                // In this case client MUST stop request father more.
+                [[[mock stub] andReturnValue:[NSNumber numberWithInt:200]] responseStatusCode];
+                [[[mock stub] andReturn:@"[{\"changed_at\":\"2011-04-18T00:14:05+0000\",\"created_at\":\"2011-04-18T00:14:05+0000\",\"id\":1326,\"json\":\"{\\\"position\\\":3,\\\"updated_at\\\":\\\"2011-04-18T00:14:05+0000\\\"}\",\"record_id\":101,\"record_type\":\"List\",\"user_id\":6}]"] responseString];
                 break;
             default:
-                STFail(@"");
+                [[[mock stub] andReturnValue:[NSNumber numberWithInt:204]] responseStatusCode]; // failsafe
+                STFail(@"By receiving same (log) id, a client should stop request next time.");
             }
             [mock requestFinished];
         }] startAsynchronous];
@@ -271,7 +285,7 @@
     record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"id == 100" argumentArray:[NSArray array]];
     STAssertEquals([[record valueForKey:@"position"] intValue], 1, @"");
     record = [m_context fetchFirstFromEntityName:@"List" withPredicateFormat:@"id == 101" argumentArray:[NSArray array]];
-    STAssertEquals([[record valueForKey:@"position"] intValue], 2, @"");
+    STAssertEquals([[record valueForKey:@"position"] intValue], 3, @"");
 }
 
 #pragma mark helper methods

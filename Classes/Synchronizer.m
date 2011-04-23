@@ -181,8 +181,15 @@
 - (void)getChangeLog {
     NSInteger lastLogId = [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"];
     NSNumber *limit = [[NSUserDefaults standardUserDefaults] objectForKey:@"GetChangesBulkLimit"];
+#if 1
+    // new api 0.3
+    NSString *path = [NSString stringWithFormat:@"/api/0.3/changes/%d/next/%@", lastLogId, limit];
+    NSURL *url = [[self class] requestURLForPath:path auth:YES query:nil];
+#else
+    // old api
     NSString *path = [NSString stringWithFormat:@"/api/changes/next/%d", lastLogId];
     NSURL *url = [[self class] requestURLForPath:path auth:YES query:[NSDictionary dictionaryWithObject:limit forKey:@"limit"]];
+#endif
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/json"];
@@ -221,14 +228,20 @@
             
             //[context processPendingChanges];
             
-            // update LastLogId
-            NSNumber *lastLogId = [log objectForKey:@"id"];
-            [[NSUserDefaults standardUserDefaults] setInteger:[lastLogId integerValue] forKey:@"LastLogId"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            // FIXME: Don't do such a entity specific thing here.
-            // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
-            if ([entityName isEqual:@"Listing"]) {
-                [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
+            NSInteger lastLogId = [[NSUserDefaults standardUserDefaults] integerForKey:@"LastLogId"];
+            NSInteger logId = [[log objectForKey:@"id"] integerValue];
+            if (logId > lastLogId) {
+                // update LastLogId
+                [[NSUserDefaults standardUserDefaults] setInteger:logId forKey:@"LastLogId"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                // FIXME: Don't do such a entity specific thing here.
+                // FIXME: using NSFetchedResultController in ItemsViewController will solve the refreshing issue
+                if ([entityName isEqual:@"Listing"]) {
+                    [context refreshObject:[record valueForKey:@"list"] mergeChanges:NO];
+                }
+            } else {
+                [self stop];
+                return;
             }
         }
         // what's next?
