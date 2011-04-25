@@ -4,11 +4,16 @@ TextLists iOS App
 
 Notes for a Developer
 ---------------------
+=== Alter "WebServiceURL" defaults
 The server URL which the app synchronize with is specified as a user defaults by key "WebServiceURL".
 The default value for the key is "http://textlists.yakitara.com/" (in AppDefaults.plist).
 On development or debug, you should alter the value for the key by adding a 
 "Arguments Passed On Launch" in Xcode scheme editing like this:
     -WebServiceURL http://localhost:3000/
+
+=== TextListsTest cannot run on iOS version prior to 4.3
+Because imp_implementationWithBlock() is only available iOS 4.3 or lator
+
 
 
 Release Instruction
