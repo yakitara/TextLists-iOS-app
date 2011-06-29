@@ -7,7 +7,7 @@
 @end
 
 @interface NSManagedObject ( Association )
-- (void)setBelongsToId:(id)value forKey:(NSString *)key entityName:(NSString *)entityName;
+- (void)setBelongsTo:(NSString *)association value:(id)value key:(NSString *)key entityName:(NSString *)entityName;
 @end
 
 @interface NSManagedObject ( Identity )

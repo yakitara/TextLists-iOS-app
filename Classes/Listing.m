@@ -30,7 +30,16 @@
 }
 
 - (void)setList_id:(NSNumber *)value {
-    [self setBelongsToId:value forKey:@"list" entityName:@"List"];
+    [self setBelongsTo:@"list" value:value key:@"id" entityName:@"List"];
+}
+
+- (NSString *)list_uuid {
+    NSManagedObject *list = [self valueForKey:@"list"];
+    return list ? [list valueForKey:@"uuid"] : nil;
+}
+
+- (void)setList_uuid:(NSString *)value {
+    [self setBelongsTo:@"list" value:value key:@"uuid" entityName:@"List"];
 }
 
 - (NSNumber *)item_id {
@@ -39,7 +48,16 @@
 }
 
 - (void)setItem_id:(NSNumber *)value {
-    [self setBelongsToId:value forKey:@"item" entityName:@"Item"];
+    [self setBelongsTo:@"item" value:value key:@"id" entityName:@"Item"];
+}
+
+- (NSString *)item_uuid {
+    NSManagedObject *item = [self valueForKey:@"item"];
+    return item ? [item valueForKey:@"uuid"] : nil;
+}
+
+- (void)setItem_uuid:(NSString *)value {
+    [self setBelongsTo:@"item" value:value key:@"uuid" entityName:@"Item"];
 }
 
 - (void)setDeleted_at:(id)value {

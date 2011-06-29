@@ -45,12 +45,12 @@
 @end
 
 @implementation NSManagedObject ( Association )
-- (void)setBelongsToId:(id)value forKey:(NSString *)key entityName:(NSString *)entityName {
+- (void)setBelongsTo:(NSString *)associationName value:(id)value key:(NSString *)key entityName:(NSString *)entityName {
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"id == %@", value];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ == %@", key, value];
     [fetchRequest setPredicate:predicate];
     NSError *error;
     NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
@@ -59,12 +59,11 @@
         abort();
     }
     if ([records count] == 0) {
-        NSLog(@"[setBelongsToId:%@ forKey:%@ entityName:%@] not found a record.", value, key, entityName);
+        NSLog(@"[setBelongsTo:%@ value:%@ key:%@ entityName:%@] not found a record.", associationName, value, key, entityName);
     }
     // set CoreData relation
-    [self setValue:[records lastObject] forKey:key];
+    [self setValue:[records lastObject] forKey:associationName];
 }
-
 @end
 
 @implementation NSManagedObject ( JSON )
