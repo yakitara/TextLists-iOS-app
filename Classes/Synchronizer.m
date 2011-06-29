@@ -220,6 +220,9 @@
             NSManagedObject *record = [context fetchFirstFromEntityName:entityName withPredicateFormat:@"id == %@" argumentArray:[NSArray arrayWithObjects:record_id, nil]];
             if (!record) {
                 record = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+                // Set record_id to id in case of lack of id in json.
+                // This may happen when the log is created by a new record of a device.
+                [record setValue:record_id forKey:@"id"];
             }
             [record setValues:[[log objectForKey:@"json"] JSONValue]];
 
