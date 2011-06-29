@@ -753,6 +753,68 @@
 			};
 			name = Release;
 		};
+		6867E30B13B79FEF0086CCE8 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+			};
+			name = AdHoc;
+		};
+		6867E30C13B79FEF0086CCE8 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = items_Prefix.pch;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "items-Info.plist";
+				PRODUCT_NAME = items;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = AdHoc;
+		};
+		6867E30D13B79FEF0086CCE8 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/items.app/items";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TextListsTests/TextListsTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Prerequisites/OCMock/Source/build/Debug/Library/Headers\"";
+				INFOPLIST_FILE = "TextListsTests/TextListsTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Prerequisites/OCMock/Source/build/Debug/Library\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+					"-force_load",
+					"\"$(SRCROOT)/Prerequisites/OCMock/Source/build/Debug/Library/libOCMock.a\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = AdHoc;
+		};
 		6878004A120BE36500562343 /* AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -923,6 +985,7 @@
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
 				6878004B120BE36500562343 /* AppStore */,
+				6867E30C13B79FEF0086CCE8 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -933,6 +996,7 @@
 				68A2B42F134EF65800C46D6C /* Debug */,
 				68A2B430134EF65800C46D6C /* Release */,
 				68A2B431134EF65800C46D6C /* AppStore */,
+				6867E30D13B79FEF0086CCE8 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -943,6 +1007,7 @@
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
 				6878004A120BE36500562343 /* AppStore */,
+				6867E30B13B79FEF0086CCE8 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
