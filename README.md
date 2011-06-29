@@ -37,7 +37,10 @@ Release Instruction
 
 Histories
 ---------
-= 0.3 (2011-XX-XX)
+= 0.4 (2011-XX-XX)
+* Fix synchronization problem when a iOS device is restored to old state by means of iTunes backup.
+
+= 0.3 (2011-04-29)
 * App icons refreshed (retina icon has been added!)
 * Synchronizing speed improved
 * Reveal version number in Settings
