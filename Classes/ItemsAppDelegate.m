@@ -172,6 +172,7 @@ int sqlite3_exec_callback(void* info,int numCols, char** texts, char** names) {
     }
     
     NSURL *storeUrl = [NSURL fileURLWithPath: [[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"ItemsCoreData.sqlite"]];
+    //NSLog(@"storeUrl:%@", storeUrl);
 #if DUMP_SQLITE
     sqlite3 *db = NULL;
     NSLog(@"db:%s\n", [[storeUrl path] UTF8String]);
