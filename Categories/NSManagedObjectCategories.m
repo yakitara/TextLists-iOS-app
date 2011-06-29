@@ -50,7 +50,7 @@
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ == %@", key, value];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", key, value];
     [fetchRequest setPredicate:predicate];
     NSError *error;
     NSArray *records = [context executeFetchRequest:fetchRequest error:&error];
